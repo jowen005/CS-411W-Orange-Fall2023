@@ -4,6 +4,7 @@
 * **source .env/bin/activate** ---> Activates the virtual environment
   * packages installed in ll_env when environment is inactive will not be available
 * **deactivate** ---> Deactivates the virtual environment
+* If you already have a requirements.txt run **pip install -r requirements.txt**
 
 ## Starting the Project
 * **pip install django** ---> installs django
