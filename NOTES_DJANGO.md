@@ -1,7 +1,7 @@
 # Django Notes
 ## Virtual Environments
 * **python3 -m venv .env** ---> Creates the - ll_env virtual environment
-* **source ll_env/bin/activate** ---> Activates the virtual environment
+* **source .env/bin/activate** ---> Activates the virtual environment
   * packages installed in ll_env when environment is inactive will not be available
 * **deactivate** ---> Deactivates the virtual environment
 
