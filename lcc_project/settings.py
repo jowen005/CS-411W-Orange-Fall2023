@@ -17,7 +17,8 @@ import json
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 try:
-    with open(BASE_DIR/'secrets.json') as handle:
+    with open(BASE_DIR/'secrets_test.json') as handle:
+    # with open(BASE_DIR/'secrets.json') as handle:
         SECRETS = json.load(handle)
 except IOError:
     SECRETS = {}
