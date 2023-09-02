@@ -1,3 +1,5 @@
 .env/*
 .vscode/* 
 lcc_project/settings.py
+secrets.json
+.DS_Store
