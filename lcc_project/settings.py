@@ -37,6 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    #Third Part Apps
+    'rest_framework',
+
+    #Our Apps
+    'restaurants',
 ]
 
 MIDDLEWARE = [
@@ -79,7 +85,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'lcc_test',         #Name your testing db this
         'USER': 'root',             
-        'PASSWORD': '',             #This is your local testing db password
+        'PASSWORD': '7d3k2d*r',             #This is your local testing db password
         'HOST': 'localhost',
         'PORT': '3306',
         'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},
