@@ -1,6 +1,6 @@
 # CS-411W-Orange-Fall2023
 CS 411W Team Orange Project: LowCalChow
-### This is the Development Branch
+### This is the Production Branch
 # SECRET management
 Create a secrets.json file in the main directory and fill out the file according to the instructions provided. This keeps all host-specific information on each computer. 
 
