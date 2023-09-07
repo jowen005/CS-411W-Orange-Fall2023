@@ -32,6 +32,7 @@ class Restaurant(models.Model):
     state = models.CharField(max_length=2)
     zip_code = models.CharField(max_length=5)       #Might want to extend to 9 digits
 
+
     def __str__(self):
         return self.name
     
