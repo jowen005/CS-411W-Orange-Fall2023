@@ -17,18 +17,17 @@ import json
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 try:
-    # with open(BASE_DIR/'secrets.json') as handle:
-    with open(BASE_DIR/'secrets_test.json') as handle:
+    with open(BASE_DIR/'secrets.json') as handle:
         SECRETS = json.load(handle)
 except IOError:
     SECRETS = {}
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = SECRETS['secret_key']
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = SECRETS['debug']
 
@@ -110,9 +109,9 @@ DATABASES = {
     'default': {
         #MySQL engine. Powered by the mysqlclient module
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': SECRETS['db_name'],
-        'USER': SECRETS['db_user'],
-        'PASSWORD': SECRETS['db_password'],
+        'NAME': SECRETS['db_name'],         #Name your testing db this
+        'USER': SECRETS['db_user'],             
+        'PASSWORD': SECRETS['db_password'],             #This is your local testing db password
         'HOST': SECRETS['db_host'],
         'PORT': SECRETS['db_port'],
         'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"},
