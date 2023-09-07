@@ -14,5 +14,5 @@ class MultiAccountBackend(ModelBackend):
         if user.check_password(password):
             return user
         else:
-            return AuthenticationFailed('Invalid email or password')
+            raise AuthenticationFailed('Invalid email or password')
         
