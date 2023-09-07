@@ -1,4 +1,4 @@
-.env/
-.vscode/ 
-secrets*.json
-.DS_STORE
+.env/*
+.vscode/* 
+secret*.json
+.DS_Store
