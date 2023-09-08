@@ -1,4 +1,9 @@
 .env/*
 .vscode/* 
 secret*.json
+Zheng
 .DS_Store
+
+.DS_Store
+**/__pycache__/
+main

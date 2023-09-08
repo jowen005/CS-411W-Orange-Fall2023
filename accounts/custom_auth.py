@@ -15,4 +15,6 @@ class MultiAccountBackend(ModelBackend):
             return user
         else:
             return AuthenticationFailed('Invalid email or password')
+            raise AuthenticationFailed('Invalid email or password')
+ main
         
