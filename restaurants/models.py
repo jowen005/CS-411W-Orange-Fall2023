@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 
 # Create your models here.
@@ -16,6 +17,7 @@ class RestTag(models.Model):
 class Restaurant(models.Model):
     """A restaurant"""
     #General Info
+    owner = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='restaurants')
     name = models.CharField(max_length=100)
     rating = models.DecimalField(max_digits=2, decimal_places=1)
     tags = models.ManyToManyField(RestTag)
@@ -63,6 +65,60 @@ class RestaurantOpenHours(models.Model):
 
     class Meta:
         db_table = 'RestOpenHours'
+
+    from django.db import models
+
+# Define the model for menu items
+class MenuItem(models.Model):
+    # Primary Key for the menu item
+    itemID = models.AutoField(primary_key=True)
+
+    # Foreign Key to the restaurant that offers this menu item
+    restaurant = models.ForeignKey('Restaurant', on_delete=models.CASCADE, related_name='menu_items')
+
+    # Item information
+    item_name = models.CharField(max_length=100)
+    food_type = models.CharField(max_length=20, choices=[
+        ('Appetizer', 'Appetizer'),
+        ('Dessert', 'Dessert'),
+        ('Main Course', 'Main Course'),
+        ('Beverage', 'Beverage'),
+    ])
+    average_rating = models.DecimalField(max_digits=3, decimal_places=2)
+    price = models.DecimalField(max_digits=6, decimal_places=2)
+    calories = models.PositiveIntegerField()
+    ingredients = models.TextField()
+     # Tags for taste (spicy, salty, smoked, etc.)
+    taste_tags = models.ManyToManyField('TasteTag', blank=True)
+
+    cooking_style = models.CharField(max_length=20, choices=[
+        ('Baked', 'Baked'),
+        ('Grilled', 'Grilled'),
+        ('Fried', 'Fried'),
+    ])
+    time_of_day_available = models.CharField(max_length=20, choices=[
+        ('Breakfast', 'Breakfast'),
+        ('Lunch', 'Lunch'),
+        ('Dinner', 'Dinner'),
+        ('Anytime', 'Anytime'),
+    ])
+    specialty_item = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.item_name
+
+    class Meta:
+        db_table = 'MenuItems'
+    # tast of the menu item
+    class TasteTag(models.Model):
+        """A tag representing the taste of a menu item"""
+        taste_tags = models.CharField(max_length=20, unique=True)
+
+        def __str__(self):
+            return self.tag_name
+
+        class Meta:
+            db_table = 'TasteTags'
 
 # class RestaurantOpenHours(models.Model):
 #     """Describes the open hours of a restaurant"""
