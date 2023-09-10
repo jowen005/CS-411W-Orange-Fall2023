@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 
 from .serializers import SignUpSerializer
+from .tokens import create_jwt_pair_for_user
 
 
 # Create your views here.
@@ -47,9 +48,10 @@ class LoginView(APIView):
 
         try:
             user = authenticate(request, email=email, password=password, user_type=user_type)
+            tokens = create_jwt_pair_for_user(user)
             response = {
                 "message": "Login Successful",
-                "token":"Token"
+                "tokens":tokens
             }
             return Response(data=response, status=status.HTTP_200_OK)
         except AuthenticationFailed:
