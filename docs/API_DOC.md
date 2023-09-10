@@ -1,5 +1,5 @@
 # Accounts (/auth/)
-## Login
+## Login -> Creates and returns access an refresh tokens
 /auth/login/patron/
 * Input: email, password
 * Output: message, tokens{access, refresh}
@@ -24,7 +24,7 @@
 /auth/signup/admin/
 * Admin cannot be created using API right now
 
-## JWT
+## JWT (Json Web Tokens) -> for manual authentication
 /auth/jwt/create/ --> creates and returns an access and refresh token
 * Input: email, password
 * Output: refresh, access
