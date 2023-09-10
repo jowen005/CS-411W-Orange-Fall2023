@@ -6,4 +6,5 @@
 # General Commands
 * **source .env/bin/activate** ---> Activates the virtual environment
 * **python3 manage.py runserver** ---> Views the project in its current state
+* **python3 manage.py migrate** ---> Make sure db is up to date
 * **python3 manage.py createsuperuser** ---> Creates a superuser (admin)
