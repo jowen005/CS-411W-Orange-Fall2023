@@ -2,7 +2,4 @@
 .vscode/* 
 secret*.json
 .DS_Store
-
-.DS_Store
 **/__pycache__/
-main
