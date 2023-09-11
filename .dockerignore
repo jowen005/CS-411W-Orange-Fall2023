@@ -3,4 +3,3 @@ Dockerfile
 .env/
 docs/
 README.md
-secret*.json

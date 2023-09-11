@@ -9,7 +9,7 @@ services:
       - MYSQL_DATABASE=lcc_main
       - MYSQL_USER=user
       - MYSQL_PASSWORD=password
-      - MYSQL_ROOT_PASSWORD=7d3k2d*r
+      - MYSQL_ROOT_PASSWORD=roottoor
     volumes:
       - mysql-data:/var/lib/mysql
     healthcheck:
