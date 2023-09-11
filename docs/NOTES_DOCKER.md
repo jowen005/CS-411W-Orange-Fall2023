@@ -77,12 +77,15 @@
   * Whenever you adjust a Dockerfile, you MUST rebuild the image
 
 Private Docker Repositories
-* Common options (Amazon ECR, Dockerhub, Canister, etc)
+* Common options (Amazon ECR, DockerHub, Canister, etc)
 * Steps to push to a private repo
   1. Give system permission to push (login)(different ways of doing this depending on repo)
+     * **docker login -u __username__**
   2. Build docker image
   3. Tag your image to include the repository address in the name
+     * **docker tag __imageid__ __username__/__reponame__:__tag__**
   4. Push image to the respitory address
+     * **docker push __username__/__reponame__:__tag__**
   * If you change something in the image or the code, you must re-tag the image, and push again
 * Steps to pull from a private repo
   1. Give remote server permission to pull (login)
