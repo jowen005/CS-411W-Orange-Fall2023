@@ -10,6 +10,11 @@
 
 Note: See NOTES_DOCKER.md for more information
 
+# Server pushes with Docker (Foster)
+* **docker login -u wtfoster2**
+* **docker tag __imageid__ wtfoster2/cs411wforang:__tag__**
+* **docker push wtfoster2/cs411wforang:__tag__**
+* **docker logout**
 
 
 # WITHOUT Docker
