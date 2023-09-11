@@ -77,7 +77,7 @@
   * Whenever you adjust a Dockerfile, you MUST rebuild the image
 
 Private Docker Repositories
-* Common options (Amazon ECR, etc)
+* Common options (Amazon ECR, Dockerhub, Canister, etc)
 * Steps to push to a private repo
   1. Give system permission to push (login)(different ways of doing this depending on repo)
   2. Build docker image
