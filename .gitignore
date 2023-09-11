@@ -1,5 +1,6 @@
-.env/*
-.vscode/* 
+.env/
+.vscode/
 secret*.json
 .DS_Store
-**/__pycache__/
+**/__pycache__
+*.pyc

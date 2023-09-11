@@ -1,0 +1,6 @@
+Dockerfile
+.gitignore
+.env/
+docs/
+README.md
+secret*.json
