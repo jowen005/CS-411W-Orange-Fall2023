@@ -23,8 +23,8 @@ class Restaurant(models.Model):
     owner = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='restaurants')
     name = models.CharField(max_length=100)
     rating = models.DecimalField(max_digits=3, decimal_places=2)
-    tags = models.ManyToManyField(RestTag, blank=True)
-    price_level = models.CharField(choices=[
+    tags = models.ManyToManyField(RestTag)
+    price_level = models.CharField(max_length=3, choices=[
         ('$','$'),
         ('$$','$$'),
         ('$$$','$$$'),
@@ -119,9 +119,9 @@ class MenuItem(models.Model):
     price = models.DecimalField(max_digits=6, decimal_places=2)
     calories = models.PositiveIntegerField()
 
-    food_type_tag = models.ForeignKey(FoodTypeTag, blank=True)
-    taste_tags = models.ManyToManyField(TasteTag, blank=True)
-    cook_style_tags = models.ForeignKey(CookStyleTag, blank=True)
+    food_type_tag = models.ForeignKey(FoodTypeTag, on_delete=models.SET_NULL, null=True)
+    taste_tags = models.ManyToManyField(TasteTag)
+    cook_style_tags = models.ForeignKey(CookStyleTag, on_delete=models.SET_NULL, null=True)
 
     # ingredients = models.TextField()
 
