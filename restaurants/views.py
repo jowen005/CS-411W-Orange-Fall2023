@@ -15,7 +15,7 @@ from rest_framework import status
 def handshake(request:Request):
     response = {
         'message': 'This API handshake was successful',
-        'content': 'Hello World!'
+        'content': 'Hello World! This is a Dev Branch'
     }
     return Response(data=response, status=status.HTTP_200_OK)
 
