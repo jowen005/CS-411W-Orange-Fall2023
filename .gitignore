@@ -4,3 +4,4 @@ secret*.json
 .DS_Store
 **/__pycache__
 *.pyc
+docker-compose.override.yml
