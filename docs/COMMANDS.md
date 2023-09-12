@@ -1,4 +1,5 @@
 # WITH Docker
+# General Docker Commands
 * **docker-compose up** --> starts up all containers in project with terminal display
   * **docker-compose up -d** --> starts up all containers in project without terminal display (detached mode)
 * **docker-compose down** --> shuts down all containers in project
@@ -8,9 +9,13 @@
   * **python3 manage.py createsuperuser** ---> Creates a superuser (admin)
   * **exit** --> exits django shell
 
+# For Backend Devs Only
+* Use **docker-compose up** in dev branch
+* Use **docker-compose -f docker-compose.yml up** in main branch (ignores override.yml)
+
 Note: See NOTES_DOCKER.md for more information
 
-# Server pushes with Docker (Foster)
+## Server pushes with Docker (Foster)
 * **docker login -u wtfoster2**
 * **docker tag __imageid__ wtfoster2/cs411wforang:__tag__**
 * **docker push wtfoster2/cs411wforang:__tag__**
