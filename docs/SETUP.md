@@ -10,6 +10,7 @@ Install Python 3.9 or 3.10 and Docker Desktop
      * "db_password": "roottoor" or "db_password": "password"
      * "db_host": "db"
      * "db_port": 3306
+   3. Check that lcc_project/settings.py refers to 'secrets.json'
 4. In terminal, run **docker-compose up**
    * Might take a minute or two
    * The system check should have identified no issues and you'll probably have quite a few unapplied migrations
@@ -26,7 +27,27 @@ Install Python 3.9 or 3.10 and Docker Desktop
    * This server is running on localhost:8000
 7. When your done with your session run **docker-compose down**
 
-NOTE: Still working on setting up multiple branches with different databases
+## Setting Up A Second Dev Branch
+1. Create secrets_dev.json
+   1. Full template file is found in Discord #backend-resources
+   2. Make sure the values are as follows:
+     * "db_name": "lcc_dev"
+     * "db_user": "root"         or "db_user": "user"
+     * "db_password": "roottoor" or "db_password": "password"
+     * "db_host": "db"
+     * "db_port": 3306
+   3. Check that lcc_project/settings.py refers to 'secrets_dev.json'
+2. Create docker-compose.override.yml
+   * Full file can be found in Discord #backend-resources
+   * Note:
+     * When running in main branch:
+       * Use **docker-compose -f docker-compose.yml up**
+       * This excludes the override file, defaulting to the main branch database
+       * Make sure *settings.py* refers to 'secrets.json'
+     * When running in dev branch:
+       * Use **docker-compose up**
+       * This uses the override file to override the database used for development
+       * Make sure *settings.py* refers to 'secrets_dev.json'
 
 
 
