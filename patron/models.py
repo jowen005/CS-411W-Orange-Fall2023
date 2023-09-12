@@ -1,11 +1,13 @@
 from django.db import models
-from django.conf import settings
 from restaurants.models import MenuItem
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class Patron(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='patron')
-    patron_name = models.CharField(max_length=255)
-    bod = models.DateField()
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='patron')
+    name = models.CharField(max_length=255)
+    dob = models.DateField()
     calorie_limit = models.PositiveIntegerField()
     gender = models.CharField(max_length=10)
     price_preference = models.CharField(max_length=5, choices=[('$', '$'), ('$$', '$$'), ('$$$', '$$$')])
@@ -15,15 +17,19 @@ class Patron(models.Model):
 
     def __str__(self):
         return self.patron_name
+    
+    class Meta:
+        db_table = 'Patrons'
+
 
 class Bookmark(models.Model):
-    bookmark_id = models.AutoField(primary_key=True)
-    patron = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='bookmarks')
-    item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
-    item_name = models.CharField(max_length=255)  
+    """A bookmarked item associated with the patron"""
+    patron = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookmarks')
+    menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE) 
 
     def __str__(self):
         return f'{self.patron.username} - {self.item_name}'
 
     class Meta:
+        db_table = 'Bookmarks'
         unique_together = ('patron', 'item') # Ensure each patron can bookmark an item only once
