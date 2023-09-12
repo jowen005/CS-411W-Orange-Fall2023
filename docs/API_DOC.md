@@ -1,38 +1,38 @@
 # Accounts (/auth/)
 ## Login -> Creates and returns access an refresh tokens
-/auth/login/patron/
+POST: /auth/login/patron/
 * Input: email, password
 * Output: message, tokens{access, refresh}
 
-/auth/login/restaurant/
+POST: /auth/login/restaurant/
 * Input: email, password
 * Output: message, tokens{access, refresh}
 
-/auth/login/admin/
+POST: /auth/login/admin/
 * Input: email, password
 * Output: message, tokens{access, refresh}
 
 ## SignUp
-/auth/signup/patron/
+POST: /auth/signup/patron/
 * Input: email, username, password
 * Output: message, content{email, username, user_type}
 
-/auth/signup/restaurant/
+POST: /auth/signup/restaurant/
 * Input: email, username, password
 * Output: message, content{email, username, user_type}
 
-/auth/signup/admin/
+POST: /auth/signup/admin/
 * Admin cannot be created using API right now
 
 ## JWT (Json Web Tokens) -> for manual authentication
-/auth/jwt/create/ --> creates and returns an access and refresh token
+POST: /auth/jwt/create/ --> creates and returns an access and refresh token
 * Input: email, password
 * Output: refresh, access
 
-/auth/jwt/refresh/ --> creates and returns a new access token
+POST: /auth/jwt/refresh/ --> creates and returns a new access token
 * Input: refresh
 * Output: access
 
-/auth/jwt/verify/ --> verifies a token
+POST: /auth/jwt/verify/ --> verifies a token
 * Input: token
 * Output: ?

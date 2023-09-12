@@ -1,12 +1,16 @@
-from django.shortcuts import render
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from rest_framework import status
+from rest_framework import status, viewsets, generics, mixins
+
+from . import models, serializers, permissions
 
 # Create your views here.
 
-
+class RestTagViewSet(viewsets.ModelViewSet):
+    queryset = models.RestTag.objects.all()
+    serializer_class = serializers.RestTagSerializer
+    permission_classes = [permissions.IsAdminOrReadOnly]
 
 
 
