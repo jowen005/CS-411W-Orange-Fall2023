@@ -108,12 +108,13 @@ class TasteTag(models.Model):
 
 # Define the model for menu items
 class MenuItem(models.Model):
+    #unkonw bug: django is not create the Auto PK ATM.
+    menu_item_id = models.AutoField(primary_key=True)
+    # Item information
+    item_name = models.CharField(max_length=100)
 
     # Foreign Key to the restaurant that offers this menu item
     restaurant = models.ForeignKey('Restaurant', on_delete=models.CASCADE, related_name='menu_items')
-
-    # Item information
-    item_name = models.CharField(max_length=100)
 
     average_rating = models.DecimalField(max_digits=3, decimal_places=2)
     price = models.DecimalField(max_digits=6, decimal_places=2)
