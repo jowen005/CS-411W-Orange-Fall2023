@@ -1,5 +1,4 @@
-from django.shortcuts import render
-from django.contrib.auth import authenticate
+
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
 from rest_framework.request import Request
@@ -8,6 +7,7 @@ from rest_framework import status
 
 from .serializers import SignUpSerializer
 from .tokens import create_jwt_pair_for_user
+from .custom_auth import authenticate
 
 
 # Create your views here.
@@ -47,12 +47,12 @@ class LoginView(APIView):
         password = request.data.get('password')
 
         try:
-            user = authenticate(request, email=email, password=password, user_type=user_type)
+            user = authenticate(email=email, password=password, user_type=user_type)
             tokens = create_jwt_pair_for_user(user)
             response = {
                 "message": "Login Successful",
                 "tokens":tokens
             }
             return Response(data=response, status=status.HTTP_200_OK)
-        except AuthenticationFailed:
-            return Response(data={'email':'Invalid email or password'})
+        except AuthenticationFailed as e:
+            return Response(data={'email':str(e)})
