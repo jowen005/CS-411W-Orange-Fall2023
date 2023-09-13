@@ -5,6 +5,8 @@ from django.db import models
 class RestTag(models.Model):
     """A descriptive tag that describes the type of restaurant or cuisine"""
     title = models.CharField(max_length=50)
+    """What else goes in here, I don't think it should be a table if it only has this field and the auto
+    generated primary key"""
 
     def __str__(self):
         return self.title
@@ -87,7 +89,17 @@ class RestaurantOpenHours(models.Model):
 #     class Meta:
 #         db_table = 'RestOpenHours'
     
-    
+class MenuItem(models.Model):
+    """A class for the individual menu items"""
+
+    itemName = models.CharField(max_length=100)
+    foodType = models.CharField(max_length=50)
+    avgRating = models.DecimalField(max_length=2, decimal_places=1)
+    price = models.DecimalField(max_length=20, decimal_places=2)
+
+    class Meta:
+        db_table = 'MenuItems'
+
     
 
 
