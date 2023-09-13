@@ -10,9 +10,7 @@ from . import models, serializers, permissions
 class RestTagViewSet(viewsets.ModelViewSet):
     queryset = models.RestTag.objects.all()
     serializer_class = serializers.RestTagSerializer
-    permission_classes = [permissions.IsAdminOrReadOnly]
-
-
+    permission_classes = [permissions.IsAdminOrAuthReadOnly]
 
 
 @api_view(http_method_names=['GET'])
