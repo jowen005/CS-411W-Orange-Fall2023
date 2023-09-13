@@ -13,6 +13,16 @@
 * Use **docker-compose up** in dev branch
 * Use **docker-compose -f docker-compose.yml up** in main branch (ignores override.yml)
 
+Note:
+* When running in main branch:
+ * Use **docker-compose -f docker-compose.yml up**
+ * This excludes the override file, defaulting to the main branch database
+ * Make sure *settings.py* refers to 'secrets.json'
+* When running in dev branch:
+ * Use **docker-compose up**
+ * This uses the override file to override the database used for development
+ * Make sure *settings.py* refers to 'secrets_dev.json'
+
 Note: See NOTES_DOCKER.md for more information
 
 ## Server pushes with Docker (Foster)
