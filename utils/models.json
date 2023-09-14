@@ -1,0 +1,36 @@
+{
+    "patron":{
+        "id":"number",
+        "name":"name",
+        "dob":"date",
+        "calorie_limit":"number",
+        "gender":"boolean",
+        "price_preference":"number",
+        "zipcode":"zipcode",
+        "dietary_restriction":"list",
+        "palate_preference":"list",
+    },
+    "restaurant":{
+        "id":"number",
+        "name":"name",
+        "rating":"number",
+        "price_level":"number",
+        "phone_number":"phone_number",
+        "website":"website",
+        "street_name":"address",
+        "city":"address",
+        "state":"address",
+        "zip_code":"zipcode",
+        "owner_id":"number"
+    },
+    "account":{
+        "id":"number",
+        "password":"text",
+        "username":"text",
+        "first_name":"name",
+        "last_name":"name",
+        "email":"email",
+        "user_type":"user_type",
+    }
+}
+
