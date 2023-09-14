@@ -26,8 +26,8 @@ class Patron(models.Model):
 
 class Bookmark(models.Model):
     """A bookmarked item associated with the patron"""
-    patron = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookmarks')
-    menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE) 
+    patron = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookmarks', null=True)
+    menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE, null=True) 
 
     def __str__(self):
         return f'{self.patron.username} - {self.item_name}'
