@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     #Our Apps
     'restaurants',
     'accounts',
-    'patron'
+    'patron',
+    'feedback'
 ]
 
 AUTH_USER_MODEL = "accounts.User"

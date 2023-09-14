@@ -21,13 +21,18 @@ class Patron(models.Model):
         return self.patron_name
     
     class Meta:
-        db_table = 'Patrons'
+        db_table = 'Patrons_Profile'
 
 
 class Bookmark(models.Model):
     """A bookmarked item associated with the patron"""
     patron = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookmarks', null=True)
     menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE, null=True) 
+    bookmarked_datetime = models.DateTimeField(auto_now_add=True)
+
+    def formatted_datetime(self):
+        return self.search_datetime.strftime('%d/%m/%y %H:%M:%S')
+
 
     def __str__(self):
         return f'{self.patron.username} - {self.item_name}'
