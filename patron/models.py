@@ -18,7 +18,7 @@ class Patron(models.Model):
     palate_preference = models.CharField(max_length=255, default='None')
 
     def __str__(self):
-        return self.patron_name
+        return self.name
     
     class Meta:
         db_table = 'Patrons_Profile'
