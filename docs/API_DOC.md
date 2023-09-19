@@ -1,17 +1,17 @@
 # Accounts (/auth/)
-## Login -> Creates and returns access an refresh tokens
-POST: /auth/login/
+## Login --- Patron(POST), Rest(POST), Admin(POST)
+POST: /auth/login/ --> Creates and returns access an refresh tokens
 * Input: email, password
 * Output: message, user_type, tokens{access, refresh}
 
-## SignUp
+## SignUp --- Patron(POST), Rest(POST)
 POST: /auth/signup/<str:user_type>/
 * Input: email, username, password
 * Output: message, content{email, username, user_type}
 
 * Admin cannot be created using API
 
-## JWT (Json Web Tokens) -> for manual authentication
+## JWT (Json Web Tokens) --- Access to Anyone
 POST: /auth/jwt/create/ --> creates and returns an access and refresh token
 * Input: email, password
 * Output: refresh, access
@@ -25,7 +25,7 @@ POST: /auth/jwt/verify/ --> verifies a token
 * Output: nothing if valid, message if not
 
 # Restaurants
-## Rest Tags
+## Rest Tags --- AdminAuth(All), RestAuth(GET), PatronAuth(GET)
 GET: restaurants/resttags/ --> lists all tags
 * Input: -
 * Output: {id, title}, {id, title}, ...
@@ -46,7 +46,7 @@ DEL: restaurants/resttags/<int:id>/ --> deletes a specific tag
 * Input: -
 * Ouput: status204 if successful, "detail": "Not found." if not
 
-## Food Type Tags
+## Food Type Tags --- AdminAuth(All), RestAuth(GET), PatronAuth(GET)
 GET: restaurants/foodtypetags/ --> lists all tags
 * Input: -
 * Output: {id, title}, {id, title}, ...
@@ -68,7 +68,7 @@ DEL: restaurants/foodtypetags/<int:id>/ --> deletes a specific tag
 * Ouput: status204 if successful, "detail": "Not found." if not
 
 
-## Cook Style Tags
+## Cook Style Tags --- AdminAuth(All), RestAuth(GET), PatronAuth(GET)
 GET: restaurants/cookstyletags/ --> lists all tags
 * Input: -
 * Output: {id, title}, {id, title}, ...
@@ -90,7 +90,7 @@ DEL: restaurants/cookstyletags/<int:id>/ --> deletes a specific tag
 * Ouput: status204 if successful, "detail": "Not found." if not
 
 
-## Taste Tags
+## Taste Tags --- --- AdminAuth(All), RestAuth(GET), PatronAuth(GET)
 GET: restaurants/tastetags/ --> lists all tags
 * Input: -
 * Output: {id, title}, {id, title}, ...
