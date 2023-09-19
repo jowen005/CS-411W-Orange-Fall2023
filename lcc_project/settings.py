@@ -18,7 +18,7 @@ import json
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 try:
-    with open(BASE_DIR/'secrets_James.json') as handle:
+    with open(BASE_DIR/'secrets_dev.json') as handle:
         SECRETS = json.load(handle)
 except IOError:
     SECRETS = {}
@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     #Our Apps
     'restaurants',
     'accounts',
+    'patron'
 ]
 
 AUTH_USER_MODEL = "accounts.User"
@@ -67,7 +68,6 @@ MIDDLEWARE = [
 ]
 
 AUTHENTICATION_BACKENDS = [
-    'accounts.custom_auth.MultiAccountBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
 

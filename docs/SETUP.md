@@ -1,5 +1,55 @@
 ## Setting up environment WITH Docker
-* WIP
+Install Python 3.9 or 3.10 and Docker Desktop
+1. Open Docker Desktop
+2. Clone GitHub Repo onto local machine
+3. Set up a file called secrets.json in main directory
+   1. Full template file is found in Discord #backend-resources
+   2. Make sure the values are as follows:
+     * "db_name": "lcc_main"
+     * "db_user": "root"         or "db_user": "user"
+     * "db_password": "roottoor" or "db_password": "password"
+     * "db_host": "db"
+     * "db_port": 3306
+   3. Check that lcc_project/settings.py refers to 'secrets.json'
+4. In terminal, run **docker-compose up**
+   * Might take a minute or two
+   * The system check should have identified no issues and you'll probably have quite a few unapplied migrations
+   * Once finished escape using CTRL-C and run **docker-compose down**
+   * Then run **docker-compose up -d** to start in detached mode
+5. Run **docker exec -it cs-411w-orange-fall2023-django-1 bash**
+   1. Run **python3 manage.py migrate**
+   2. This should migrate all those migrations to the database
+   3. Optionally, you can create an admin account (superuser) using **python3 manage.py createsuperuser**
+   4. To exit, type **exit**
+6. You can now start using the API while the containers are running
+   * You should be able to monitor container status from within Docker Desktop as well
+   * You can access the API using API Endpoints listed in API_DOC.md
+   * This server is running on localhost:8000
+7. When your done with your session run **docker-compose down**
+
+## Setting Up A Second Dev Branch
+1. Create secrets_dev.json
+   1. Full template file is found in Discord #backend-resources
+   2. Make sure the values are as follows:
+     * "db_name": "lcc_dev"
+     * "db_user": "root"         or "db_user": "user"
+     * "db_password": "roottoor" or "db_password": "password"
+     * "db_host": "db"
+     * "db_port": 3306
+   3. Check that lcc_project/settings.py refers to 'secrets_dev.json'
+2. Create docker-compose.override.yml
+   * Full file can be found in Discord #backend-resources
+   * Note:
+     * When running in main branch:
+       * Use **docker-compose -f docker-compose.yml up**
+       * This excludes the override file, defaulting to the main branch database
+       * Make sure *settings.py* refers to 'secrets.json'
+     * When running in dev branch:
+       * Use **docker-compose up**
+       * This uses the override file to override the database used for development
+       * Make sure *settings.py* refers to 'secrets_dev.json'
+
+
 
 ## Setting up environment without Docker
 Install Python 3.9 or 3.10, MySQL Server, and MySQL Workbench

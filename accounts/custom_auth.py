@@ -1,9 +1,8 @@
-from django.contrib.auth.backends import ModelBackend
+
 from django.contrib.auth import get_user_model
 from rest_framework.exceptions import AuthenticationFailed
-
-class MultiAccountBackend(ModelBackend):
-    def authenticate(self, request, email=None, password=None, user_type=None, **kwargs):
+        
+def authenticate(email=None, password=None, user_type=None, **kwargs):
         User = get_user_model()
 
         # print(f"\n{email} - {user_type} - {password}\n")
