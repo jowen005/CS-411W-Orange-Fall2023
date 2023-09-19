@@ -47,7 +47,7 @@ class Restaurant(models.Model):
 
 class RestaurantOpenHours(models.Model):
     """Describes the open hours of a restaurant"""
-    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, null=True)
     mon_open = models.TimeField()
     mon_close = models.TimeField()
     tue_open = models.TimeField()

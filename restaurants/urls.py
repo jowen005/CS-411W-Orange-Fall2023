@@ -5,10 +5,15 @@ from . import views
 
 
 router = DefaultRouter()
-router.register("", views.RestTagViewSet, basename="resttags")
+router.register('resttags', views.RestTagViewSet, basename='resttags')
+router.register('foodtypetags', views.FoodTypeTagViewSet, basename='foodtypetags')
+router.register('cookstyletags', views.CookStyleTagViewSet, basename='cookstyletags')
+router.register('tastetags', views.TasteTagViewSet, basename='tastetags')
 
 
 urlpatterns = [
-    path('handshake/', views.handshake, name='handshake'),
-    path('resttags/', include(router.urls))
+    path('handshake', views.handshake, name='handshake'),
+    path('', include(router.urls))
 ]
+
+# urlpatterns += router.urls

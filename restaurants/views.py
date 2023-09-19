@@ -13,6 +13,24 @@ class RestTagViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAdminOrAuthReadOnly]
 
 
+class FoodTypeTagViewSet(viewsets.ModelViewSet):
+    queryset = models.FoodTypeTag.objects.all()
+    serializer_class = serializers.FoodTypeTagSerializer
+    permission_classes = [permissions.IsAdminOrAuthReadOnly]
+
+
+class CookStyleTagViewSet(viewsets.ModelViewSet):
+    queryset = models.CookStyleTag.objects.all()
+    serializer_class = serializers.CookStyleTagSerializer
+    permission_classes = [permissions.IsAdminOrAuthReadOnly]
+
+
+class TasteTagViewSet(viewsets.ModelViewSet):
+    queryset = models.TasteTag.objects.all()
+    serializer_class = serializers.TasteTagSerializer
+    permission_classes = [permissions.IsAdminOrAuthReadOnly]
+
+
 @api_view(http_method_names=['GET'])
 def handshake(request:Request):
     response = {
