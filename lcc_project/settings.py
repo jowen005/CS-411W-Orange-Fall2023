@@ -48,11 +48,12 @@ INSTALLED_APPS = [
     #Third Part Apps
     'rest_framework',
     'rest_framework.authtoken',
+    'faker',
 
     #Our Apps
     'restaurants',
     'accounts',
-    'patron'
+    'patron',
 ]
 
 AUTH_USER_MODEL = "accounts.User"
