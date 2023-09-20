@@ -23,7 +23,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
         ('$$$','$$$'),
     ])
     phone_number = serializers.CharField(max_length=12)
-
+    
     street_name = serializers.CharField(max_length=50)
     city = serializers.CharField(max_length=30)
     state = serializers.CharField(max_length=2)
@@ -32,12 +32,19 @@ class RestaurantSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Restaurant
         fields = ['id','owner','name','rating','tags','price_level',
-                'phone_number','street_name','city','state','zip_code']
-        read_only_fields = ['owner',]
+                'phone_number','website', 'street_name','city','state','zip_code']
+        read_only_fields = ['owner']
 
 
 class RestOpenHourSerializer():
-    pass
+
+    class meta:
+        model = models.RestaurantOpenHours
+        fields = ['mon_open', 'mon_close', 'tue_open', 'tue_close', 'wed_open',
+                  'wed_close', 'thu_open', 'thu_close', 'fri_open', 'fri_close', 'sat_open',
+                  'sat_close', 'sun_open', 'sun_close']
+        read_only_fields = ['restaurant']
+
     
 
 class FoodTypeTagSerializer(serializers.ModelSerializer):
@@ -65,4 +72,20 @@ class TasteTagSerializer(serializers.ModelSerializer):
 
 
 class MenuItemSerializer():
-    pass
+    item_name = serializers.CharField(max_length=100)
+    average_rating = serializers.DecimalField(max_digits=3, decimal_places=2)
+    price = serializers.DecimalField(max_digits=6, decimal_places=2)
+    #taste_tags = serializers.ManyToManyField(models.TasteTag)
+    time_of_day_available = serializers.CharField(max_length=20, choices=[
+        ('Breakfast', 'Breakfast'),
+        ('Lunch', 'Lunch'),
+        ('Dinner', 'Dinner'),
+        ('Anytime', 'Anytime'),
+    ])
+    specialty_item = serializers.BooleanField(default=False)
+
+    class Meta:
+        model = models.MenuItem
+        fields = ['item_name', 'average_rating', 'price', 'calories', 'taste_tags',
+                  'time_of_day_available', 'specialty_item']
+        read_only_fields = ['restaurant','food_type_tag','cook_style_tags']
