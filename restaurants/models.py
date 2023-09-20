@@ -3,6 +3,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
+
 # Create your models here.
 class RestTag(models.Model):
     """
@@ -21,7 +22,7 @@ class RestTag(models.Model):
 class Restaurant(models.Model):
     """A restaurant"""
     #General Info
-    owner = models.OneToOneField(User, on_delete=models.CASCADE, related_name='restaurants')
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='restaurants')
     name = models.CharField(max_length=100)
     rating = models.DecimalField(max_digits=3, decimal_places=2)
     tags = models.ManyToManyField(RestTag)
@@ -48,7 +49,7 @@ class Restaurant(models.Model):
 
 class RestaurantOpenHours(models.Model):
     """Describes the open hours of a restaurant"""
-    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, null=True)
     mon_open = models.TimeField()
     mon_close = models.TimeField()
     tue_open = models.TimeField()

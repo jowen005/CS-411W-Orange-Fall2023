@@ -7,7 +7,8 @@ from rest_framework import status
 
 from .serializers import SignUpSerializer
 from .tokens import create_jwt_pair_for_user
-from .custom_auth import authenticate
+# from .custom_auth import authenticate
+from django.contrib.auth import authenticate
 
 
 # Create your views here.
@@ -39,18 +40,49 @@ class SignUpView(APIView):
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# class LoginView(APIView):
+#     """
+#         Authenticates a user checking if there is a user of the specified type 
+#         matching credentials in database and returns that users tokens
+#     """
+
+#     permission_classes = []
+
+#     def post(self, request: Request, user_type:str):
+#         email = request.data.get('email')
+#         password = request.data.get('password')
+
+#         try:
+#             # Uses custom Authenticate method
+#             user = authenticate(email=email, password=password, user_type=user_type)
+#             tokens = create_jwt_pair_for_user(user)
+#             response = {
+#                 "message": "Login Successful",
+#                 "tokens":tokens
+#             }
+#             return Response(data=response, status=status.HTTP_200_OK)
+#         except AuthenticationFailed as e:
+#             return Response(data={'email':str(e)})
+
+# Authenticates whether or not they are a user, returns 
 class LoginView(APIView):
+    """
+        Authenticates a user checking if there is a user matching credentials
+        in database and returns the type of user, along with tokens
+    """
     permission_classes = []
 
-    def post(self, request: Request, user_type:str):
+    def post(self, request: Request):
         email = request.data.get('email')
         password = request.data.get('password')
 
         try:
-            user = authenticate(email=email, password=password, user_type=user_type)
+            #Uses default authenticate method
+            user = authenticate(email=email, password=password)
             tokens = create_jwt_pair_for_user(user)
             response = {
                 "message": "Login Successful",
+                "user_type": user.user_type,
                 "tokens":tokens
             }
             return Response(data=response, status=status.HTTP_200_OK)
