@@ -76,7 +76,9 @@ class MenuItemSerializer():
     average_rating = serializers.DecimalField(max_digits=3, decimal_places=2)
     price = serializers.DecimalField(max_digits=6, decimal_places=2)
     #taste_tags = serializers.ManyToManyField(models.TasteTag)
-    time_of_day_available = serializers.CharField(max_length=20, choices=[
+    """I changed this to a choice field and took out the max_length
+        because it wasn't working and is likely not necessary"""
+    time_of_day_available = serializers.ChoiceField(choices=[
         ('Breakfast', 'Breakfast'),
         ('Lunch', 'Lunch'),
         ('Dinner', 'Dinner'),
