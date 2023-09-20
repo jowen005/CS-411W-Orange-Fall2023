@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
 
 # Create your models here.
 class RestTag(models.Model):
@@ -20,7 +22,7 @@ class RestTag(models.Model):
 class Restaurant(models.Model):
     """A restaurant"""
     #General Info
-    owner = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='restaurants')
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='restaurants')
     name = models.CharField(max_length=100)
     rating = models.DecimalField(max_digits=3, decimal_places=2)
     tags = models.ManyToManyField(RestTag)

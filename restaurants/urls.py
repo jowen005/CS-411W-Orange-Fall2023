@@ -9,6 +9,7 @@ router.register('resttags', views.RestTagViewSet, basename='resttags')
 router.register('foodtypetags', views.FoodTypeTagViewSet, basename='foodtypetags')
 router.register('cookstyletags', views.CookStyleTagViewSet, basename='cookstyletags')
 router.register('tastetags', views.TasteTagViewSet, basename='tastetags')
+router.register('', views.RestaurantViewSet, basename='restaurants')
 
 
 urlpatterns = [

@@ -24,7 +24,7 @@ POST: /auth/jwt/verify/ --> verifies a token
 * Input: token
 * Output: nothing if valid, message if not
 
-# Restaurants
+# Restaurants (/restaurants/)
 ## Rest Tags --- AdminAuth(All), RestAuth(GET), PatronAuth(GET)
 GET: restaurants/resttags/ --> lists all tags
 * Input: -
@@ -32,19 +32,19 @@ GET: restaurants/resttags/ --> lists all tags
 
 POST: restaurants/resttags/ --> adds a tag
 * Input: -
-* Ouput: id, title
+* Output: id, title
 
 GET: restaurants/resttags/<int:id>/ --> retrieves a specific tag
 * Input: -
-* Ouput: id, title
+* Output: id, title
 
 PUT: restaurants/resttags/<int:id>/ --> updates a specific tag
 * Input: title
-* Ouput: id, title
+* Output: id, title
 
 DEL: restaurants/resttags/<int:id>/ --> deletes a specific tag
 * Input: -
-* Ouput: status204 if successful, "detail": "Not found." if not
+* Output: status204 if successful, "detail": "Not found." if not
 
 ## Food Type Tags --- AdminAuth(All), RestAuth(GET), PatronAuth(GET)
 GET: restaurants/foodtypetags/ --> lists all tags
@@ -53,19 +53,19 @@ GET: restaurants/foodtypetags/ --> lists all tags
 
 POST: restaurants/foodtypetags/ --> adds a tag
 * Input: -
-* Ouput: id, title
+* Output: id, title
 
 GET: restaurants/foodtypetags/<int:id>/ --> retrieves a specific tag
 * Input: -
-* Ouput: id, title
+* Output: id, title
 
 PUT: restaurants/foodtypetags/<int:id>/ --> updates a specific tag
 * Input: title
-* Ouput: id, title
+* Output: id, title
 
 DEL: restaurants/foodtypetags/<int:id>/ --> deletes a specific tag
 * Input: -
-* Ouput: status204 if successful, "detail": "Not found." if not
+* Output: status204 if successful, "detail": "Not found." if not
 
 
 ## Cook Style Tags --- AdminAuth(All), RestAuth(GET), PatronAuth(GET)
@@ -75,38 +75,64 @@ GET: restaurants/cookstyletags/ --> lists all tags
 
 POST: restaurants/cookstyletags/ --> adds a tag
 * Input: -
-* Ouput: id, title
+* Output: id, title
 
 GET: restaurants/cookstyletags/<int:id>/ --> retrieves a specific tag
 * Input: -
-* Ouput: id, title
+* Output: id, title
 
 PUT: restaurants/cookstyletags/<int:id>/ --> updates a specific tag
 * Input: title
-* Ouput: id, title
+* Output: id, title
 
 DEL: restaurants/cookstyletags/<int:id>/ --> deletes a specific tag
 * Input: -
-* Ouput: status204 if successful, "detail": "Not found." if not
+* Output: status204 if successful, "detail": "Not found." if not
 
 
-## Taste Tags --- --- AdminAuth(All), RestAuth(GET), PatronAuth(GET)
+## Taste Tags --- AdminAuth(All), RestAuth(GET), PatronAuth(GET)
 GET: restaurants/tastetags/ --> lists all tags
 * Input: -
 * Output: {id, title}, {id, title}, ...
 
 POST: restaurants/tastetags/ --> adds a tag
 * Input: -
-* Ouput: id, title
+* Output: id, title
 
 GET: restaurants/tastetags/<int:id>/ --> retrieves a specific tag
 * Input: -
-* Ouput: id, title
+* Output: id, title
 
 PUT: restaurants/tastetags/<int:id>/ --> updates a specific tag
 * Input: title
-* Ouput: id, title
+* Output: id, title
 
 DEL: restaurants/tastetags/<int:id>/ --> deletes a specific tag
 * Input: -
-* Ouput: status204 if successful, "detail": "Not found." if not
+* Output: status204 if successful, "detail": "Not found." if not
+
+## Restaurants --- RestAuth(All) && With Ownership
+GET: restaurants/ --> lists all restaurants owned by user
+* Input: -
+* Output: List of restaurants
+
+POST: restaurants/ --> adds a new restaurant owned by user
+* Input: name, rating, tags[tag1,tag2,...], price_level, phone_number, 
+                    street_name, city, state, zip_code
+* Output: id, owner, name, rating, tags[tag1,tag2,...], price_level,
+                    phone_number, street_name, city, state, zip_code
+
+GET: restaurants/<int:id>/ --> retrieves a specific restaurant owned by user
+* Input: -
+* Output: id, owner, name, rating, tags[tag1,tag2,...], price_level,
+                    phone_number, street_name, city, state, zip_code
+
+PUT: restaurants/<int:id>/ --> updates a specific restaurant owned by user
+* Input: name, rating, tags[tag1,tag2,...], price_level, phone_number, 
+                    street_name, city, state, zip_code
+* Output: id, owner, name, rating, tags[tag1,tag2,...], price_level,
+                    phone_number, street_name, city, state, zip_code
+
+DEL: restaurants/<int:id>/ --> deletes a specific restaurant owned by user
+* Input: -
+* Output: status204 if successful, "detail": "Not found." if not
