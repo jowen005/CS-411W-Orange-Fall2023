@@ -11,12 +11,11 @@ class IsAdminOrAuthReadOnly(BasePermission):
     """
     def has_permission(self, request, view):
         # Allows anyone to perform GET requests
-        if request.method in SAFE_METHODS and request.user.is_authenticated:
-            return True
-
-        # Only Admin can perform any other action
-        return IsAdminUser().has_permission(request, view)
-        # Same as request.user.is_authenticated and request.user.is_staff
+        if request.user.is_authenticated:
+            if request.method in SAFE_METHODS or request.user.user_type == 'admin':
+                return True
+            
+        return False
 
 
 class IsAuthenticatedAndRestaurantOwner(BasePermission):
@@ -29,7 +28,6 @@ class IsAuthenticatedAndRestaurantOwner(BasePermission):
                 return True
             elif hasattr(view, 'get_object'):
                 obj = view.get_object()
-                # is_owner = obj.owner == request.user
-                return True
+                return obj.owner == request.user
         
         return False
