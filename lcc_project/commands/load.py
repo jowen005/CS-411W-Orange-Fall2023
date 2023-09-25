@@ -13,6 +13,19 @@ def add_file_path(cls):
     return cls
 
 class LoadCommand(BaseCommand, ABC):
+    """
+        Abstract Base Class for creating Load commands.
+
+        By default uses DEFAULT_JSON_PATHas input, but a file 
+        can be specified using the -f=json_path flag
+
+        To implement, do the following:
+        * Use @add_file_path decorator before class declaration
+            to add in the child class's file path
+        * Define DEFAULT_JSON_PATH as 'json_files/______.json'
+        * Define a load function that creates model objects
+    """
+
     help = 'Generate and insert fake patron user data'
     DEFAULT_JSON_PATH = ""
     User = get_user_model()
