@@ -18,7 +18,7 @@ import json
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 try:
-    with open(BASE_DIR/'secrets.json') as handle:
+    with open(BASE_DIR/'secrets_dev.json') as handle:
         SECRETS = json.load(handle)
 except IOError:
     SECRETS = {}
@@ -48,11 +48,12 @@ INSTALLED_APPS = [
     #Third Part Apps
     'rest_framework',
     'rest_framework.authtoken',
+    'faker',
 
     #Our Apps
     'restaurants',
     'accounts',
-    'patron'
+    'patron',
 ]
 
 AUTH_USER_MODEL = "accounts.User"
