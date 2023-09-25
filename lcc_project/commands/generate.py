@@ -15,14 +15,18 @@ def add_file_path(cls):
 
 class GenerateCommand(BaseCommand, ABC):
     """
-        Abstract Base Class for creating Generate commands
+        Abstract Base Class for creating Generate commands.
+
+        Takes an integer count as input, to determine the number of generated models.
+
+        To implement, do the following:
         * Use @add_file_path decorator before class declaration
             to add in the child class's file path
         * Define DEFAULT_JSON_PATH as 'json_files/______.json'
         * Define a generate function that takes in a count and 
             returns a list of dictionaries containing model data
-
     """
+    
     help = 'Generate and insert fake patron user data'
     DEFAULT_JSON_PATH = ""
     User = get_user_model()
