@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     #Third Part Apps
     'rest_framework',
     'rest_framework.authtoken',
+    'faker',
 
     #Our Apps
     'restaurants',
