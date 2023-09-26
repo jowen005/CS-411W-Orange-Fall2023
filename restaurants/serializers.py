@@ -94,6 +94,6 @@ class MenuItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.MenuItem
-        fields = ['item_name', 'average_rating', 'price', 'calories', 'food_type_tags', 
+        fields = ['id','item_name', 'average_rating', 'price', 'calories', 'food_type_tags', 
                   'taste_tags', 'cook_style_tags', 'time_of_day_available', 'specialty_item']
         read_only_fields = ['restaurant']
