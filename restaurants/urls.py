@@ -13,7 +13,7 @@ router.register('', views.RestaurantViewSet, basename='restaurants')
 
 
 urlpatterns = [
-    path('handshake', views.handshake, name='handshake'),
+    path('handshake/', views.handshake, name='handshake'),
     path('', include(router.urls))
 ]
 
