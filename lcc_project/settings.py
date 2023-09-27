@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'restaurants',
     'accounts',
     'patron',
+    'feedback'
 ]
 
 AUTH_USER_MODEL = "accounts.User"

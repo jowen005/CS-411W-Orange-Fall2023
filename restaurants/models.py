@@ -18,7 +18,6 @@ class RestTag(models.Model):
     class Meta:
         db_table = 'RestTags'
 
-
 class Restaurant(models.Model):
     """A restaurant"""
     #General Info
@@ -106,16 +105,44 @@ class TasteTag(models.Model):
 
     class Meta:
         db_table = 'TasteTags'
+# Tags for Restriction(halal,veg.)
 
+class Restriction_tag(models.Model):
+    title = models.CharField(max_length=30, unique=True)
+
+    def __str__(self):
+        return self.title
+    
+    class Meta:
+        db_table = 'Restriction'
+
+# Tags for Allergy (Nuts)
+class Allergy_tag(models.Model):
+    title = models.CharField(max_length=30, unique=True)
+
+    def __str__(self):
+        return self.title
+    
+    class Meta:
+        db_table = 'Allergy_tag'
+
+#Tags for ingredients (Beef)
+class IngredientsTag(models.Model):
+    title = models.CharField(max_length=100, unique=True)
+    def __str__(self):
+        return self.title
+    
+    class Meta:
+        db_table = 'Ingredients'
 
 # Define the model for menu items
 class MenuItem(models.Model):
+    
+    # Item information
+    item_name = models.CharField(max_length=100)
 
     # Foreign Key to the restaurant that offers this menu item
     restaurant = models.ForeignKey('Restaurant', on_delete=models.CASCADE, related_name='menu_items')
-
-    # Item information
-    item_name = models.CharField(max_length=100)
 
     average_rating = models.DecimalField(max_digits=3, decimal_places=2)
     price = models.DecimalField(max_digits=6, decimal_places=2)
@@ -124,9 +151,10 @@ class MenuItem(models.Model):
     food_type_tag = models.ForeignKey(FoodTypeTag, on_delete=models.SET_NULL, null=True)
     taste_tags = models.ManyToManyField(TasteTag)
     cook_style_tags = models.ForeignKey(CookStyleTag, on_delete=models.SET_NULL, null=True)
-
-    # ingredients = models.TextField()
-
+    menu_restriction_tag = models.ManyToManyField(Restriction_tag)
+    menu_allergy_tag = models.ManyToManyField(Allergy_tag)
+    ingredients_tag = models.ManyToManyField(IngredientsTag)
+    
     time_of_day_available = models.CharField(max_length=20, choices=[
         ('Breakfast', 'Breakfast'),
         ('Lunch', 'Lunch'),
@@ -134,7 +162,7 @@ class MenuItem(models.Model):
         ('Anytime', 'Anytime'),
     ])
 
-    specialty_item = models.BooleanField(default=False)
+    is_modifiable = models.BooleanField(default=False)
 
     def __str__(self):
         return self.item_name
