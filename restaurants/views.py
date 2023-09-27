@@ -14,6 +14,21 @@ class RestTagViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAdminOrAuthReadOnly]
 
 
+class RestaurantViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.RestaurantSerializer
+    permission_classes = [permissions.IsAuthenticatedAndRestaurantOwner]
+    
+    def get_queryset(self):
+        user = self.request.user
+        if user.user_type == 'restaurant':
+            return models.Restaurant.objects.filter(owner=user)
+        else:
+            return models.Restaurant.objects.none()
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+
 class FoodTypeTagViewSet(viewsets.ModelViewSet):
     queryset = models.FoodTypeTag.objects.all()
     serializer_class = serializers.FoodTypeTagSerializer
@@ -32,19 +47,7 @@ class TasteTagViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAdminOrAuthReadOnly]
 
 
-class RestaurantViewSet(viewsets.ModelViewSet):
-    serializer_class = serializers.RestaurantSerializer
-    permission_classes = [permissions.IsAuthenticatedAndRestaurantOwner]
-    
-    def get_queryset(self):
-        user = self.request.user
-        if user.user_type == 'restaurant':
-            return models.Restaurant.objects.filter(owner=user)
-        else:
-            return models.Restaurant.objects.none()
 
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
 
 
 @api_view(http_method_names=['GET'])
