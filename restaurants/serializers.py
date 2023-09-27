@@ -9,7 +9,8 @@ class RestTagSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = models.RestTag
-        fields = ['id', 'title']
+        fields = '_all_'
+        #fields = ['id', 'title']
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
@@ -27,23 +28,27 @@ class RestaurantSerializer(serializers.ModelSerializer):
     street_name = serializers.CharField(max_length=50)
     city = serializers.CharField(max_length=30)
     state = serializers.CharField(max_length=2)
-    zip_code = serializers.CharField(max_length=5)
+    zip_code = serializers.CharField(max_length=9)
 
     class Meta:
         model = models.Restaurant
-        fields = ['id','owner','name','rating','tags','price_level',
-                'phone_number','website', 'street_name','city','state','zip_code']
+        fields = '_all_'
+        # fields = ['id','owner','name','rating','tags','price_level',
+        #         'phone_number','website', 'street_name','city','state','zip_code',
+        #         'mon_open', 'mon_close', 'tue_open', 'tue_close', 'wed_open',
+        #         'wed_close', 'thu_open', 'thu_close', 'fri_open', 'fri_close',
+        #         'sat_open','sat_close', 'sun_open', 'sun_close']
         read_only_fields = ['owner']
 
 
-class RestOpenHourSerializer(serializers.ModelSerializer):
+# class RestOpenHourSerializer(serializers.ModelSerializer):
 
-    class Meta:
-        model = models.RestaurantOpenHours
-        fields = ['mon_open', 'mon_close', 'tue_open', 'tue_close', 'wed_open',
-                  'wed_close', 'thu_open', 'thu_close', 'fri_open', 'fri_close', 'sat_open',
-                  'sat_close', 'sun_open', 'sun_close']
-        read_only_fields = ['restaurant']
+#     class Meta:
+#         model = models.RestaurantOpenHours
+#         fields = ['mon_open', 'mon_close', 'tue_open', 'tue_close', 'wed_open',
+#                   'wed_close', 'thu_open', 'thu_close', 'fri_open', 'fri_close', 'sat_open',
+#                   'sat_close', 'sun_open', 'sun_close']
+#         read_only_fields = ['restaurant']
 
     
 
@@ -52,7 +57,8 @@ class FoodTypeTagSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = models.FoodTypeTag
-        fields = ['id', 'title']
+        fields = '_all_'
+        #fields = ['id', 'title']
 
 
 class CookStyleTagSerializer(serializers.ModelSerializer):
@@ -60,7 +66,8 @@ class CookStyleTagSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = models.CookStyleTag
-        fields = ['id', 'title']
+        fields = '_all_'
+        #fields = ['id', 'title']
 
 
 class TasteTagSerializer(serializers.ModelSerializer):
@@ -68,7 +75,8 @@ class TasteTagSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = models.TasteTag
-        fields = ['id', 'title']
+        fields = '_all_'
+        #fields = ['id', 'title']
 
 
 class MenuItemSerializer(serializers.ModelSerializer):
@@ -94,6 +102,7 @@ class MenuItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.MenuItem
-        fields = ['item_name', 'average_rating', 'price', 'calories', 'food_type_tags', 
-                  'taste_tags', 'cook_style_tags', 'time_of_day_available', 'specialty_item']
+        fields = '_all_'
+        # fields = ['id', 'restaurant', 'item_name', 'average_rating', 'price', 'calories', 'food_type_tags', 
+        #           'taste_tags', 'cook_style_tags', 'time_of_day_available', 'specialty_item']
         read_only_fields = ['restaurant']
