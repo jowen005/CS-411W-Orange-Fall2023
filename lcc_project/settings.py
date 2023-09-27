@@ -48,11 +48,14 @@ INSTALLED_APPS = [
     #Third Part Apps
     'rest_framework',
     'rest_framework.authtoken',
+    'faker',
+    'corsheaders',
 
     #Our Apps
     'restaurants',
     'accounts',
-    'patron'
+    'patron',
+    'feedback'
 ]
 
 AUTH_USER_MODEL = "accounts.User"
@@ -65,11 +68,19 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-]
+CORS_ORIGIN_ALLOW_ALL = True
+
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:19006/",
+#     # Add other allowed origins as needed
+# ]
+
+# AUTHENTICATION_BACKENDS = [
+#     'django.contrib.auth.backends.ModelBackend',
+# ]
 
 REST_FRAMEWORK = {
     'NON_FIELD_ERRORS_KEY':'errors',
