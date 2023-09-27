@@ -1,5 +1,5 @@
 from django.db import models
-from restaurants.models import MenuItem
+from restaurants.models import MenuItem,Restriction_tag,Allergy_tag,TasteTag
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
 from decimal import Decimal
@@ -14,9 +14,10 @@ class Patron(models.Model):
     gender = models.CharField(max_length=10)
     price_preference = models.CharField(max_length=5, choices=[('$', '$'), ('$$', '$$'), ('$$$', '$$$')])
     zipcode = models.CharField(max_length=10)
-    dietary_restriction = models.CharField(max_length=255,default='None')
-    palate_preference = models.CharField(max_length=255, default='None')
-
+    patron_restriction_tag = models.ManyToManyField(Restriction_tag)
+    patron_allergy_tag = models.ManyToManyField(Allergy_tag)
+    Patron_taste_tag = models.ManyToManyField(TasteTag)
+    
     def __str__(self):
         return self.name
     
