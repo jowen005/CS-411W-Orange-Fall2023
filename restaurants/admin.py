@@ -7,9 +7,6 @@ admin.site.register(RestTag)
 from .models import Restaurant
 admin.site.register(Restaurant)
 
-from .models import RestaurantOpenHours
-admin.site.register(RestaurantOpenHours)
-
 from .models import FoodTypeTag
 admin.site.register(FoodTypeTag)
 

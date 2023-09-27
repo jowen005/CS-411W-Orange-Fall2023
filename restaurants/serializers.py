@@ -9,7 +9,7 @@ class RestTagSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = models.RestTag
-        fields = '_all_'
+        fields = '__all__'
         #fields = ['id', 'title']
 
 
@@ -32,7 +32,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Restaurant
-        fields = '_all_'
+        fields = '__all__'
         # fields = ['id','owner','name','rating','tags','price_level',
         #         'phone_number','website', 'street_name','city','state','zip_code',
         #         'mon_open', 'mon_close', 'tue_open', 'tue_close', 'wed_open',
@@ -57,7 +57,7 @@ class FoodTypeTagSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = models.FoodTypeTag
-        fields = '_all_'
+        fields = '__all__'
         #fields = ['id', 'title']
 
 
@@ -66,7 +66,7 @@ class CookStyleTagSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = models.CookStyleTag
-        fields = '_all_'
+        fields = '__all__'
         #fields = ['id', 'title']
 
 
@@ -75,7 +75,7 @@ class TasteTagSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = models.TasteTag
-        fields = '_all_'
+        fields = '__all__'
         #fields = ['id', 'title']
 
 
@@ -102,7 +102,7 @@ class MenuItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.MenuItem
-        fields = '_all_'
+        fields = '__all__'
         # fields = ['id', 'restaurant', 'item_name', 'average_rating', 'price', 'calories', 'food_type_tags', 
         #           'taste_tags', 'cook_style_tags', 'time_of_day_available', 'specialty_item']
         read_only_fields = ['restaurant']
