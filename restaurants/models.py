@@ -36,19 +36,7 @@ class Restaurant(models.Model):
     street_name = models.CharField(max_length=50)   #Might be a google library for addresses
     city = models.CharField(max_length=30)
     state = models.CharField(max_length=2)
-    zip_code = models.CharField(max_length=5)       #Might want to extend to 9 digits
-
-
-    def __str__(self):
-        return self.name
-    
-    class Meta:
-        db_table = 'Restaurants'
-
-
-class RestaurantOpenHours(models.Model):
-    """Describes the open hours of a restaurant"""
-    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, null=True)
+    zip_code = models.CharField(max_length=9)       #Might want to extend to 9 digits
     mon_open = models.TimeField()
     mon_close = models.TimeField()
     tue_open = models.TimeField()
@@ -62,13 +50,38 @@ class RestaurantOpenHours(models.Model):
     sat_open = models.TimeField()
     sat_close = models.TimeField()
     sun_open = models.TimeField()
-    sun_close = models.TimeField()
+
 
     def __str__(self):
-        return f"{self.restaurant.name}'s Open Hours"
-
+        return self.name
+    
     class Meta:
-        db_table = 'RestOpenHours'
+        db_table = 'Restaurants'
+
+
+# class RestaurantOpenHours(models.Model):
+#     """Describes the open hours of a restaurant"""
+#     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, null=True)
+#     mon_open = models.TimeField()
+#     mon_close = models.TimeField()
+#     tue_open = models.TimeField()
+#     tue_close = models.TimeField()
+#     wed_open = models.TimeField()
+#     wed_close = models.TimeField()
+#     thu_open = models.TimeField()
+#     thu_close = models.TimeField()
+#     fri_open = models.TimeField()
+#     fri_close = models.TimeField()
+#     sat_open = models.TimeField()
+#     sat_close = models.TimeField()
+#     sun_open = models.TimeField()
+#     sun_close = models.TimeField()
+
+#     def __str__(self):
+#         return f"{self.restaurant.name}'s Open Hours"
+
+#     class Meta:
+#         db_table = 'RestOpenHours'
 
 
 # Appetizer, Main Course, Dessert Beverage
