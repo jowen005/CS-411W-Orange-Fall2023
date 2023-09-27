@@ -50,6 +50,7 @@ class Restaurant(models.Model):
     sat_open = models.TimeField(null=True)
     sat_close = models.TimeField(null=True)
     sun_open = models.TimeField(null=True)
+    sun_close = models.TimeField(null=True)
 
 
     def __str__(self):
