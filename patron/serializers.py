@@ -8,6 +8,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 User = get_user_model()
 
+# Serializer for Patron model
 class PatronSerializer(serializers.ModelSerializer):
     # May be able to use writable nested serializer or the below example
     # https://stackoverflow.com/questions/42314882/drf-onetoonefield-create-serializer
@@ -31,11 +32,12 @@ class PatronSerializer(serializers.ModelSerializer):
         #           'palate_allergy_tag', 'patron_taste_tag', 'patron_restriction_tag']
         read_only_fields = ['user']
 
+# Serializer for Bookmark model
 class BookmarkSerializer(serializers.ModelSerializer):
     # Not in the same app
     #menu_item = MenuItemSerializer(many=False)
     #Next line might cause same problems as it did in the owner line in Restaurant serializer
-    patron = serializers.PrimaryKeyRelatedField(queryset=models.User.objects.all())
+    #patron = serializers.PrimaryKeyRelatedField(queryset=models.User.objects.all())
 
     menu_item = serializers.PrimaryKeyRelatedField(queryset=MenuItem.objects.all())
     bookmarked_datetime = serializers.DateTimeField(auto_now_add=True)
@@ -46,12 +48,13 @@ class BookmarkSerializer(serializers.ModelSerializer):
         #fields = ['id', 'menu_item', 'bookmarked_datetime']
         read_only_fields = ['patron']
 
-    def formatted_datetime(self):
-        return self.search_datetime.strftime('%d/%m/%y %H:%M:%S')
-    
+    # def formatted_datetime(self):
+    #     return self.search_datetime.strftime('%d/%m/%y %H:%M:%S')
+
+# Serializer for Patron Search History model    
 class PatronSearchHistorySerializer(serializers.ModelSerializer):
-    # If not working comment patron
-    patron = serializers.PrimaryKeyRelatedField(queryset=models.User.objects.all())
+    # If not working uncomment patron
+    #patron = serializers.PrimaryKeyRelatedField(queryset=models.User.objects.all())
     query = serializers.CharField(max_length=255)
     #calorie_limit = serializers.IntegerField(null=True, blank=True)
     dietary_restriction = serializers.CharField(max_length=255, blank=True)
@@ -77,11 +80,12 @@ class PatronSearchHistorySerializer(serializers.ModelSerializer):
         read_only_fiels = ['patron']
 
 
-    def formatted_datetime(self):
-        return self.search_datetime.strftime('%d/%m/%y %H:%M:%S')
-    
+    # def formatted_datetime(self):
+    #     return self.search_datetime.strftime('%d/%m/%y %H:%M:%S')
+
+# Serializer for Meal History model    
 class MealHistorySerializer(serializers.ModelSerializer):
-    patron = serializers.PrimaryKeyRelatedField(queryset=models.User.objects.all())
+    #patron = serializers.PrimaryKeyRelatedField(queryset=models.User.objects.all())
     menu_item = serializers.PrimaryKeyRelatedField(queryset=MenuItem.objects.all())
     mealHS_datetime = serializers.DateTimeField(auto_now_add=True)
 
@@ -90,8 +94,8 @@ class MealHistorySerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['patron']
 
-    def formatted_datetime(self):
-        return self.search_datetime.strftime('%d/%m/%y %H:%M:%S')
+    # def formatted_datetime(self):
+    #     return self.search_datetime.strftime('%d/%m/%y %H:%M:%S')
 
 
 

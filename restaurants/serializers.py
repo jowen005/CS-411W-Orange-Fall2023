@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+# Serializer for Rest Tag model
 class RestTagSerializer(serializers.ModelSerializer):
     title = serializers.CharField(max_length=30)
     
@@ -12,7 +13,7 @@ class RestTagSerializer(serializers.ModelSerializer):
         fields = '__all__'
         #fields = ['id', 'title']
 
-
+# Serializer for Restaurant model
 class RestaurantSerializer(serializers.ModelSerializer):
     # owner = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     name = serializers.CharField(max_length=100)
@@ -40,7 +41,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
         #         'sat_open','sat_close', 'sun_open', 'sun_close']
         read_only_fields = ['owner']
 
-
+# Serializer for Rest Open Hour model (removed)
 # class RestOpenHourSerializer(serializers.ModelSerializer):
 
 #     class Meta:
@@ -51,7 +52,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
 #         read_only_fields = ['restaurant']
 
     
-
+# Serializer for Food Type model
 class FoodTypeTagSerializer(serializers.ModelSerializer):
     title = serializers.CharField(max_length=20)
     
@@ -60,7 +61,7 @@ class FoodTypeTagSerializer(serializers.ModelSerializer):
         fields = '__all__'
         #fields = ['id', 'title']
 
-
+# Serializer for Cook Style Tag model
 class CookStyleTagSerializer(serializers.ModelSerializer):
     title = serializers.CharField(max_length=20)
     
@@ -69,7 +70,7 @@ class CookStyleTagSerializer(serializers.ModelSerializer):
         fields = '__all__'
         #fields = ['id', 'title']
 
-
+# Serializer for Taste Tag model
 class TasteTagSerializer(serializers.ModelSerializer):
     title = serializers.CharField(max_length=20)
     
@@ -78,7 +79,7 @@ class TasteTagSerializer(serializers.ModelSerializer):
         fields = '__all__'
         #fields = ['id', 'title']
 
-
+# Serializer for Menu Item model
 class MenuItemSerializer(serializers.ModelSerializer):
     #restaurant -- not explicit at creation
     item_name = serializers.CharField(max_length=100)
