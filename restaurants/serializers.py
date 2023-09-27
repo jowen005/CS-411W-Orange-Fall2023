@@ -4,14 +4,6 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-# Serializer for Rest Tag model
-class RestTagSerializer(serializers.ModelSerializer):
-    title = serializers.CharField(max_length=30)
-    
-    class Meta:
-        model = models.RestTag
-        fields = '__all__'
-        #fields = ['id', 'title']
 
 # Serializer for Restaurant model
 class RestaurantSerializer(serializers.ModelSerializer):
@@ -41,43 +33,6 @@ class RestaurantSerializer(serializers.ModelSerializer):
         #         'sat_open','sat_close', 'sun_open', 'sun_close']
         read_only_fields = ['owner']
 
-# Serializer for Rest Open Hour model (removed)
-# class RestOpenHourSerializer(serializers.ModelSerializer):
-
-#     class Meta:
-#         model = models.RestaurantOpenHours
-#         fields = ['mon_open', 'mon_close', 'tue_open', 'tue_close', 'wed_open',
-#                   'wed_close', 'thu_open', 'thu_close', 'fri_open', 'fri_close', 'sat_open',
-#                   'sat_close', 'sun_open', 'sun_close']
-#         read_only_fields = ['restaurant']
-
-    
-# Serializer for Food Type model
-class FoodTypeTagSerializer(serializers.ModelSerializer):
-    title = serializers.CharField(max_length=20)
-    
-    class Meta:
-        model = models.FoodTypeTag
-        fields = '__all__'
-        #fields = ['id', 'title']
-
-# Serializer for Cook Style Tag model
-class CookStyleTagSerializer(serializers.ModelSerializer):
-    title = serializers.CharField(max_length=20)
-    
-    class Meta:
-        model = models.CookStyleTag
-        fields = '__all__'
-        #fields = ['id', 'title']
-
-# Serializer for Taste Tag model
-class TasteTagSerializer(serializers.ModelSerializer):
-    title = serializers.CharField(max_length=20)
-    
-    class Meta:
-        model = models.TasteTag
-        fields = '__all__'
-        #fields = ['id', 'title']
 
 # Serializer for Menu Item model
 class MenuItemSerializer(serializers.ModelSerializer):
@@ -92,14 +47,18 @@ class MenuItemSerializer(serializers.ModelSerializer):
     food_type_tag = serializers.PrimaryKeyRelatedField(queryset=models.FoodTypeTag.objects.all())
     taste_tags = serializers.PrimaryKeyRelatedField(queryset=models.TasteTag.objects.all(), many=True)
     cook_style_tags = serializers.PrimaryKeyRelatedField(queryset=models.CookStyleTag.objects.all())
-    
+    menu_restriction_tag = serializers.PrimaryKeyRelatedField(queryset=models.RestrictionTag.objects.all(), many=True)
+    menu_allergy_tag = serializers.PrimaryKeyRelatedField(queryset=models.AllergyTag.objects.all(), many=True)
+    ingredients_tag = serializers.PrimaryKeyRelatedField(queryset=models.IngredientTag.objects.all(), many=True)
+
+
     time_of_day_available = serializers.ChoiceField(choices=[
         ('Breakfast', 'Breakfast'),
         ('Lunch', 'Lunch'),
         ('Dinner', 'Dinner'),
         ('Anytime', 'Anytime'),
     ])
-    specialty_item = serializers.BooleanField(default=False)
+    is_modifiable = serializers.BooleanField(default=False)
 
     class Meta:
         model = models.MenuItem
@@ -107,3 +66,73 @@ class MenuItemSerializer(serializers.ModelSerializer):
         # fields = ['id', 'restaurant', 'item_name', 'average_rating', 'price', 'calories', 'food_type_tags', 
         #           'taste_tags', 'cook_style_tags', 'time_of_day_available', 'specialty_item']
         read_only_fields = ['restaurant']
+
+
+# Serializer for Rest Tag model
+class RestTagSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(max_length=30)
+    
+    class Meta:
+        model = models.RestTag
+        fields = '__all__'
+        #fields = ['id', 'title']
+
+
+# Serializer for Food Type model
+class FoodTypeTagSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(max_length=20)
+    
+    class Meta:
+        model = models.FoodTypeTag
+        fields = '__all__'
+        #fields = ['id', 'title']
+
+
+# Serializer for Cook Style Tag model
+class CookStyleTagSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(max_length=20)
+    
+    class Meta:
+        model = models.CookStyleTag
+        fields = '__all__'
+        #fields = ['id', 'title']
+
+
+# Serializer for Taste Tag model
+class TasteTagSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(max_length=20)
+    
+    class Meta:
+        model = models.TasteTag
+        fields = '__all__'
+        #fields = ['id', 'title']
+
+
+# Serializer for Restriction Tag model
+class RestrictionTagSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(max_length=20)
+    
+    class Meta:
+        model = models.RestrictionTag
+        fields = '__all__'
+        #fields = ['id', 'title']
+
+
+# Serializer for Allergy Tag model
+class AllergyTagSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(max_length=20)
+    
+    class Meta:
+        model = models.AllergyTag
+        fields = '__all__'
+        #fields = ['id', 'title']
+
+
+# Serializer for Ingredient Tag model
+class IngredientTagSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(max_length=20)
+    
+    class Meta:
+        model = models.IngredientTag
+        fields = '__all__'
+        #fields = ['id', 'title']

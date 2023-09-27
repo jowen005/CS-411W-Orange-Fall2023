@@ -8,15 +8,9 @@ from . import models, serializers, permissions
 
 # Create your views here.
 
-class RestTagViewSet(viewsets.ModelViewSet):
-    queryset = models.RestTag.objects.all()
-    serializer_class = serializers.RestTagSerializer
-    permission_classes = [permissions.IsAdminOrAuthReadOnly]
-
-
 class RestaurantViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.RestaurantSerializer
-    permission_classes = [permissions.IsAuthenticatedAndRestaurantOwner]
+    permission_classes = [permissions.IsAuthRestAndIsOwner]
     
     def get_queryset(self):
         user = self.request.user
@@ -27,6 +21,31 @@ class RestaurantViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+
+class MenuItemViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.MenuItemSerializer
+    permission_classes = [permissions.IsAuthRestIsOwnerAndIsRest]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.user_type == 'restaurant':
+            requested_id = self.kwargs.get('restaurant_id')
+            restaurant = models.Restaurant.objects.get(pk=requested_id)
+            return models.MenuItem.objects.filter(restaurant=restaurant)
+        else:
+            return models.Restaurant.objects.none()
+
+    def perform_create(self, serializer):
+        requested_id = self.kwargs.get('restaurant_id')
+        restaurant = models.Restaurant.objects.get(pk=requested_id)
+        serializer.save(restaurant=restaurant)
+
+
+class RestTagViewSet(viewsets.ModelViewSet):
+    queryset = models.RestTag.objects.all()
+    serializer_class = serializers.RestTagSerializer
+    permission_classes = [permissions.IsAdminOrAuthReadOnly]
 
 
 class FoodTypeTagViewSet(viewsets.ModelViewSet):
@@ -47,7 +66,22 @@ class TasteTagViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAdminOrAuthReadOnly]
 
 
+class RestrictionTagViewSet(viewsets.ModelViewSet):
+    queryset = models.RestrictionTag.objects.all()
+    serializer_class = serializers.RestrictionTagSerializer
+    permission_classes = [permissions.IsAdminOrAuthReadOnly]
 
+
+class AllergyTagViewSet(viewsets.ModelViewSet):
+    queryset = models.AllergyTag.objects.all()
+    serializer_class = serializers.AllergyTagSerializer
+    permission_classes = [permissions.IsAdminOrAuthReadOnly]
+
+
+class IngredientTagViewSet(viewsets.ModelViewSet):
+    queryset = models.IngredientTag.objects.all()
+    serializer_class = serializers.IngredientTagSerializer
+    permission_classes = [permissions.IsAdminOrAuthReadOnly]
 
 
 @api_view(http_method_names=['GET'])

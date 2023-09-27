@@ -18,6 +18,7 @@ class RestTag(models.Model):
     class Meta:
         db_table = 'RestTags'
 
+
 class Restaurant(models.Model):
     """A restaurant"""
     #General Info
@@ -60,31 +61,6 @@ class Restaurant(models.Model):
         db_table = 'Restaurants'
 
 
-# class RestaurantOpenHours(models.Model):
-#     """Describes the open hours of a restaurant"""
-#     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, null=True)
-#     mon_open = models.TimeField()
-#     mon_close = models.TimeField()
-#     tue_open = models.TimeField()
-#     tue_close = models.TimeField()
-#     wed_open = models.TimeField()
-#     wed_close = models.TimeField()
-#     thu_open = models.TimeField()
-#     thu_close = models.TimeField()
-#     fri_open = models.TimeField()
-#     fri_close = models.TimeField()
-#     sat_open = models.TimeField()
-#     sat_close = models.TimeField()
-#     sun_open = models.TimeField()
-#     sun_close = models.TimeField()
-
-#     def __str__(self):
-#         return f"{self.restaurant.name}'s Open Hours"
-
-#     class Meta:
-#         db_table = 'RestOpenHours'
-
-
 # Appetizer, Main Course, Dessert Beverage
 class FoodTypeTag(models.Model):
     """A tag representing the type of food the menu item is"""
@@ -119,35 +95,39 @@ class TasteTag(models.Model):
 
     class Meta:
         db_table = 'TasteTags'
-# Tags for Restriction(halal,veg.)
 
-class Restriction_tag(models.Model):
+
+# Tags for Restriction(halal,veg.)
+class RestrictionTag(models.Model):
     title = models.CharField(max_length=30, unique=True)
 
     def __str__(self):
         return self.title
     
     class Meta:
-        db_table = 'Restriction'
+        db_table = 'RestrictionTag'
+
 
 # Tags for Allergy (Nuts)
-class Allergy_tag(models.Model):
+class AllergyTag(models.Model):
     title = models.CharField(max_length=30, unique=True)
 
     def __str__(self):
         return self.title
     
     class Meta:
-        db_table = 'Allergy_tag'
+        db_table = 'AllergyTags'
+
 
 #Tags for ingredients (Beef)
-class IngredientsTag(models.Model):
+class IngredientTag(models.Model):
     title = models.CharField(max_length=100, unique=True)
     def __str__(self):
         return self.title
     
     class Meta:
-        db_table = 'Ingredients'
+        db_table = 'IngredientTags'
+
 
 # Define the model for menu items
 class MenuItem(models.Model):
@@ -165,9 +145,9 @@ class MenuItem(models.Model):
     food_type_tag = models.ForeignKey(FoodTypeTag, on_delete=models.SET_NULL, null=True)
     taste_tags = models.ManyToManyField(TasteTag)
     cook_style_tags = models.ForeignKey(CookStyleTag, on_delete=models.SET_NULL, null=True)
-    menu_restriction_tag = models.ManyToManyField(Restriction_tag)
-    menu_allergy_tag = models.ManyToManyField(Allergy_tag)
-    ingredients_tag = models.ManyToManyField(IngredientsTag)
+    menu_restriction_tag = models.ManyToManyField(RestrictionTag)
+    menu_allergy_tag = models.ManyToManyField(AllergyTag)
+    ingredients_tag = models.ManyToManyField(IngredientTag)
     
     time_of_day_available = models.CharField(max_length=20, choices=[
         ('Breakfast', 'Breakfast'),
