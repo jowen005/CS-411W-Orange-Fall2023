@@ -256,7 +256,7 @@ POST: patrons/ --> creates a patron profile for the user (Only allowed one)
 * Output: id, user, name, gender, price_preference, zipcode, patron_restriction_tag[tag1,tag2,...], 
                 patron_allergy_tag[tag1,tag2,...], patron_taste_tag[tag1,tag2,...],
                 dob, calorie_limit
-GET: patrons/<int:patron_id>/ --> retrieves the specific patron profile the user has access to
+GET: patrons/<int:patron_id>/ --> (NOT NEEDED)retrieves the specific patron profile the user has access to
 * Input: -
 * Output: id, user, name, gender, price_preference, zipcode, patron_restriction_tag[tag1,tag2,...], 
                 patron_allergy_tag[tag1,tag2,...], patron_taste_tag[tag1,tag2,...],
