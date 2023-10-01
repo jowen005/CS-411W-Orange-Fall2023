@@ -240,3 +240,37 @@ PUT: restaurants/ingredienttags/<int:id>/ --> updates a specific tag
 DEL: restaurants/ingredienttags/<int:id>/ --> deletes a specific tag
 * Input: -
 * Output: status204 if successful, "detail": "Not found." if not
+
+
+# Patrons (/patrons/)
+## Patrons --- PatronAuth(All) && User Owns 'patron_id'
+GET: patrons/ --> lists the patron owned by user
+* Input: -
+* Output: List of patrons (will only be the ONE the user has access to)
+
+POST: patrons/ --> creates a patron profile for the user (Only allowed one)
+* Input: name, gender, price_preference, zipcode, patron_restriction_tag[tag1,tag2,...], 
+                patron_allergy_tag[tag1,tag2,...], patron_taste_tag[tag1,tag2,...],
+                dob, calorie_limit
+                    
+* Output: id, user, name, gender, price_preference, zipcode, patron_restriction_tag[tag1,tag2,...], 
+                patron_allergy_tag[tag1,tag2,...], patron_taste_tag[tag1,tag2,...],
+                dob, calorie_limit
+GET: patrons/<int:patron_id>/ --> (NOT NEEDED)retrieves the specific patron profile the user has access to
+* Input: -
+* Output: id, user, name, gender, price_preference, zipcode, patron_restriction_tag[tag1,tag2,...], 
+                patron_allergy_tag[tag1,tag2,...], patron_taste_tag[tag1,tag2,...],
+                dob, calorie_limit
+
+PUT: patrons/<int:patron_id>/ --> updates the user's patron profile
+* Input: name, gender, price_preference, zipcode, patron_restriction_tag[tag1,tag2,...], 
+                patron_allergy_tag[tag1,tag2,...], patron_taste_tag[tag1,tag2,...],
+                dob, calorie_limit
+* Output: id, user, name, gender, price_preference, zipcode, patron_restriction_tag[tag1,tag2,...], 
+                patron_allergy_tag[tag1,tag2,...], patron_taste_tag[tag1,tag2,...],
+                dob, calorie_limit
+
+DEL: patrons/<int:patron_id>/ --> deletes a user's patron profile
+* Input: -
+* Output: (status204) if successful --- ("detail": "Not found.") if not
+

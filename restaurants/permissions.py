@@ -1,7 +1,5 @@
 from rest_framework.permissions import (
     BasePermission,
-    IsAdminUser,
-    IsAuthenticated,
     SAFE_METHODS)
 from .models import Restaurant
 from rest_framework.exceptions import PermissionDenied
