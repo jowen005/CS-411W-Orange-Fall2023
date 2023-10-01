@@ -31,6 +31,7 @@ class Command(LoadCommand):
         newRestrTags = 0
         newIngrTags = 0
 
+        #TO-DO should probably compair the database before and after instead of using a counter just to be sure they were actually added.
         for el in TAGS['RestTag']:
             elementsEvaluated += 1
             if not(el in PresentRestTags):
