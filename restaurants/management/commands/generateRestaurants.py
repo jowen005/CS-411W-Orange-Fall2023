@@ -19,6 +19,10 @@ class Command(GenerateCommand):
             '23479',
         ]
 
+        valid_rest_suffix = [
+            '', 'Grill', 'Diner', 'Sushi', 'Bar', 'Smokehouse', 'BBQ', 
+            'Pizza', 'Wings', 'Hotdogs', 'Cafe', 'Coffee Shop', 'Steakhouse']
+
         #Get Valid Values for PK Field attributes
         valid_owners = list(self.User.objects.filter(user_type='restaurant').values_list('id',flat=True))
         valid_tags = list(RestTag.objects.values_list('id',flat=True))
@@ -28,7 +32,7 @@ class Command(GenerateCommand):
             #Generate and Store Data
             data = {
                 "owner": random.choice(valid_owners),
-                "name": "A Restaurant Name",
+                "name": f"{self.fake.first_name()}'s {random.choice(valid_rest_suffix)}",
                 "rating": float(self.fake.numerify(text='#.##')),
                 "tags": list(set(self.fake.random_choices(elements=valid_tags))),
                 "price_level": self.fake.random_element(elements=('$', '$$', '$$$')),

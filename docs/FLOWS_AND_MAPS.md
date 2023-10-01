@@ -1,4 +1,3 @@
-
 # FLOWS
 ## Everytime you make request:
 1. Make a http header with request
@@ -23,9 +22,13 @@
 
 ## Tag Selection
 1. List Tags using 'localhost:8000/restaurants/_tagtype_/' GET (LIST)
+   1. [{"id":1,"title":"Asian"},{"id":2,"title":"Thai"},{"id":3,"title":"Bar"},...]
 2. Display Title from the list of tags to be selected
+   1. "Asian", "Thai", "Bar",...
 3. Record IDs of tags that are selected
+   1. 2,3
 4. Use those selected IDs with the API you are trying to use (Patron Profile CRUD, Menu Item CRUD, etc)
+   1. {"name":"Restaurant", rest_id:[2,3], ...
 
 ## Restaurant Flow Steps
 1. Upon entry of the Restaurant Homepage call 'localhost:8000/restaurants/' with GET (LIST)
@@ -71,14 +74,18 @@
 * *Homepage* (Tuan)
   * Global Analytics (account-wide analytics and trends)
   * *List of Restaurants -> Rest Page* 
+  * *Add Restaurant Page -> AddRest Page*
 
 * *Restaurant Page* (Tuan)
   * *(Home)Profile Information for that restaurant*
     * Local Restaurant Analytics
-  * *List of Menu Items -> MenuItem Page*
+  * *List of Menu Items -> Edit MenuItem Page*
+  * *Add Menu Item -> Add Menu Item Page*
 
-* *MenuItem Page* (Justin)
+* *Edit MenuItem Page* (Justin)
   * *(Home)Menu Item Information*
   * Menu Item Analytics
+
+* *Add Menu Item Page* (Justin)
 
 * *Admin* (Aaron)
