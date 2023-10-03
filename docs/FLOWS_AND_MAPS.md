@@ -28,7 +28,18 @@
 3. Record IDs of tags that are selected
    1. 2,3
 4. Use those selected IDs with the API you are trying to use (Patron Profile CRUD, Menu Item CRUD, etc)
-   1. {"name":"Restaurant", rest_id:[2,3], ...
+   1. "name":"Restaurant", rest_id:[2,3], ...
+
+## TagTypePage Flow
+1. Pass _AccessToken_ to TagTypePage
+2. Display tags using 'localhost:8000/restaurants/_tagtype_/' GET (LIST)
+3. Upon click of a tag, navigate to EditTagPage and pass _tagid_ and _AccessToken_ (and _tagtitle_?)
+   1. display current tag info inside form, 'localhost:8000/restaurants/_tagtype_/_tagid_/' GET (RETRIEVE)
+   2. Allow to be edited
+   3. Upon click of submit button call 'localhost:8000/restaurants/_tagtype_/_tagid_/' PUT (UPDATE) and navigate to TagTypePage and pass _AccessToken_
+4. Upon click of Add Tag Button, navigate to AddTagPage and pass _AccessToken_
+   1. Allow form to be filled
+   2. Upon click of submit button call 'localhost:8000/restaurants/_tagtype_/' POST (CREATE) and navigate to TagTypePage and pass _AccessToken_
 
 ## Restaurant Flow Steps
 1. Upon entry of the Restaurant Homepage call 'localhost:8000/restaurants/' with GET (LIST)
@@ -69,12 +80,14 @@
   * Update all information
   * Submit -> Settings
 
-
 ## Restaurant Overview SiteMap
 * *Homepage* (Tuan)
   * Global Analytics (account-wide analytics and trends)
   * *List of Restaurants -> Rest Page* 
   * *Add Restaurant Page -> AddRest Page*
+
+* *AddRest Page*
+  * Submit -> Homepage
 
 * *Restaurant Page* (Tuan)
   * *(Home)Profile Information for that restaurant*
@@ -87,5 +100,15 @@
   * Menu Item Analytics
 
 * *Add Menu Item Page* (Justin)
+  * Submit -> Restaurant Page
 
-* *Admin* (Aaron)
+## Admin Overview SiteMap
+* *Homepage*
+   *  Analytic Overview -> Analytics Dashboard
+   *  *List Tag Types -> Tag Type Page*
+   *  *FAQ*
+
+* *Tag Type Page*
+  * *List of Tags -> EditTag Page*
+  * *Add Tag Button -> AddTag Page*
+

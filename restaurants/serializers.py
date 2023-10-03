@@ -6,6 +6,14 @@ User = get_user_model()
 
 
 # Serializer for Restaurant model
+class RestaurantListSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(max_length=100)
+
+    class Meta:
+        model = models.Restaurant
+        fields = ['id', 'name']
+
+
 class RestaurantSerializer(serializers.ModelSerializer):
     # owner = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     name = serializers.CharField(max_length=100)
@@ -29,12 +37,20 @@ class RestaurantSerializer(serializers.ModelSerializer):
         # fields = ['id','owner','name','rating','tags','price_level',
         #         'phone_number','website', 'street_name','city','state','zip_code',
         #         'mon_open', 'mon_close', 'tue_open', 'tue_close', 'wed_open',
-        #         'wed_close', 'thu_open', 'thu_close', 'fri_open', 'fri_close',
+        #         'wed_closea', 'thu_open', 'thu_close', 'fri_open', 'fri_close',
         #         'sat_open','sat_close', 'sun_open', 'sun_close']
         read_only_fields = ['owner']
 
 
 # Serializer for Menu Item model
+class MenuItemListSerializer(serializers.ModelSerializer):
+    item_name = serializers.CharField(max_length=100)
+
+    class Meta:
+        model = models.MenuItem
+        fields = ['id', 'item_name']
+
+
 class MenuItemSerializer(serializers.ModelSerializer):
     #restaurant -- not explicit at creation
     item_name = serializers.CharField(max_length=100)
