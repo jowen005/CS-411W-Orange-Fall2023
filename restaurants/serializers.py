@@ -77,10 +77,10 @@ class MenuItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.MenuItem
-        # fields = '__all__'
-        fields = ['id', 'restaurant', 'item_name', 'price', 'calories', 'food_type_tag', 
-                  'taste_tags', 'cook_style_tags', 'menu_restriction_tag',
-                  'menu_allergy_tag','ingredients_tag','time_of_day_available', 'is_modifiable']
+        fields = '__all__'
+        # fields = ['id', 'restaurant', 'item_name', 'price', 'calories', 'food_type_tag', 
+        #           'taste_tags', 'cook_style_tags', 'menu_restriction_tag',
+        #           'menu_allergy_tag','ingredients_tag','time_of_day_available', 'is_modifiable']
         read_only_fields = ['restaurant']
 
 
