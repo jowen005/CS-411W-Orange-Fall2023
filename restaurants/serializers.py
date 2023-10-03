@@ -55,7 +55,6 @@ class MenuItemSerializer(serializers.ModelSerializer):
     #restaurant -- not explicit at creation
     item_name = serializers.CharField(max_length=100)
     
-    average_rating = serializers.DecimalField(max_digits=3, decimal_places=2)
     price = serializers.DecimalField(max_digits=6, decimal_places=2)
     #calories -- implicit
     
@@ -78,9 +77,10 @@ class MenuItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.MenuItem
-        fields = '__all__'
-        # fields = ['id', 'restaurant', 'item_name', 'average_rating', 'price', 'calories', 'food_type_tags', 
-        #           'taste_tags', 'cook_style_tags', 'time_of_day_available', 'specialty_item']
+        # fields = '__all__'
+        fields = ['id', 'restaurant', 'item_name', 'price', 'calories', 'food_type_tag', 
+                  'taste_tags', 'cook_style_tags', 'menu_restriction_tag',
+                  'menu_allergy_tag','ingredients_tag','time_of_day_available', 'is_modifiable']
         read_only_fields = ['restaurant']
 
 
