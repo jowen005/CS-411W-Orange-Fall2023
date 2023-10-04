@@ -1,5 +1,5 @@
 {
-    "RestTags":[
+    "RestTag":[
         "american",
         "bird-food",
         "chinese",
@@ -25,7 +25,7 @@
         "smoked",
         "blackened"
     ],
-    "Allergy_tag":[
+    "AllergyTag":[
         "milk",
         "sesame",
         "soybeans",
@@ -35,6 +35,7 @@
         "eggs",
         "shellfish",
         "fish",
+        "gluten_free",
         "celiac"
     ],
     "TasteTag":[
@@ -45,7 +46,7 @@
         "sour",
         "bitter"
     ],
-    "Restriction_tag":[
+    "RestrictionTag":[
         "vegan",
         "vegitarian",
         "halal",
@@ -55,7 +56,7 @@
         "dairy-free",
         "paleo"            
     ],
-    "IngredientsTag":[	
+    "IngredientTag":[	
         "anchovy_paste",
         "banana",
         "basil",

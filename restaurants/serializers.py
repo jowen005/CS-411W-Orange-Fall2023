@@ -6,6 +6,14 @@ User = get_user_model()
 
 
 # Serializer for Restaurant model
+class RestaurantListSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(max_length=100)
+
+    class Meta:
+        model = models.Restaurant
+        fields = ['id', 'name']
+
+
 class RestaurantSerializer(serializers.ModelSerializer):
     # owner = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     name = serializers.CharField(max_length=100)
@@ -29,17 +37,24 @@ class RestaurantSerializer(serializers.ModelSerializer):
         # fields = ['id','owner','name','rating','tags','price_level',
         #         'phone_number','website', 'street_name','city','state','zip_code',
         #         'mon_open', 'mon_close', 'tue_open', 'tue_close', 'wed_open',
-        #         'wed_close', 'thu_open', 'thu_close', 'fri_open', 'fri_close',
+        #         'wed_closea', 'thu_open', 'thu_close', 'fri_open', 'fri_close',
         #         'sat_open','sat_close', 'sun_open', 'sun_close']
         read_only_fields = ['owner']
 
 
 # Serializer for Menu Item model
+class MenuItemListSerializer(serializers.ModelSerializer):
+    item_name = serializers.CharField(max_length=100)
+
+    class Meta:
+        model = models.MenuItem
+        fields = ['id', 'item_name']
+
+
 class MenuItemSerializer(serializers.ModelSerializer):
     #restaurant -- not explicit at creation
     item_name = serializers.CharField(max_length=100)
     
-    average_rating = serializers.DecimalField(max_digits=3, decimal_places=2)
     price = serializers.DecimalField(max_digits=6, decimal_places=2)
     #calories -- implicit
     
@@ -63,8 +78,9 @@ class MenuItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.MenuItem
         fields = '__all__'
-        # fields = ['id', 'restaurant', 'item_name', 'average_rating', 'price', 'calories', 'food_type_tags', 
-        #           'taste_tags', 'cook_style_tags', 'time_of_day_available', 'specialty_item']
+        # fields = ['id', 'restaurant', 'item_name', 'price', 'calories', 'food_type_tag', 
+        #           'taste_tags', 'cook_style_tags', 'menu_restriction_tag',
+        #           'menu_allergy_tag','ingredients_tag','time_of_day_available', 'is_modifiable']
         read_only_fields = ['restaurant']
 
 

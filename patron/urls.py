@@ -1,0 +1,14 @@
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+
+from . import views
+
+router = DefaultRouter()
+router.register('', views.PatronViewSet, basename='patron')
+
+
+urlpatterns = [
+    path('tag_overview/', views.tag_overview, name='analytics'),
+    path('', include(router.urls))
+    
+]

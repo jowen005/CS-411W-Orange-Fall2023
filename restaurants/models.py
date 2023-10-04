@@ -91,7 +91,7 @@ class TasteTag(models.Model):
     title = models.CharField(max_length=20, unique=True)
 
     def __str__(self):
-        return self.tag_name
+        return self.title
 
     class Meta:
         db_table = 'TasteTags'
@@ -138,7 +138,7 @@ class MenuItem(models.Model):
     # Foreign Key to the restaurant that offers this menu item
     restaurant = models.ForeignKey('Restaurant', on_delete=models.CASCADE, related_name='menu_items')
 
-    average_rating = models.DecimalField(max_digits=3, decimal_places=2)
+    average_rating = models.DecimalField(max_digits=3, decimal_places=2, null=True)
     price = models.DecimalField(max_digits=6, decimal_places=2)
     calories = models.PositiveIntegerField()
 

@@ -1,8 +1,7 @@
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework import status, viewsets, generics, mixins
+from rest_framework import status, viewsets
 
 from . import models, serializers, permissions
 
@@ -22,6 +21,11 @@ class RestaurantViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return serializers.RestaurantListSerializer
+        return serializers.RestaurantSerializer
+
 
 class MenuItemViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.MenuItemSerializer
@@ -40,6 +44,11 @@ class MenuItemViewSet(viewsets.ModelViewSet):
         requested_id = self.kwargs.get('restaurant_id')
         restaurant = models.Restaurant.objects.get(pk=requested_id)
         serializer.save(restaurant=restaurant)
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return serializers.MenuItemListSerializer
+        return serializers.MenuItemSerializer
 
 
 class RestTagViewSet(viewsets.ModelViewSet):
