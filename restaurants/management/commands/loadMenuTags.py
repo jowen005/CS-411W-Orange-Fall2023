@@ -68,7 +68,7 @@ class Command(LoadCommand):
                 newIngrTags += 1
                 IngredientTag.objects.create(title=str(el))
 
-        print(str(elementsEvaluated) + " elements evelauated.")
+        print(str(elementsEvaluated) + " elements evaluated.")
         print("\t" + str(newRestTags) + " new restaurant  tags added.")
         print("\t" + str(newFoodTags) + " new food        tags added.")
         print("\t" + str(newCookTags) + " new cook style  tags added.")
