@@ -5,4 +5,5 @@ secret*.json
 **/__pycache__
 *.pyc
 docker-compose.override.yml
-**/json_files
+**/json_files/
+# **/json_files/*Buffer.json
