@@ -13,8 +13,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         
-        call_command('loadAccounts')
+        call_command('loadDefaultAccounts')
         call_command('loadMenuTags')
+        call_command('loadDefaultPatrons')
+        call_command('loadDefaultRestaurants')
         
 
         self.stdout.write(self.style.SUCCESS(f'All commands were called'))

@@ -40,12 +40,16 @@ class Command(LoadCommand):
             User.objects.create_superuser(email=email, username=username, password=password, user_type="admin")
             added_emails.append(email)
         
+        print("-"*50)
+        print("loadDefaultAccounts Report")
+        print("-"*50)
+
         if skipped_emails:
-            print("\nSKIPPED | These accounts had an email associated with an existing account")
+            print("SKIPPED | These accounts had an email associated with an existing account")
             for email in skipped_emails:
                 print(f" - {email}")
         
         if added_emails:
-            print("\nCREATED | These accounts were successfully created:")
+            print("CREATED | These accounts were successfully created:")
             for email in added_emails:
                 print(f" - {email}")
