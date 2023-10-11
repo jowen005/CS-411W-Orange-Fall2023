@@ -31,6 +31,7 @@ class Command(LoadCommand):
         newRestrTags = 0
         newIngrTags = 0
 
+        #TO-DO should probably compair the database before and after instead of using a counter just to be sure they were actually added.
         for el in TAGS['RestTag']:
             elementsEvaluated += 1
             if not(el in PresentRestTags):
@@ -67,7 +68,11 @@ class Command(LoadCommand):
                 newIngrTags += 1
                 IngredientTag.objects.create(title=str(el))
 
-        print(str(elementsEvaluated) + " elements evelauated.")
+        print("-"*50)
+        print("loadMenuTags Report")
+        print("-"*50)
+
+        print(str(elementsEvaluated) + " elements evaluated.")
         print("\t" + str(newRestTags) + " new restaurant  tags added.")
         print("\t" + str(newFoodTags) + " new food        tags added.")
         print("\t" + str(newCookTags) + " new cook style  tags added.")
