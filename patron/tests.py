@@ -1,3 +1,9 @@
-from django.test import TestCase
+from rest_framework.test import APITestCase
+from rest_framework.test import APIRequestFactory
+from django.urls import reverse
+# Test patron view set
 
-# Create your tests here.
+# Test patron tags
+#class PatronTagTestCase(APITestCase):
+    
+    #def

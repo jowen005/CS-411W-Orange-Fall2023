@@ -3,6 +3,7 @@ from rest_framework.routers import DefaultRouter
 
 from . import views
 
+# Does the url routing for PatronViewSet
 router = DefaultRouter()
 router.register('', views.PatronViewSet, basename='patron')
 
