@@ -67,3 +67,4 @@ Note: See NOTES_DOCKER.md for more information
 * **python3 manage.py migrate** ---> Make sure db is up to date
 * **python3 manage.py createsuperuser** ---> Creates a superuser (admin)
 * **python3 manage.py test** ---> Runs all backend tests
+* **python3 -Wa manage.py test** ---> Runs all backend tests with outputting warnings
