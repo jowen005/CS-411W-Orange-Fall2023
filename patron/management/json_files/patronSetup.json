@@ -1,0 +1,96 @@
+[
+    {
+        "email": "johnd@app.com",
+        "name": "John D",
+        "dob": "1989-06-27",
+        "calorie_limit": 600,
+        "gender": "Male",
+        "price_preference": "$$",
+        "zipcode": "23460",
+        "patron_restriction_tag": [
+
+        ],
+        "patron_allergy_tag": [
+
+        ],
+        "patron_taste_tag": [
+            "spicey",
+            "sweet",
+            "omami"
+        ]
+    },
+    {
+        "email": "johndoe@app.com",
+        "name": "John Doe",
+        "dob": "1967-08-14",
+        "calorie_limit": 1000,
+        "gender": "Other",
+        "price_preference": "$$$",
+        "zipcode": "23460",
+        "patron_restriction_tag": [
+            "halal"
+        ],
+        "patron_allergy_tag": [
+            "peanuts"
+        ],
+        "patron_taste_tag": [
+            "spicey",
+            "sour"
+        ]
+    },
+    {
+        "email": "jessica@odu.edu",
+        "name": "Jessica",
+        "dob": "2001-06-04",
+        "calorie_limit": 321,
+        "gender": "Female",
+        "price_preference": "$$",
+        "zipcode": "23460",
+        "patron_restriction_tag": [
+            
+        ],
+        "patron_allergy_tag": [
+            "tree_nuts"
+        ],
+        "patron_taste_tag": [
+            "omami"
+        ]
+    },
+    {
+        "email": "stan@odu.edu",
+        "name": "Stan",
+        "dob": "2002-04-17",
+        "calorie_limit": 800,
+        "gender": "Male",
+        "price_preference": "$",
+        "zipcode": "23460",
+        "patron_restriction_tag": [
+            "kosher"
+        ],
+        "patron_allergy_tag": [
+            
+        ],
+        "patron_taste_tag": [
+            "sweet",
+            "salty"
+        ]
+    },
+    {
+        "email": "mikey@odu.edu",
+        "name": "Mikey",
+        "dob": "1999-02-25",
+        "calorie_limit": 800,
+        "gender": "Male",
+        "price_preference": "$$$",
+        "zipcode": "23460",
+        "patron_restriction_tag": [
+            
+        ],
+        "patron_allergy_tag": [
+            
+        ],
+        "patron_taste_tag": [
+            "omami"
+        ]
+    }
+]

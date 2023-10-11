@@ -1,0 +1,32 @@
+[
+    {
+        "owner_email": "monarch@odu.edu",
+        "name": "Monarch Wings and Things",
+        "rating": 4.56,
+        "tags": [
+            "american"
+        ],
+        "price_level": "$",
+        "phone_number": "757-238-6505",
+        "website": "https://www.odu.edu/dining/",
+        "street_name": "124 University Avenue",
+        "city": "Norfolk",
+        "state": "VA",
+        "zip_code": "23529"
+    },
+    {
+        "owner_email": "monarch@odu.edu",
+        "name": "Monarch Butterflies",
+        "rating": 2.95,
+        "tags": [
+            "bird-food"
+        ],
+        "price_level": "$$",
+        "phone_number": "757-238-6505",
+        "website": "https://www.odu.edu/dining/",
+        "street_name": "123 University Avenue",
+        "city": "Norfolk",
+        "state": "VA",
+        "zip_code": "23529"
+    }
+]

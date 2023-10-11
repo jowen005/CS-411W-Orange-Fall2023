@@ -1,4 +1,4 @@
-## Setting up environment WITH Docker
+# Setting up environment WITH Docker
 Install Python 3.9 or 3.10 and Docker Desktop
 1. Open Docker Desktop
 2. Clone GitHub Repo onto local machine
@@ -27,7 +27,7 @@ Install Python 3.9 or 3.10 and Docker Desktop
    * This server is running on localhost:8000
 7. When your done with your session run **docker-compose down**
 
-## Setting Up A Second Dev Branch
+## Setting Up A Second Dev Branch (Backend Devs)
 1. Create secrets_dev.json
    1. Full template file is found in Discord #backend-resources
    2. Make sure the values are as follows:
@@ -51,7 +51,7 @@ Install Python 3.9 or 3.10 and Docker Desktop
 
 
 
-## Setting up environment without Docker
+# Setting up environment without Docker
 Install Python 3.9 or 3.10, MySQL Server, and MySQL Workbench
 1. Setting up MySQL Server
    1. If having trouble installing, follow machine specific instructions for initial setup (you should have already set a root password)
