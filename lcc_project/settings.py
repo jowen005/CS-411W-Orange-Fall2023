@@ -38,6 +38,14 @@ ALLOWED_HOSTS = SECRETS['allowed_hosts']
 # Application definition
 
 INSTALLED_APPS = [
+    #Our Apps
+    'restaurants',
+    'accounts',
+    'patron',
+    'feedback',
+    'analytics',
+
+    #Default Apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -49,13 +57,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'faker',
-    'corsheaders',
-
-    #Our Apps
-    'restaurants',
-    'accounts',
-    'patron',
-    'feedback'
+    'corsheaders'
 ]
 
 AUTH_USER_MODEL = "accounts.User"
