@@ -13,6 +13,18 @@
 * **docker compose build** --> Rebuilds django container (use when requirements.txt is updated)
 
 
+## Load and Generate Commands (run in interactive shell)
+* **python3 manage.py init** --> runs a series of default load commands that initializes the databse
+  * This command calls the following commands:
+  * **python3 manage.py loadMenuTags** --> loads the default menu tags
+  * **python3 manage.py loadDefaultAccounts** --> loads the default patron, restaurant, and admin accounts
+  * **python3 manage.py loadDefaultPatrons** --> loads the default patron profiles
+  * **python3 manage.py loadDefaultRestaurants** --> loads the default restaurants
+
+* **python3 manage.py generateRestaurants _int_** --> generates randomized restaurant information into restaurantBuffer.json
+* **python3 manage.py loadRestaurants** --> loads restaurant json objects from restaurantBuffer.json (default) or a specified file (-f=_filepath_)
+* **python3 manage.py generatePatrons _int_** --> generates randomized patron information into patronBuffer.json
+* **python3 manage.py loadPatrons** --> loads patron json objects from patronBuffer.json (default) or a specified file (-f=_filepath_)
 
 
 ## For Backend Devs Only
