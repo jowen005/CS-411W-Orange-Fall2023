@@ -6,20 +6,23 @@ def quickSearch(patron_ID, query_string):
 
 #this function will hit the database twice, once to pull the patron profile and again with the actual search query.
 #since all the values set by the patron profile are specified in an advanced search patron_ID is not provided
-#query_string: string, callorie_range: tuple(int, int), price_range: tuple(double, double),
-#restriction_tags: list, allergy_tags: list, excluded_ingredient_tags: list, taste_tags: list, style: list, time: time
-#sortMethod: int
 #
 #returns a list of menu item IDs matching the search
-def advancedSearch(query_string, callorie_range, price_range,
-                   restriction_tags, allergy_tags, excluded_ingredient_tags,
-                   taste_tags, style, time, sortMethod):
+def advancedSearch(query_string:str, callorie_range:tuple, price_range:tuple,
+                   restriction_tags:list, allergy_tags:list, excluded_ingredient_tags:list,
+                   taste_tags:list, style:list, time:datetime, sortMethod:int):
     #select from menuitems where restriction_tags is true and allergy_tags is false and excluded_ingredient_tags is false and taste_tags is true and style = style and resturant_hours < time 
     
     #acording to the django docs the database shouldn't be queried until the query object is evaluated so we should be able to stack filters without
     #thrashing the database with tiny queries
     
-    
+    #todo time filter
+    #conceptual method:
+    #get day of week from time.day
+    #big ol' if block
+    #Restuarants = Resturant.objects.filter(open__gte=time,close__lte=time)
+
+
     #todo add nullable functionality for the optional sections.
 
     #the most restrictive tag is likely the allergy tags so we'll filter on that first
@@ -74,16 +77,20 @@ def advancedSearch(query_string, callorie_range, price_range,
     #now it gets complicated and hard to track what the query should look like                                
     #theoretically we can save the query string until last weirdly
     for queryElement in split(query_string, " ")
-        if ('\"' in queryElement):
-            #first lets clean those qoutes of 
-            queryElement = queryElement.replace('\"','')
+        #input should be clean before getting here but JUST IN CASE we'll do a little input sanitization
+        queryElement = queryElement.replace('\"','')
         queryElement = queryElement.strip()
+
         if(queryElement[0] = '-'):
+            #remove the first character ("-")
             queryElement = queryElement[1:]
-            MenuItems = MenuItems.objects.exclude(name__contains = queryElement)
+            MenuItems = MenuItems.objects.exclude(name__icontains = queryElement)
         else:
-            MenuItems = MenuItems.objects.filter(name__contains = queryElement)
+            MenuItems = MenuItems.objects.filter(name__icontains = queryElement)
     
+    #for debug purposes remove when finished
+    print(MenuItems.query)
+
     #now we should finally be ready to evaluate the query and ping the database
     return MenuItems.values_list("id",flat=true)
     
