@@ -1,6 +1,6 @@
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, APIView
 from rest_framework import status, viewsets
 
 from . import models, serializers, permissions
@@ -22,6 +22,19 @@ class PatronViewSet(viewsets.ModelViewSet):
         
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+class SearchView(APIView):
+    pass
+
+
+
+
+
+
+
+
+
 
 @api_view(http_method_names=['GET'])
 def tag_overview(request:Request):
