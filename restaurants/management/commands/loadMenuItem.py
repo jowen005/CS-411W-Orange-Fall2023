@@ -3,7 +3,7 @@ from lcc_project.commands.load import LoadCommand, add_file_path
 
 @add_file_path
 class Command(LoadCommand):
-    DEFAULT_JSON_PATH = 'json_files/menuItems.json'
+    DEFAULT_JSON_PATH = 'json_files/menuItemsBuffer.json'
 
     def load(self, data_list):
         for obj in data_list:

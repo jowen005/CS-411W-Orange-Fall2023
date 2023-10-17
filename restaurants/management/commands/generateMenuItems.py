@@ -6,7 +6,7 @@ from restaurants.models import TasteTag,CookStyleTag,FoodTypeTag,AllergyTag,Rest
 
 @add_file_path
 class Command(GenerateCommand):
-    DEFAULT_JSON_PATH = 'json_files/menuItems.json'
+    DEFAULT_JSON_PATH = 'json_files/menuItemsBuffer.json'
 
     def generate(self, count:int):
 
