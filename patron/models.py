@@ -16,7 +16,7 @@ class Patron(models.Model):
     zipcode = models.CharField(max_length=10)
     patron_restriction_tag = models.ManyToManyField(RestrictionTag)
     patron_allergy_tag = models.ManyToManyField(AllergyTag)
-    # disliked_ingredients = models.ManyToManyField(IngredientTag)
+    disliked_ingredients = models.ManyToManyField(IngredientTag)
     patron_taste_tag = models.ManyToManyField(TasteTag)
     
     def __str__(self):
