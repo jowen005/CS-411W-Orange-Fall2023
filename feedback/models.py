@@ -1,6 +1,6 @@
 from django.db import models
 from restaurants.models import MenuItem
-from patron.models import MealHistory
+from patron.models import MenuItemHistory
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
 from decimal import Decimal
@@ -10,10 +10,10 @@ User = get_user_model()
 class Reviews(models.Model):
     #When patron delete his account, the reviews still remains.
     #when menu_item deleted, the reviews will not available.
-    #when meal_history deleted, the reviews still remains.
+    #when menuItem_history deleted, the reviews still remains.
     patron = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE, null=True) 
-    meal_history = models.ForeignKey(MealHistory, on_delete=models.SET_NULL,null=True)
+    menuItem_history = models.ForeignKey(MenuItemHistory, on_delete=models.SET_NULL,null=True)
     patron_review = models.CharField(max_length=255,null=True)
     review_datetime = models.DateTimeField(auto_now_add=True)
 
@@ -26,9 +26,9 @@ class Reviews(models.Model):
 class Ratings(models.Model):
     #When patron delete his account, the ratings still remains.
     #when menu_item deleted, the ratings will not available.
-    #when meal_history deleted, the ratings still remains.
+    #when menuItem_history deleted, the ratings still remains.
     patron = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    meal_history = models.ForeignKey(MealHistory, on_delete=models.SET_NULL,null=True)
+    menuItem_history = models.ForeignKey(MenuItemHistory, on_delete=models.SET_NULL,null=True)
     menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE, null=True)  
     ratings = models.IntegerField(
         choices = [('1', '1'), ('2', '2'), ('3', '3'),('4', '4'),('5', '5')],
