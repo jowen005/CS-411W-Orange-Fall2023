@@ -48,7 +48,18 @@ class PatronSearchHistory(models.Model):
     patron = models.ForeignKey(User,on_delete=models.CASCADE,related_name = 'search_history')
     query = models.CharField(max_length=255) 
     calorie_limit = models.PositiveIntegerField(null=True, blank=True)
+
+    #Replace this
     dietary_restriction = models.CharField(max_length=255, blank=True)
+
+    #With this
+    # dietary_restriction_tags = models.ManyToManyField(RestrictionTag)
+    # allergy_tags = models.ManyToManyField(AllergyTag)
+    # disliked_ingredients = models.ManyToManyField(IngredientTag)
+    # patron_taste_tags = models.ManyToManyField(TasteTag)
+
+
+    # Are we storing prices or price levels???
     # store the price range number which min to max. 
     price_min = models.DecimalField(
         max_digits=8,  # Total number of digits
