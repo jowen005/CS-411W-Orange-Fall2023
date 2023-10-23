@@ -41,38 +41,40 @@ class RestaurantTests(APITestCase):
 
         cls.data = [
             {"owner": cls.restaurant0_user, "name": "Woodys", "rating": 4.56,
-                "tags": [cls.rest_tags[2],cls.rest_tags[4]],"price_level": "$$","phone_number": "757-274-9281",
+                "tags": [cls.rest_tags[1],cls.rest_tags[3]],"price_level": "$$","phone_number": "757-274-9281",
                 "website": "https://www.woodys.com/","street_name": "120 University Avenue",
                 "city": "Norfolk","state": "VA","zip_code": "23529"
             },
             {"owner": cls.restaurant0_user, "name": "Moes", "rating": 8.34,
-                "tags": [cls.rest_tags[1],cls.rest_tags[3]],"price_level": "$$","phone_number": "757-238-6505",
+                "tags": [cls.rest_tags[0],cls.rest_tags[2]],"price_level": "$$","phone_number": "757-238-6505",
                 "website": "https://www.moes.com","street_name": "121 University Avenue",
                 "city": "Norfolk","state": "VA","zip_code": "23529"
             },
             {"owner": cls.restaurant1_user, "name": "McDonalds", "rating": 1.10,
-                "tags": [cls.rest_tags[1],cls.rest_tags[4]],"price_level": "$","phone_number": "757-272-4028",
+                "tags": [cls.rest_tags[0],cls.rest_tags[3]],"price_level": "$","phone_number": "757-272-4028",
                 "website": "https://www.mcds.com","street_name": "122 University Avenue",
                 "city": "Norfolk","state": "VA","zip_code": "23529"
             },
             {"owner": cls.restaurant1_user, "name": "Arbys", "rating": 2.43,
-                "tags": [cls.rest_tags[1],cls.rest_tags[4]],"price_level": "$","phone_number": "757-573-8271",
+                "tags": [cls.rest_tags[0],cls.rest_tags[3]],"price_level": "$","phone_number": "757-573-8271",
                 "website": "https://www.arbys.com","street_name": "123 University Avenue",
                 "city": "Norfolk","state": "VA","zip_code": "23529"
             },
         ]
 
         for obj in cls.data:
-            models.Restaurant.objects.create(obj)
+            tags = obj.pop('tags')
+            instance = models.Restaurant.objects.create(**obj)
+            instance.tags.set(tags)
 
         cls.new_data = [{"name": "Buffalo Wild Wings", "rating": 0.05,
-            "tags": [cls.rest_tags[2],cls.rest_tags[4]],"price_level": "$$$","phone_number": "757-989-1102",
+            "tags": [2, 4],"price_level": "$$$","phone_number": "757-989-1102",
             "website": "https://www.bww.com","street_name": "124 University Avenue",
             "city": "Norfolk","state": "VA","zip_code": "23529"
             },
             {"name": "Dairy Queen", "rating": 9.99,
-            "tags": [cls.rest_tags[5]],"price_level": "$","phone_number": "757-382-3392",
-            "website": "https://dq.com","street_name": "125 University Avenue",
+            "tags": [5],"price_level": "$","phone_number": "757-382-3392",
+            "website": "https://www.dq.com","street_name": "125 University Avenue",
             "city": "Norfolk","state": "VA","zip_code": "23529"
             },
         ]
@@ -83,19 +85,29 @@ class RestaurantTests(APITestCase):
     def test_list_restaurants_rest(self):
         
         rest0_response = self.client.get(self.list_url, HTTP_AUTHORIZATION=f'Bearer {self.restaurant0_access}')
+        rest1_response = self.client.get(self.list_url, HTTP_AUTHORIZATION=f'Bearer {self.restaurant1_access}')
+        
+        #Rest0 Tests
         self.assertEqual(rest0_response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(rest0_response.data), 2)
 
-        tags_owned = list(models.Restaurant.objects.filter(owner=self.restaurant0_user).values_list('id',flat=True))
+        rest_owned = list(models.Restaurant.objects.filter(owner=self.restaurant0_user).values_list('id',flat=True))
         for obj in rest0_response.data:
-            self.assertTrue(obj["id"] in tags_owned)
-            tags_owned.remove(obj["id"])
+            self.assertTrue(obj["id"] in rest_owned)
+            rest_owned.remove(obj["id"])
 
-        self.assertTrue(tags_owned.empty())
+        self.assertEqual(len(rest_owned), 0)
 
-        rest1_response = self.client.get(self.list_url, HTTP_AUTHORIZATION=f'Bearer {self.restaurant1_access}')
-       
+        #Rest1 Tests
+        self.assertEqual(rest1_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(rest1_response.data), 2)
 
+        rest_owned = list(models.Restaurant.objects.filter(owner=self.restaurant1_user).values_list('id',flat=True))
+        for obj in rest1_response.data:
+            self.assertTrue(obj["id"] in rest_owned)
+            rest_owned.remove(obj["id"])
+
+        self.assertEqual(len(rest_owned), 0)
 
     def test_list_restaurants_nonrest(self):
         admin_response = self.client.get(self.list_url, HTTP_AUTHORIZATION=f'Bearer {self.admin_access}')
@@ -107,66 +119,127 @@ class RestaurantTests(APITestCase):
         self.assertEqual(patron_response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(admin_response.data["detail"], "You do not have permission to perform this action.")
 
-    # def test_create_restaurants_rest(self):
-    #     pass
+    def test_create_restaurants_rest(self):
 
-    # def test_create_restaurants_nonrest(self):
-    #     data = self.data[1]
+        rest0_response = self.client.post(self.list_url, self.new_data[0], HTTP_AUTHORIZATION=f'Bearer {self.restaurant0_access}')
+        rest1_response = self.client.post(self.list_url, self.new_data[1], HTTP_AUTHORIZATION=f'Bearer {self.restaurant1_access}')
 
-    #     admin_response = self.client.post(self.list_url, data, HTTP_AUTHORIZATION=f'Bearer {self.admin_access}')
-    #     patron_response = self.client.post(self.list_url, data, HTTP_AUTHORIZATION=f'Bearer {self.patron_access}')
+        #Rest0 Tests
+        self.assertEqual(rest0_response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(len(rest0_response.data), 26)
 
-    #     self.assertEqual(admin_response.status_code, status.HTTP_403_FORBIDDEN)
-    #     self.assertEqual(admin_response.data["detail"], "You do not have permission to perform this action.")
+        rest_owned = models.Restaurant.objects.filter(owner=self.restaurant0_user)
+        self.assertEqual(len(rest_owned), 3)
 
-    #     self.assertEqual(patron_response.status_code, status.HTTP_403_FORBIDDEN)
-    #     self.assertEqual(admin_response.data["detail"], "You do not have permission to perform this action.")
+        self.assertTrue(models.Restaurant.objects.filter(owner=self.restaurant0_user, id=rest0_response.data['id']).exists())
+        new_rest = models.Restaurant.objects.get(id=rest0_response.data['id'])
+        self.assertEquals(self.new_data[0]["name"], new_rest.name)
 
-    # def test_retrieve_restaurants_rest(self):
-    #     pass
+        self.assertFalse(models.Restaurant.objects.filter(owner=self.restaurant0_user, id=rest1_response.data['id']).exists())
 
-    # def test_retrieve_restaurants_nonrest(self):
-    #     detail_url = reverse(f'{self.basename}-detail', kwargs={'pk': 1})
+    def test_create_restaurants_nonrest(self):
+        data = self.data[1]
 
-    #     admin_response = self.client.get(detail_url, HTTP_AUTHORIZATION=f'Bearer {self.admin_access}')
-    #     patron_response = self.client.get(detail_url, HTTP_AUTHORIZATION=f'Bearer {self.patron_access}')
+        admin_response = self.client.post(self.list_url, data, HTTP_AUTHORIZATION=f'Bearer {self.admin_access}')
+        patron_response = self.client.post(self.list_url, data, HTTP_AUTHORIZATION=f'Bearer {self.patron_access}')
 
-    #     self.assertEqual(admin_response.status_code, status.HTTP_403_FORBIDDEN)
-    #     self.assertEqual(admin_response.data["detail"], "You do not have permission to perform this action.")
+        self.assertEqual(admin_response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(admin_response.data["detail"], "You do not have permission to perform this action.")
 
-    #     self.assertEqual(patron_response.status_code, status.HTTP_403_FORBIDDEN)
-    #     self.assertEqual(admin_response.data["detail"], "You do not have permission to perform this action.")
+        self.assertEqual(patron_response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(admin_response.data["detail"], "You do not have permission to perform this action.")
 
-    # def test_update_restaurants_rest(self):
-    #     pass
+    def test_retrieve_restaurants_rest(self):
+        
+        detail0_url = reverse(f'{self.basename}-detail', kwargs={'pk': 1})
+        detail1_url = reverse(f'{self.basename}-detail', kwargs={'pk': 3})  #rest1 owns this
 
-    # def test_update_restaurants_nonrest(self):
-    #     detail_url = reverse(f'{self.basename}-detail', kwargs={'pk': 1})
-    #     data = data[1]
+        rest0_response = self.client.get(detail0_url, HTTP_AUTHORIZATION=f'Bearer {self.restaurant0_access}')
+        rest0_wrongowner_response = self.client.get(detail1_url, HTTP_AUTHORIZATION=f'Bearer {self.restaurant0_access}')
+        invalid_response = self.client.get(self.invalid_url, HTTP_AUTHORIZATION=f'Bearer {self.restaurant0_access}')
+        
+        self.assertEqual(rest0_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(rest0_response.data), 26)
 
-    #     admin_response = self.client.put(detail_url, data, HTTP_AUTHORIZATION=f'Bearer {self.admin_access}')
-    #     patron_response = self.client.put(detail_url, data, HTTP_AUTHORIZATION=f'Bearer {self.patron_access}')
+        req_rest = models.Restaurant.objects.get(id=1)
+        self.assertEqual(rest0_response.data["name"], req_rest.name)
+        self.assertEqual(rest0_response.data["owner"], self.restaurant0_user.id)
 
-    #     self.assertEqual(admin_response.status_code, status.HTTP_403_FORBIDDEN)
-    #     self.assertEqual(admin_response.data["detail"], "You do not have permission to perform this action.")
+        self.assertEqual(rest0_wrongowner_response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(invalid_response.status_code, status.HTTP_404_NOT_FOUND)
 
-    #     self.assertEqual(patron_response.status_code, status.HTTP_403_FORBIDDEN)
-    #     self.assertEqual(admin_response.data["detail"], "You do not have permission to perform this action.")
+    def test_retrieve_restaurants_nonrest(self):
+        detail_url = reverse(f'{self.basename}-detail', kwargs={'pk': 1})
 
-    # def test_delete_restaurants_rest(self):
-    #     pass
+        admin_response = self.client.get(detail_url, HTTP_AUTHORIZATION=f'Bearer {self.admin_access}')
+        patron_response = self.client.get(detail_url, HTTP_AUTHORIZATION=f'Bearer {self.patron_access}')
+
+        self.assertEqual(admin_response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(admin_response.data["detail"], "You do not have permission to perform this action.")
+
+        self.assertEqual(patron_response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(admin_response.data["detail"], "You do not have permission to perform this action.")
+
+    def test_update_restaurants_rest(self):
+        
+        detail0_url = reverse(f'{self.basename}-detail', kwargs={'pk': 1})
+        detail1_url = reverse(f'{self.basename}-detail', kwargs={'pk': 3})  #rest1 owns this
+
+        rest0_response = self.client.put(detail0_url, self.new_data[0], HTTP_AUTHORIZATION=f'Bearer {self.restaurant0_access}')
+        rest0_wrongowner_response = self.client.put(detail1_url, self.new_data[1], HTTP_AUTHORIZATION=f'Bearer {self.restaurant0_access}')
+        invalid_response = self.client.put(self.invalid_url, self.new_data[1], HTTP_AUTHORIZATION=f'Bearer {self.restaurant0_access}')
+        
+        self.assertEqual(rest0_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(rest0_response.data), 26)
+        self.assertEqual(len(models.Restaurant.objects.filter(owner=self.restaurant0_user)), 2)
+
+        req_rest = models.Restaurant.objects.get(id=1)
+        self.assertEqual(rest0_response.data["name"], req_rest.name)
+        self.assertEqual(rest0_response.data["owner"], self.restaurant0_user.id)
+
+        self.assertEqual(rest0_wrongowner_response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(invalid_response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_update_restaurants_nonrest(self):
+        detail_url = reverse(f'{self.basename}-detail', kwargs={'pk': 1})
+        data = self.new_data[1]
+
+        admin_response = self.client.put(detail_url, data, HTTP_AUTHORIZATION=f'Bearer {self.admin_access}')
+        patron_response = self.client.put(detail_url, data, HTTP_AUTHORIZATION=f'Bearer {self.patron_access}')
+
+        self.assertEqual(admin_response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(admin_response.data["detail"], "You do not have permission to perform this action.")
+
+        self.assertEqual(patron_response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(admin_response.data["detail"], "You do not have permission to perform this action.")
+
+    def test_delete_restaurants_rest(self):
+        
+        detail0_url = reverse(f'{self.basename}-detail', kwargs={'pk': 1})
+        detail1_url = reverse(f'{self.basename}-detail', kwargs={'pk': 3})  #rest1 owns this
+
+        rest0_response = self.client.delete(detail0_url, self.new_data[0], HTTP_AUTHORIZATION=f'Bearer {self.restaurant0_access}')
+        rest0_wrongowner_response = self.client.delete(detail1_url, HTTP_AUTHORIZATION=f'Bearer {self.restaurant0_access}')
+        invalid_response = self.client.delete(self.invalid_url, HTTP_AUTHORIZATION=f'Bearer {self.restaurant0_access}')
+        
+        self.assertEqual(rest0_response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(len(models.Restaurant.objects.filter(owner=self.restaurant0_user)), 1)
+        self.assertFalse(models.Restaurant.objects.filter(id=1).exists())
+
+        self.assertEqual(rest0_wrongowner_response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(invalid_response.status_code, status.HTTP_404_NOT_FOUND)
     
-    # def test_delete_restaurants_nonrest(self):
-    #     detail_url = reverse(f'{self.basename}-detail', kwargs={'pk': 1})
+    def test_delete_restaurants_nonrest(self):
+        detail_url = reverse(f'{self.basename}-detail', kwargs={'pk': 1})
 
-    #     admin_response = self.client.delete(detail_url, HTTP_AUTHORIZATION=f'Bearer {self.admin_access}')
-    #     patron_response = self.client.delete(detail_url, HTTP_AUTHORIZATION=f'Bearer {self.patron_access}')
+        admin_response = self.client.delete(detail_url, HTTP_AUTHORIZATION=f'Bearer {self.admin_access}')
+        patron_response = self.client.delete(detail_url, HTTP_AUTHORIZATION=f'Bearer {self.patron_access}')
 
-    #     self.assertEqual(admin_response.status_code, status.HTTP_403_FORBIDDEN)
-    #     self.assertEqual(admin_response.data["detail"], "You do not have permission to perform this action.")
+        self.assertEqual(admin_response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(admin_response.data["detail"], "You do not have permission to perform this action.")
 
-    #     self.assertEqual(patron_response.status_code, status.HTTP_403_FORBIDDEN)
-    #     self.assertEqual(admin_response.data["detail"], "You do not have permission to perform this action.")
+        self.assertEqual(patron_response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(admin_response.data["detail"], "You do not have permission to perform this action.")
 
     @classmethod
     def tearDownClass(cls):
