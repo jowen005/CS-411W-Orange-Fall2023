@@ -26,6 +26,8 @@ class ReviewsSerializer(serializers.ModelSerializer):
 class RatingsSerializer(serializers.ModelSerializer):
     #patron = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     menu_item = serializers.PrimaryKeyRelatedField(queryset=MenuItem.objects.all())
+    
+    #Does this need to be a choice field?
     ratings = serializers.IntegerField(
         choices = [('1', '1'), ('2', '2'), ('3', '3'),('4', '4'),('5', '5')],
     )
