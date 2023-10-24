@@ -45,6 +45,11 @@ class RestaurantSerializer(serializers.ModelSerializer):
 # Serializer for Menu Item model
 class MenuItemListSerializer(serializers.ModelSerializer):
     item_name = serializers.CharField(max_length=100)
+    #calories
+    #restuarant name
+    #avg rating
+    #price
+    
 
     class Meta:
         model = models.MenuItem
