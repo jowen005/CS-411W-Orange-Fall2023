@@ -92,13 +92,13 @@ class BookmarkSerializer(serializers.ModelSerializer):
 
 
 # # Serializer for Meal History model    
-class MealHistorySerializer(serializers.ModelSerializer):
+class MenuItemHistorySerializer(serializers.ModelSerializer):
     #patron = serializers.PrimaryKeyRelatedField(queryset=models.User.objects.all())
     menu_item = serializers.PrimaryKeyRelatedField(queryset=MenuItem.objects.all())
     # mealHS_datetime = serializers.DateTimeField()
 
     class Meta:
-        model = models.MealHistory
+        model = models.MenuItemHistory
         fields = '__all__'
         read_only_fields = ['patron']
 

@@ -74,8 +74,8 @@ class BookmarkViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
 
-class MealHistoryViewSet(viewsets.ModelViewSet):
-    serializer_class = serializers.MealHistorySerializer
+class MenuItemHistoryViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.MenuItemHistorySerializer
     permission_classes = [permissions.IsAuthPatronIsUserNoUpdate]
 
     def get_queryset(self):
