@@ -58,8 +58,10 @@ class PatronSearchHistory(models.Model):
     # disliked_ingredients = models.ManyToManyField(IngredientTag)
     # patron_taste_tags = models.ManyToManyField(TasteTag)
 
-
-    # Are we storing prices or price levels???
+    #conversion from price level to price min max
+    # QS - in backend
+    # AS - in frontend
+    
     # store the price range number which min to max. 
     price_min = models.DecimalField(
         max_digits=8,  # Total number of digits

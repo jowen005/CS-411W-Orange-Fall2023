@@ -38,10 +38,10 @@ class PatronSerializer(serializers.ModelSerializer):
 class PatronSearchHistorySerializer(serializers.ModelSerializer):
     #patron = serializers.PrimaryKeyRelatedField(queryset=models.User.objects.all())
     query = serializers.CharField(max_length=255)
-    calorie_limit = serializers.IntegerField(null=True, blank=True)
+    calorie_limit = serializers.IntegerField()
 
     #Replace this
-    dietary_restriction = serializers.CharField(max_length=255, blank=True)
+    dietary_restriction = serializers.CharField(max_length=255)
     
     #With this
     # dietary_restriction_tags = serializers.PrimaryKeyRelatedField(queryset=RestrictionTag.objects.all(), many=True)
@@ -53,17 +53,13 @@ class PatronSearchHistorySerializer(serializers.ModelSerializer):
         max_digits=8,  # Total number of digits
         decimal_places=2,  # Maximum of 2 decimal places
         validators=[MinValueValidator(0.01)],  # Positive only
-        null=True,  # Allow null values
-        blank=True
     )
     price_max = serializers.DecimalField(
         max_digits=8,  # Total number of digits
         decimal_places=2,  # Maximum of 2 decimal places
         validators=[MinValueValidator(0.01)],  # Positive only
-        null=True,  # Allow null values
-        blank=True
     )
-    search_datetime = serializers.DateTimeField(auto_now_add=True)
+    # search_datetime = serializers.DateTimeField()
 
     class Meta:
         model = models.PatronSearchHistory
@@ -82,7 +78,7 @@ class BookmarkSerializer(serializers.ModelSerializer):
     #patron = serializers.PrimaryKeyRelatedField(queryset=models.User.objects.all())
 
     menu_item = serializers.PrimaryKeyRelatedField(queryset=MenuItem.objects.all())
-    bookmarked_datetime = serializers.DateTimeField(auto_now_add=True)
+    # bookmarked_datetime = serializers.DateTimeField()
 
     class Meta:
         model = models.Bookmark
@@ -99,7 +95,7 @@ class BookmarkSerializer(serializers.ModelSerializer):
 class MealHistorySerializer(serializers.ModelSerializer):
     #patron = serializers.PrimaryKeyRelatedField(queryset=models.User.objects.all())
     menu_item = serializers.PrimaryKeyRelatedField(queryset=MenuItem.objects.all())
-    mealHS_datetime = serializers.DateTimeField(auto_now_add=True)
+    # mealHS_datetime = serializers.DateTimeField()
 
     class Meta:
         model = models.MealHistory
