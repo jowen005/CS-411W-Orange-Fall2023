@@ -54,7 +54,6 @@ User = get_user_model()
 #     class Meta:
 #         db_table = 'Ratings'
 
-# MY STUFF
 class Reviews(models.Model):
     #When patron delete his account, the reviews still remains.
     #when menu_item deleted, the reviews will not available.
