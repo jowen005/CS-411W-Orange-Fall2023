@@ -41,7 +41,7 @@ User = get_user_model()
 class ReviewsSerializer(serializers.ModelSerializer):
     menu_item = serializers.PrimaryKeyRelatedField(queryset=MenuItem.objects.all())
     menuItem_history = serializers.PrimaryKeyRelatedField(queryset=MenuItemHistory.objects.all())
-    patron_review = serializers.CharField(max_length=255,null=True)
+    patron_review = serializers.CharField(max_length=255)
     ratings = serializers.ChoiceField(
         choices = [('1', '1'), ('2', '2'), ('3', '3'),('4', '4'),('5', '5')],
     )
