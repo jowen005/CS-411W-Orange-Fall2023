@@ -63,7 +63,7 @@ class Reviews(models.Model):
     menuItem_history = models.ForeignKey(MenuItemHistory, on_delete=models.SET_NULL,null=True)
     review = models.CharField(max_length=255,null=True)
     rating = models.IntegerField(
-        choices = [('1', '1'), ('2', '2'), ('3', '3'),('4', '4'),('5', '5')],
+        choices = [('1', '1'), ('2', '2'), ('3', '3'),('4', '4'),('5', '5')], null=True
     )
     review_datetime = models.DateTimeField(auto_now_add=True)
 

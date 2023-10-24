@@ -85,14 +85,7 @@ class BookmarkSerializer(serializers.ModelSerializer):
         fields = '__all__'
         #fields = ['id', 'menu_item', 'bookmarked_datetime']
         read_only_fields = ['patron']
-    class Meta:
-        model = models.Bookmark
-        fields = '__all__'
-        #fields = ['id', 'menu_item', 'bookmarked_datetime']
-        read_only_fields = ['patron']
 
-    # def formatted_datetime(self):
-    #     return self.search_datetime.strftime('%d/%m/%y %H:%M:%S')
     # def formatted_datetime(self):
     #     return self.search_datetime.strftime('%d/%m/%y %H:%M:%S')
 
