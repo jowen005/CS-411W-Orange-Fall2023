@@ -85,11 +85,11 @@ class PatronSearchHistory(models.Model):
     class Meta:
         db_table = 'PatronSearchHistory'
 
-class MealHistory(models.Model):
-    """A meal history associated with a menu item"""
+class MenuItemHistory(models.Model):
+    """A MenuItem history associated with a menu item"""
     patron = models.ForeignKey(User, on_delete=models.CASCADE, related_name='meal_history')
     menu_item = models.ForeignKey(MenuItem, on_delete=models.SET_NULL,null=True)  
-    mealHS_datetime = models.DateTimeField(auto_now_add=True)
+    MenuItemHS_datetime = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f'{self.patron.username} - {self.menu_item}'
@@ -98,4 +98,4 @@ class MealHistory(models.Model):
         return self.search_datetime.strftime('%d/%m/%y %H:%M:%S')
 
     class Meta:
-        db_table = 'MealHistory'
+        db_table = 'MenuItemHistory'

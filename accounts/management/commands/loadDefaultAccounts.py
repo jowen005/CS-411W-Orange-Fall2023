@@ -37,6 +37,7 @@ class Command(LoadCommand):
             if account["email"] in used_emails:
                 skipped_emails.append(account["email"])
                 continue
+            email, username, password = account["email"], account["username"], account["password"]
             User.objects.create_superuser(email=email, username=username, password=password, user_type="admin")
             added_emails.append(email)
         
