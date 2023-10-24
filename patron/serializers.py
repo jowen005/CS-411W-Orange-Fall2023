@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from . import models
 from django.contrib.auth import get_user_model
-from restaurants.models import MenuItem,RestrictionTag,AllergyTag,TasteTag
+from restaurants.models import MenuItem,RestrictionTag,AllergyTag,TasteTag,IngredientTag
 from django.core.validators import MinValueValidator, MaxValueValidator
 #from ..restaurants import serializers
 
@@ -25,6 +25,7 @@ class PatronSerializer(serializers.ModelSerializer):
     patron_restriction_tag = serializers.PrimaryKeyRelatedField(queryset=RestrictionTag.objects.all(), many=True)
     patron_allergy_tag = serializers.PrimaryKeyRelatedField(queryset=AllergyTag.objects.all(), many=True)
     patron_taste_tag = serializers.PrimaryKeyRelatedField(queryset=TasteTag.objects.all(), many=True)
+    disliked_ingredients = serializers.PrimaryKeyRelatedField(queryset=IngredientTag.objects.all(), many=True)
 
     class Meta:
         model = models.Patron
@@ -33,7 +34,43 @@ class PatronSerializer(serializers.ModelSerializer):
         #           'palate_allergy_tag', 'patron_taste_tag', 'patron_restriction_tag']
         read_only_fields = ['user']
 
-#Serializer for Bookmark model
+# Serializer for Patron Search History model    
+class PatronSearchHistorySerializer(serializers.ModelSerializer):
+    #patron = serializers.PrimaryKeyRelatedField(queryset=models.User.objects.all())
+    query = serializers.CharField(max_length=255)
+    calorie_limit = serializers.IntegerField()
+
+    #Replace this
+    dietary_restriction = serializers.CharField(max_length=255)
+    
+    #With this
+    # dietary_restriction_tags = serializers.PrimaryKeyRelatedField(queryset=RestrictionTag.objects.all(), many=True)
+    # allergy_tags = serializers.PrimaryKeyRelatedField(queryset=AllergyTag.objects.all(), many=True)
+    # taste_tags = serializers.PrimaryKeyRelatedField(queryset=TasteTag.objects.all(), many=True)
+    # disliked_ingredients = serializers.PrimaryKeyRelatedField(queryset=IngredientTag.objects.all(), many=True)
+    
+    price_min = serializers.DecimalField(
+        max_digits=8,  # Total number of digits
+        decimal_places=2,  # Maximum of 2 decimal places
+        validators=[MinValueValidator(0.01)],  # Positive only
+    )
+    price_max = serializers.DecimalField(
+        max_digits=8,  # Total number of digits
+        decimal_places=2,  # Maximum of 2 decimal places
+        validators=[MinValueValidator(0.01)],  # Positive only
+    )
+    # search_datetime = serializers.DateTimeField()
+
+    class Meta:
+        model = models.PatronSearchHistory
+        fields = '__all__'
+        read_only_fields = ['patron']
+
+
+    # def formatted_datetime(self):
+    #     return self.search_datetime.strftime('%d/%m/%y %H:%M:%S')
+
+# Serializer for Bookmark model
 class BookmarkSerializer(serializers.ModelSerializer):
     # Not in the same app
     #menu_item = MenuItemSerializer(many=False)
@@ -41,8 +78,13 @@ class BookmarkSerializer(serializers.ModelSerializer):
     #patron = serializers.PrimaryKeyRelatedField(queryset=models.User.objects.all())
 
     menu_item = serializers.PrimaryKeyRelatedField(queryset=MenuItem.objects.all())
-    #bookmarked_datetime = serializers.DateTimeField(auto_now_add=True)
+    # bookmarked_datetime = serializers.DateTimeField()
 
+    class Meta:
+        model = models.Bookmark
+        fields = '__all__'
+        #fields = ['id', 'menu_item', 'bookmarked_datetime']
+        read_only_fields = ['patron']
     class Meta:
         model = models.Bookmark
         fields = '__all__'
@@ -51,44 +93,15 @@ class BookmarkSerializer(serializers.ModelSerializer):
 
     # def formatted_datetime(self):
     #     return self.search_datetime.strftime('%d/%m/%y %H:%M:%S')
-
-# Serializer for Patron Search History model    
-class PatronSearchHistorySerializer(serializers.ModelSerializer):
-    # If not working uncomment patron
-    #patron = serializers.PrimaryKeyRelatedField(queryset=models.User.objects.all())
-    query = serializers.CharField(max_length=255)
-    #calorie_limit = serializers.IntegerField(null=True, blank=True)
-    dietary_restriction = serializers.CharField(max_length=255)
-    price_min = serializers.DecimalField(
-        max_digits=8,  # Total number of digits
-        decimal_places=2,  # Maximum of 2 decimal places
-        validators=[MinValueValidator(0.01)],  # Positive only
-        #null=True,  # Allow null values
-        #blank=True
-    )
-    price_max = serializers.DecimalField(
-        max_digits=8,  # Total number of digits
-        decimal_places=2,  # Maximum of 2 decimal places
-        validators=[MinValueValidator(0.01)],  # Positive only
-        #null=True,  # Allow null values
-        #blank=True
-    )
-    #search_datetime = serializers.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        model = models.PatronSearchHistory
-        fields = '__all__'
-        read_only_fiels = ['patron']
-
-
     # def formatted_datetime(self):
     #     return self.search_datetime.strftime('%d/%m/%y %H:%M:%S')
 
-# Serializer for Meal History model    
+
+# # Serializer for Meal History model    
 class MenuItemHistorySerializer(serializers.ModelSerializer):
     #patron = serializers.PrimaryKeyRelatedField(queryset=models.User.objects.all())
     menu_item = serializers.PrimaryKeyRelatedField(queryset=MenuItem.objects.all())
-    #mealHS_datetime = serializers.DateTimeField(auto_now_add=True)
+    # mealHS_datetime = serializers.DateTimeField()
 
     class Meta:
         model = models.MenuItemHistory
