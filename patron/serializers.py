@@ -33,70 +33,70 @@ class PatronSerializer(serializers.ModelSerializer):
         #           'palate_allergy_tag', 'patron_taste_tag', 'patron_restriction_tag']
         read_only_fields = ['user']
 
-# Serializer for Bookmark model
-# class BookmarkSerializer(serializers.ModelSerializer):
-#     # Not in the same app
-#     #menu_item = MenuItemSerializer(many=False)
-#     #Next line might cause same problems as it did in the owner line in Restaurant serializer
-#     #patron = serializers.PrimaryKeyRelatedField(queryset=models.User.objects.all())
+#Serializer for Bookmark model
+class BookmarkSerializer(serializers.ModelSerializer):
+    # Not in the same app
+    #menu_item = MenuItemSerializer(many=False)
+    #Next line might cause same problems as it did in the owner line in Restaurant serializer
+    #patron = serializers.PrimaryKeyRelatedField(queryset=models.User.objects.all())
 
-#     menu_item = serializers.PrimaryKeyRelatedField(queryset=MenuItem.objects.all())
-#     bookmarked_datetime = serializers.DateTimeField(auto_now_add=True)
+    menu_item = serializers.PrimaryKeyRelatedField(queryset=MenuItem.objects.all())
+    #bookmarked_datetime = serializers.DateTimeField(auto_now_add=True)
 
-#     class Meta:
-#         model = models.Bookmark
-#         fields = '__all__'
-#         #fields = ['id', 'menu_item', 'bookmarked_datetime']
-#         read_only_fields = ['patron']
+    class Meta:
+        model = models.Bookmark
+        fields = '__all__'
+        #fields = ['id', 'menu_item', 'bookmarked_datetime']
+        read_only_fields = ['patron']
 
-#     # def formatted_datetime(self):
-#     #     return self.search_datetime.strftime('%d/%m/%y %H:%M:%S')
+    # def formatted_datetime(self):
+    #     return self.search_datetime.strftime('%d/%m/%y %H:%M:%S')
 
-# # Serializer for Patron Search History model    
-# class PatronSearchHistorySerializer(serializers.ModelSerializer):
-#     # If not working uncomment patron
-#     #patron = serializers.PrimaryKeyRelatedField(queryset=models.User.objects.all())
-#     query = serializers.CharField(max_length=255)
-#     #calorie_limit = serializers.IntegerField(null=True, blank=True)
-#     dietary_restriction = serializers.CharField(max_length=255, blank=True)
-#     price_min = serializers.DecimalField(
-#         max_digits=8,  # Total number of digits
-#         decimal_places=2,  # Maximum of 2 decimal places
-#         validators=[MinValueValidator(0.01)],  # Positive only
-#         null=True,  # Allow null values
-#         blank=True
-#     )
-#     price_max = serializers.DecimalField(
-#         max_digits=8,  # Total number of digits
-#         decimal_places=2,  # Maximum of 2 decimal places
-#         validators=[MinValueValidator(0.01)],  # Positive only
-#         null=True,  # Allow null values
-#         blank=True
-#     )
-#     search_datetime = serializers.DateTimeField(auto_now_add=True)
+# Serializer for Patron Search History model    
+class PatronSearchHistorySerializer(serializers.ModelSerializer):
+    # If not working uncomment patron
+    #patron = serializers.PrimaryKeyRelatedField(queryset=models.User.objects.all())
+    query = serializers.CharField(max_length=255)
+    #calorie_limit = serializers.IntegerField(null=True, blank=True)
+    dietary_restriction = serializers.CharField(max_length=255)
+    price_min = serializers.DecimalField(
+        max_digits=8,  # Total number of digits
+        decimal_places=2,  # Maximum of 2 decimal places
+        validators=[MinValueValidator(0.01)],  # Positive only
+        #null=True,  # Allow null values
+        #blank=True
+    )
+    price_max = serializers.DecimalField(
+        max_digits=8,  # Total number of digits
+        decimal_places=2,  # Maximum of 2 decimal places
+        validators=[MinValueValidator(0.01)],  # Positive only
+        #null=True,  # Allow null values
+        #blank=True
+    )
+    #search_datetime = serializers.DateTimeField(auto_now_add=True)
 
-#     class Meta:
-#         model = models.PatronSearchHistory
-#         fields = '__all__'
-#         read_only_fiels = ['patron']
+    class Meta:
+        model = models.PatronSearchHistory
+        fields = '__all__'
+        read_only_fiels = ['patron']
 
 
-#     # def formatted_datetime(self):
-#     #     return self.search_datetime.strftime('%d/%m/%y %H:%M:%S')
+    # def formatted_datetime(self):
+    #     return self.search_datetime.strftime('%d/%m/%y %H:%M:%S')
 
-# # Serializer for Meal History model    
-# class MealHistorySerializer(serializers.ModelSerializer):
-#     #patron = serializers.PrimaryKeyRelatedField(queryset=models.User.objects.all())
-#     menu_item = serializers.PrimaryKeyRelatedField(queryset=MenuItem.objects.all())
-#     mealHS_datetime = serializers.DateTimeField(auto_now_add=True)
+# Serializer for Meal History model    
+class MenuItemHistorySerializer(serializers.ModelSerializer):
+    #patron = serializers.PrimaryKeyRelatedField(queryset=models.User.objects.all())
+    menu_item = serializers.PrimaryKeyRelatedField(queryset=MenuItem.objects.all())
+    #mealHS_datetime = serializers.DateTimeField(auto_now_add=True)
 
-#     class Meta:
-#         model = models.MealHistory
-#         fields = '__all__'
-#         read_only_fields = ['patron']
+    class Meta:
+        model = models.MenuItemHistory
+        fields = '__all__'
+        read_only_fields = ['patron']
 
-#     # def formatted_datetime(self):
-#     #     return self.search_datetime.strftime('%d/%m/%y %H:%M:%S')
+    # def formatted_datetime(self):
+    #     return self.search_datetime.strftime('%d/%m/%y %H:%M:%S')
 
 
 
