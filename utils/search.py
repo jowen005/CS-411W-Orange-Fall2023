@@ -5,11 +5,11 @@ def quickSearch(patron_ID, query_string):
     patron = Patrons.objects.get(patron_ID)
     callorie_range = (0,patron.calorie_limit)
     if(patron.price_preference = '$'):
-        price_max = 25
+        price_max = 25.0
     if(patron.price_preference = '$$'):
-        price_max = 50
+        price_max = 50.0
     if(patron.price_preference = '$$$'):
-        price_max = 100
+        price_max = 1000.0
     restriction_tags = list(patron.patron_restriction_tag)
     allergy_tags = list(patron.patron_allergy_tag)
     excluded_ingredient_tags = list(patron.disliked_ingredients)
