@@ -16,7 +16,7 @@ class Command(LoadCommand):
 
         PresentRestTags = list(RestTag.objects.values_list('title',flat=True))
         PresentFoodTags = list(FoodTypeTag.objects.values_list('title',flat=True))
-        PresentCookStyleags = list(CookStyleTag.objects.values_list('title',flat=True))
+        PresentCookStyleTags = list(CookStyleTag.objects.values_list('title',flat=True))
         PresentAllergyTags = list(AllergyTag.objects.values_list('title',flat=True))
         PresentTasteTags = list(TasteTag.objects.values_list('title',flat=True))
         PresentRestrictionTags = list(RestrictionTag.objects.values_list('title',flat=True))
@@ -44,7 +44,7 @@ class Command(LoadCommand):
                 FoodTypeTag.objects.create(title=str(el))
         for el in TAGS['CookStyleTag']:
             elementsEvaluated += 1
-            if not(el in PresentCookStyleags):
+            if not(el in PresentCookStyleTags):
                 newCookTags += 1
                 CookStyleTag.objects.create(title=str(el))
         for el in TAGS['AllergyTag']:
