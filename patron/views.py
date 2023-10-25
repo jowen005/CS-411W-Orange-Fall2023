@@ -10,7 +10,6 @@ from restaurants.serializers import MenuItemListSerializer
 # Create your views here.
 
 class PatronViewSet(viewsets.ModelViewSet):
-    serializer_class = serializers.PatronSerializer
     permission_classes = [permissions.IsAuthPatronAndIsUser]
 
     def get_queryset(self):
@@ -20,12 +19,16 @@ class PatronViewSet(viewsets.ModelViewSet):
         else:
             return models.Patron.objects.none()
         
+    def get_serializer_class(self):
+        if self.action == 'list' or self.action == 'retrieve':
+            return serializers.PatronGetSerializer
+        return serializers.PatronSerializer
+
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
 
 class SearchHistoryViewSet(viewsets.ModelViewSet):
-    serializer_class = serializers.PatronSearchHistorySerializer
     permission_classes = [permissions.IsAuthPatronIsUserNoUpdate]
 
     def get_queryset(self):
@@ -34,22 +37,34 @@ class SearchHistoryViewSet(viewsets.ModelViewSet):
             return models.PatronSearchHistory.objects.filter(patron=user)
         else:
             return models.PatronSearchHistory.objects.none()
+        
+    def get_serializer_class(self):
+        if self.action == 'list' or self.action == 'retrieve':
+            return serializers.PatronSearchHistoryGetSerializer
+        return serializers.PatronSearchHistorySerializer
     
-    def perform_create(self, serializer):
+    def create(self, request, *args, **kwargs):
         #Call Search function with self.request.data which returns menu item IDs
         search_results = [1, 2, 3]
+        print(f'\n\n{search_results}\n\n')
 
         #If search was ok
         if len(search_results) > 0:
-            serializer.save(patron=self.request.user)
+            history_serializer = self.get_serializer(data=request.data)
+            history_serializer.is_valid(raise_exception=True)
+            history_serializer.save(patron=self.request.user)
 
             objects = MenuItem.objects.filter(id__in=search_results)
+            print(f'\n\n{objects}\n\n')
             menu_item_serializer = MenuItemListSerializer(objects, many=True)
+            print(f'\n\n{menu_item_serializer.data}\n\n')
 
             response_data = {
                 'message': ' Search successfully performed.',
                 'results': menu_item_serializer.data,
             }
+
+            print(f'\n\n{response_data}\n\n')
 
             status_code = status.HTTP_201_CREATED
             
@@ -60,7 +75,6 @@ class SearchHistoryViewSet(viewsets.ModelViewSet):
 
 
 class BookmarkViewSet(viewsets.ModelViewSet):
-    serializer_class = serializers.BookmarkSerializer
     permission_classes = [permissions.IsAuthPatronIsUserNoUpdate]
 
     def get_queryset(self):
@@ -70,23 +84,32 @@ class BookmarkViewSet(viewsets.ModelViewSet):
         else:
             return models.Bookmark.objects.none()
     
+    def get_serializer_class(self):
+        if self.action == 'list' or self.action == 'retrieve':
+            return serializers.BookmarkGetSerializer
+        return serializers.BookmarkSerializer
+
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(patron=self.request.user)
 
 
 class MenuItemHistoryViewSet(viewsets.ModelViewSet):
-    serializer_class = serializers.MenuItemHistorySerializer
     permission_classes = [permissions.IsAuthPatronIsUserNoUpdate]
 
     def get_queryset(self):
         user = self.request.user
         if user.user_type == 'patron':
-            return models.MealHistory.objects.filter(patron=user)
+            return models.MenuItemHistory.objects.filter(patron=user)
         else:
-            return models.MealHistory.objects.none()
+            return models.MenuItemHistory.objects.none()
     
+    def get_serializer_class(self):
+        if self.action == 'list' or self.action == 'retrieve':
+            return serializers.MenuItemHistoryGetSerializer
+        return serializers.MenuItemHistorySerializer
+
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(patron=self.request.user)
 
 
 

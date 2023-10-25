@@ -1,10 +1,31 @@
 from rest_framework import serializers
 from . import models
 from django.contrib.auth import get_user_model
-from restaurants.models import MenuItem, MenuItemHistory
+import restaurants.serializers as rs
+import patron.models as pm
 
 
 User = get_user_model()
+
+
+# Serializer for combined Review model
+class ReviewsSerializer(serializers.ModelSerializer):
+    menu_item = rs.MenuItemListSerializer()
+    menuItem_history = serializers.PrimaryKeyRelatedField(queryset=pm.MenuItemHistory.objects.all())
+    
+    # menu_item = serializers.PrimaryKeyRelatedField(queryset=MenuItem.objects.all())
+    # menuItem_history = ps.MenuItemHistorySerializer()
+    
+    patron_review = serializers.CharField(max_length=255)
+    ratings = serializers.ChoiceField(
+        choices = [('1', '1'), ('2', '2'), ('3', '3'),('4', '4'),('5', '5')],
+    )
+
+    class Meta:
+        model = models.Reviews
+        fields = '__all__'
+        read_only_fields = ['patron']
+
 
 # Serializer for Reviews model
 # class ReviewsSerializer(serializers.ModelSerializer):
@@ -35,19 +56,3 @@ User = get_user_model()
 #         model = models.Ratings
 #         fields = '__all__'
 #         read_only_fields = ['patron']
-
-
-# Serializer for combined Review model
-class ReviewsSerializer(serializers.ModelSerializer):
-    menu_item = serializers.PrimaryKeyRelatedField(queryset=MenuItem.objects.all())
-    menuItem_history = serializers.PrimaryKeyRelatedField(queryset=MenuItemHistory.objects.all())
-    patron_review = serializers.CharField(max_length=255)
-    ratings = serializers.ChoiceField(
-        choices = [('1', '1'), ('2', '2'), ('3', '3'),('4', '4'),('5', '5')],
-    )
-    # review_datetime = serializers.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        model = models.Reviews
-        fields = '__all__'
-        read_only_fields = ['patron']

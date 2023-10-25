@@ -5,7 +5,7 @@
         "dob": "1989-06-27",
         "calorie_limit": 600,
         "gender": "Male",
-        "price_preference": "$$",
+        "price_max": 30.0,
         "zipcode": "23460",
         "patron_restriction_tag": [
 
@@ -25,7 +25,7 @@
         "dob": "1967-08-14",
         "calorie_limit": 1000,
         "gender": "Other",
-        "price_preference": "$$$",
+        "price_max": 50.0,
         "zipcode": "23460",
         "patron_restriction_tag": [
             "halal"
@@ -44,7 +44,7 @@
         "dob": "2001-06-04",
         "calorie_limit": 321,
         "gender": "Female",
-        "price_preference": "$$",
+        "price_max": 25.0,
         "zipcode": "23460",
         "patron_restriction_tag": [
             
@@ -62,7 +62,7 @@
         "dob": "2002-04-17",
         "calorie_limit": 800,
         "gender": "Male",
-        "price_preference": "$",
+        "price_max": 15.0,
         "zipcode": "23460",
         "patron_restriction_tag": [
             "kosher"
@@ -81,7 +81,7 @@
         "dob": "1999-02-25",
         "calorie_limit": 800,
         "gender": "Male",
-        "price_preference": "$$$",
+        "price_max": 100.0,
         "zipcode": "23460",
         "patron_restriction_tag": [
             
