@@ -12,7 +12,10 @@ class Patron(models.Model):
     dob = models.DateField()
     calorie_limit = models.PositiveIntegerField()
     gender = models.CharField(max_length=10)
-    price_preference = models.CharField(max_length=5, choices=[('$', '$'), ('$$', '$$'), ('$$$', '$$$')])
+
+    # price_preference = models.CharField(max_length=5, choices=[('$', '$'), ('$$', '$$'), ('$$$', '$$$')])
+    price_max = models.PositiveIntegerField(null=True)
+
     zipcode = models.CharField(max_length=10)
     patron_restriction_tag = models.ManyToManyField(RestrictionTag)
     patron_allergy_tag = models.ManyToManyField(AllergyTag)
@@ -50,13 +53,13 @@ class PatronSearchHistory(models.Model):
     calorie_limit = models.PositiveIntegerField(null=True, blank=True)
 
     #Replace this
-    dietary_restriction = models.CharField(max_length=255, blank=True)
+    # dietary_restriction = models.CharField(max_length=255, blank=True)
 
     #With this
-    # dietary_restriction_tags = models.ManyToManyField(RestrictionTag)
-    # allergy_tags = models.ManyToManyField(AllergyTag)
-    # disliked_ingredients = models.ManyToManyField(IngredientTag)
-    # patron_taste_tags = models.ManyToManyField(TasteTag)
+    dietary_restriction_tags = models.ManyToManyField(RestrictionTag)
+    allergy_tags = models.ManyToManyField(AllergyTag)
+    disliked_ingredients = models.ManyToManyField(IngredientTag)
+    patron_taste_tags = models.ManyToManyField(TasteTag)
 
     #conversion from price level to price min max
     # QS - in backend

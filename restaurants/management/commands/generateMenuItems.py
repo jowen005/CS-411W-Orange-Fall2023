@@ -2,13 +2,16 @@ from faker import Faker
 import random
 
 from lcc_project.commands.generate import GenerateCommand, add_file_path
-from restaurants.models import TasteTag,CookStyleTag,FoodTypeTag,AllergyTag,RestrictionTag
+from restaurants.models import TasteTag,CookStyleTag,FoodTypeTag,AllergyTag,RestrictionTag,Restaurant,IngredientTag
 
 @add_file_path
 class Command(GenerateCommand):
     DEFAULT_JSON_PATH = 'json_files/menuItemsBuffer.json'
 
     def generate(self, count:int):
+
+        monarch_user = self.User.objects.get(email="monarch@odu.edu")
+        monarch_rest_ids = Restaurant.objects.filter(owner=monarch_user).values_list("id",flat=True)
 
         ingredient_to_allergy_mapping = {
             "anchovy_paste": ["halal", "kosher","fish"],
@@ -90,20 +93,30 @@ class Command(GenerateCommand):
             "veal", "venison", "vinegar", "wheat"
         ]
 
-        valid_owners = list(self.User.objects.filter(user_type='restaurant').values_list('id',flat=True))
+        # valid_owners = list(self.User.objects.filter(user_type='restaurant').values_list('id',flat=True))
+        valid_owners = list(Restaurant.objects.all().values_list('id',flat=True))
+        for monarch_id in monarch_rest_ids:
+            valid_owners.remove(monarch_id)
         valid_food_type_tag = list(FoodTypeTag.objects.values_list('id',flat=True))
         valid_cook_style_tags = list(CookStyleTag.objects.values_list('id',flat=True))
         valid_taste_tags = list(TasteTag.objects.values_list('id',flat=True))
 
-        
+        for tag in AllergyTag.objects.all():
+            print(f'{tag.id} - {tag.title}')
+
+        print('\n')
+        for tag in RestrictionTag.objects.all():
+            print(f'{tag.id} - {tag.title}')
+
         data_list = []
         for _ in range(count):
             #Generate and Store Data
             # Randomly choose 2-5 ingredients
             num_ingredients = random.randint(2, min(5, len(valid_ingredient_tag)))
             chosen_ingredients = random.sample(valid_ingredient_tag,num_ingredients)
+
             ingredients_tags = set()
-            ingredient_indices = {ingredient_value: index + 1 for index, ingredient_value in enumerate(valid_ingredient_tag)}
+            ingredient_indices = {title: IngredientTag.objects.get(title=title).id for title in valid_ingredient_tag}
             for ingredient in chosen_ingredients:
                 if ingredient in valid_ingredient_tag:
                     ingredients_tags.add(ingredient_indices[ingredient])
@@ -113,8 +126,14 @@ class Command(GenerateCommand):
 
             # Map chosen ingredients to their respective allergy tags
             allergy_values = list(AllergyTag.objects.values_list('title', flat=True).order_by('id'))
+            allergy_ids = list(AllergyTag.objects.values_list('id', flat=True).order_by('id'))
             #print("Allergen values:", allergy_values)
-            allergy_indices = {allergy_value: index + 1 for index, allergy_value in enumerate(allergy_values)}
+            # a dictionary of allergy_title, allergy_id pairs
+            # allergy_indices = {allergy_value: index + 1 for index, allergy_value in enumerate(allergy_values)}
+
+            allergy_indices = {value: allergy_ids[index] for index, value in enumerate(allergy_values)}
+            print(allergy_indices)
+            
             #print("Allergen values:", allergy_indices)
             allergy_tags = set()
                 #check if any allergy
@@ -148,7 +167,10 @@ class Command(GenerateCommand):
                 restriction_tags.update(common_restriction_values)
             # Create a mapping of restriction values to their respective indices (+1)
             def_restriction_values = list(RestrictionTag.objects.values_list('title', flat=True).order_by('id'))
-            restriction_indices = {value: index for index, value in enumerate(def_restriction_values, start=1)}
+            def_restriction_ids = list(RestrictionTag.objects.values_list('id', flat=True).order_by('id'))
+            restriction_indices = {value: def_restriction_ids[index] for index, value in enumerate(def_restriction_values)}
+            print(f'{restriction_indices}\n')
+            
             #print("Updated restriction_tags_id:", restriction_indices)
             # Initialize a mapping to store the index (+1) of each common restriction value
             restriction_tags_id = set()
@@ -163,7 +185,7 @@ class Command(GenerateCommand):
                 "calories": random.randint(250, 1800),
 
                 "food_type_tag_id": random.choice(valid_food_type_tag),
-                "taste_tags": random.choice(valid_taste_tags),
+                "taste_tags": list(set(self.fake.random_choices(elements=valid_taste_tags))),
                 "cook_style_tags_id": random.choice(valid_cook_style_tags),
 
                 "menu_restriction_id": list(restriction_tags_id),
