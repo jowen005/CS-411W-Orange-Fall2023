@@ -1,14 +1,14 @@
 from restaurants.models import MenuItem
-from restaurants.models import Patron
+from patron.models import Patron
 
 def quickSearch(patron_ID, query_string):
     patron = Patrons.objects.get(patron_ID)
     callorie_range = (0,patron.calorie_limit)
-    if(patron.price_preference = '$'):
+    if(patron.price_preference == '$'):
         price_max = 25.0
-    if(patron.price_preference = '$$'):
+    if(patron.price_preference == '$$'):
         price_max = 50.0
-    if(patron.price_preference = '$$$'):
+    if(patron.price_preference == '$$$'):
         price_max = 1000.0
     restriction_tags = list(patron.patron_restriction_tag)
     allergy_tags = list(patron.patron_allergy_tag)
@@ -22,9 +22,9 @@ def quickSearch(patron_ID, query_string):
 #since all the values set by the patron profile are specified in an advanced search patron_ID is not provided
 #
 #returns a list of menu item IDs matching the search
-def advancedSearch(query_string:str, callorie_range:tuple=(0,0), price_max:float=0f,
+def advancedSearch(query_string:str, callorie_range:tuple=(0,10000), price_range:tuple=(0.0,10000.0),
                    restriction_tags:list=None, allergy_tags:list=None, excluded_ingredient_tags:list=None,
-                   taste_tags:list=None, style:list=None, time:datetime=None, sortMethod:int=0):
+                   taste_tags:list=None, style:list=None, time=None, sortMethod:int=0):
     #select from menuitems where restriction_tags is true and allergy_tags is false and excluded_ingredient_tags is false and taste_tags is true and style = style and resturant_hours < time 
     
     #acording to the django docs the database shouldn't be queried until the query object is evaluated so we should be able to stack filters without
@@ -35,24 +35,13 @@ def advancedSearch(query_string:str, callorie_range:tuple=(0,0), price_max:float
     #get day of week from time.day
     #big ol' if block
     #Restuarants = Resturant.objects.filter(open__gte=time,close__lte=time)
-    for queryElement in split(query_string, " ")
-        #input should be clean before getting here but JUST IN CASE we'll do a little input sanitization
-        queryElement = queryElement.replace('\"','')
-        queryElement = queryElement.strip()
-
-        if(queryElement[0] = '-'):
-            #remove the first character ("-")
-            queryElement = queryElement[1:]
-            MenuItems = MenuItems.objects.exclude(name__icontains = queryElement)
-        else:
-            MenuItems = MenuItems.objects.filter(name__icontains = queryElement)
     
 
-    #todo add nullable functionality for the optional sections.
-
+    #todo add nullable functionality for the optional sections.  || DONE
+    MenuItems = MenuItem.objects.all()
     #the most restrictive tag is likely the allergy tags so we'll filter on that first
     if allergy_tags is not None:
-        MenuItems = MenuItem.objects.exclude(menu_allergy_tag__in = allergy_tags)
+        MenuItems = MenuItems.exclude(menu_allergy_tag__in = allergy_tags)
         #current SQL query should look like SELECT * from MenuItems
                                         #WHERE NOT (AllergyTag IN list(allergy_tags));
     if excluded_ingredient_tags is not None:
@@ -108,10 +97,21 @@ def advancedSearch(query_string:str, callorie_range:tuple=(0,0), price_max:float
 
     #now it gets complicated and hard to track what the query should look like                                
     #theoretically we can save the query string until last weirdly
+    for queryElement in query_string.split(" "):
+        #input should be clean before getting here but JUST IN CASE we'll do a little input sanitization
+        queryElement = queryElement.replace('\"','')
+        queryElement = queryElement.strip()
+
+        if(queryElement[0] == '-'):
+            #remove the first character ("-")
+            queryElement = queryElement[1:]
+            MenuItems = MenuItems.exclude(item_name__icontains = queryElement)
+        else:
+            MenuItems = MenuItems.filter(item_name__icontains = queryElement)
     
     #for debug purposes remove when finished
     print(MenuItems.query)
 
     #now we should finally be ready to evaluate the query and ping the database
-    return MenuItems.values_list("id",flat=true)
+    return MenuItems.values_list("id",flat=True)
     
