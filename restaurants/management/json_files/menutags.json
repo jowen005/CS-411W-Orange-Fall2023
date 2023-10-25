@@ -47,14 +47,14 @@
     "bitter"
     ],
     "RestrictionTag":[
-    "vegan",
-    "vegetarian",
-    "halal",
-    "kosher",
-    "keto",
-    "pescetarian",
-    "dairy-free",
-    "paleo" 
+        "vegan",
+        "vegetarian",
+        "halal",
+        "kosher",
+        "keto",
+        "pescetarian",
+        "dairy-free",
+        "paleo"            
     ],
     "IngredientTag":[ 
     "anchovy_paste",

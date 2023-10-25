@@ -13,3 +13,9 @@ class IsAuthPatronAndIsUser(BasePermission):
                 return obj.user == request.user
         
         return False
+    
+class IsAuthPatronIsUserNoUpdate(IsAuthPatronAndIsUser):
+    def has_permission(self, request, view):
+        if view.action == 'update':
+            return False
+        super().has_permission(self, request, view)

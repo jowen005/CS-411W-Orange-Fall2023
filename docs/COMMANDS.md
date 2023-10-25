@@ -68,3 +68,4 @@ Note: See NOTES_DOCKER.md for more information
 * **python3 manage.py createsuperuser** ---> Creates a superuser (admin)
 * **python3 manage.py test** ---> Runs all backend tests
 * **python3 -Wa manage.py test** ---> Runs all backend tests with outputting warnings
+* **python3 manage.py test -v1** ---> v1, v2, v3, or v4 makes output more descriptive 
