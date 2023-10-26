@@ -111,6 +111,50 @@ class MenuItemHistoryViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(patron=self.request.user)
 
+    def create(self, request, *args, **kwargs):
+        
+        if request.data["bookmarkid"] == 0:
+            history_serializer = self.get_serializer(data=request.data)
+            history_serializer.is_valid(raise_exception=True)
+            history_serializer.save(patron=self.request.user)
+            response_data = {
+                'message': 'Successfully added to meal history.',
+                'results': history_serializer.data,
+            }
+            status_code = status.HTTP_201_CREATED
+                
+            return Response(response_data, status=status_code)
+        else:
+            bookmarkid = request.data.pop("bookmarkid")
+
+            #Delete bookmark entry
+            bookmark = models.Bookmark.objects.get(id=bookmarkid)
+            if request.data["menu_item"] == bookmark.menu_item.id:
+                bookmark.delete()
+
+                history_serializer = self.get_serializer(data=request.data)
+                history_serializer.is_valid(raise_exception=True)
+                history_serializer.save(patron=self.request.user)
+
+                response_data = {
+                    'message': 'Successfully added to meal history and removed from bookmarks.',
+                    'results': history_serializer.data,
+                }
+                status_code = status.HTTP_201_CREATED
+                    
+                return Response(response_data, status=status_code)
+            else:
+                response_data = {
+                    'message': 'Supplied menu item ID does not match bookmark',
+                }
+                status_code = status.HTTP_400_BAD_REQUEST
+                    
+                return Response(response_data, status=status_code)
+
+        
+
+
+
 
 
 
