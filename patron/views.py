@@ -44,33 +44,41 @@ class SearchHistoryViewSet(viewsets.ModelViewSet):
         return serializers.PatronSearchHistorySerializer
     
     def create(self, request, *args, **kwargs):
+        
+        history_serializer = self.get_serializer(data=request.data)
+            
+        # Catch if Search object is invalid
+        try:
+            history_serializer.is_valid(raise_exception=True)
+
+        except serializers.ValidationError as e:
+            response_data = {
+                'message': 'Invalid input data.',
+                'errors': e.detail,
+            }
+            return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
+        
         #Call Search function with self.request.data which returns menu item IDs
         search_results = [1, 2, 3]
-        print(f'\n\n{search_results}\n\n')
 
-        #If search was ok
+        # Handle if results were returned
         if len(search_results) > 0:
-            history_serializer = self.get_serializer(data=request.data)
-            history_serializer.is_valid(raise_exception=True)
+            
             history_serializer.save(patron=self.request.user)
 
             objects = MenuItem.objects.filter(id__in=search_results)
-            print(f'\n\n{objects}\n\n')
             menu_item_serializer = MenuItemListSerializer(objects, many=True)
-            print(f'\n\n{menu_item_serializer.data}\n\n')
-
+            
             response_data = {
                 'message': ' Search successfully performed.',
                 'results': menu_item_serializer.data,
             }
-
-            print(f'\n\n{response_data}\n\n')
-
-            status_code = status.HTTP_201_CREATED
-            
-            return Response(response_data, status=status_code)
+            return Response(response_data, status=status.HTTP_201_CREATED)
         
-        response_data = {'message': 'Search Failed'}
+        # Handle if no results were returned or search failed
+        response_data = {
+            'message': 'No Results or Search Failed'
+        }
         return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -112,44 +120,65 @@ class MenuItemHistoryViewSet(viewsets.ModelViewSet):
         serializer.save(patron=self.request.user)
 
     def create(self, request, *args, **kwargs):
+        bookmarkid = request.data.pop("bookmarkid")
+        history_serializer = self.get_serializer(data=request.data)
         
-        if request.data["bookmarkid"] == 0:
-            history_serializer = self.get_serializer(data=request.data)
+        # Catch if menu item history is invalid
+        try:
             history_serializer.is_valid(raise_exception=True)
+
+        except serializers.ValidationError as e:
+            response_data = {
+                'message': 'Invalid input data.',
+                'errors': e.detail,
+            }
+            return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Handle if NOT adding from bookmarks
+        if request.data["bookmarkid"] == 0:     # 0 is invalid ID, meaning not added from bookmarks
             history_serializer.save(patron=self.request.user)
             response_data = {
                 'message': 'Successfully added to meal history.',
                 'results': history_serializer.data,
             }
-            status_code = status.HTTP_201_CREATED
-                
-            return Response(response_data, status=status_code)
+            return Response(response_data, status=status.HTTP_201_CREATED)
+        
+        # Handle if adding from bookmarks
         else:
-            bookmarkid = request.data.pop("bookmarkid")
+            # Catch if bookmark ID is invalid
+            try:
+                bookmark = models.Bookmark.objects.get(id=bookmarkid)
 
-            #Delete bookmark entry
-            bookmark = models.Bookmark.objects.get(id=bookmarkid)
-            if request.data["menu_item"] == bookmark.menu_item.id:
-                bookmark.delete()
-
-                history_serializer = self.get_serializer(data=request.data)
-                history_serializer.is_valid(raise_exception=True)
-                history_serializer.save(patron=self.request.user)
-
-                response_data = {
-                    'message': 'Successfully added to meal history and removed from bookmarks.',
-                    'results': history_serializer.data,
-                }
-                status_code = status.HTTP_201_CREATED
+                # Handle if specified menu item is the same as menu item in bookmark
+                if request.data["menu_item"] == bookmark.menu_item.id:
                     
-                return Response(response_data, status=status_code)
-            else:
+                    bookmark.delete()
+                    history_serializer.save(patron=self.request.user)
+
+                    response_data = {
+                        'message': 'Successfully added to meal history and removed from bookmarks.',
+                        'results': history_serializer.data,
+                    }
+                    return Response(response_data, status=status.HTTP_201_CREATED)
+                
+                else:
+                    response_data = {
+                        'message': 'Supplied menu item ID does not match bookmark',
+                    }
+                    return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
+                
+            except models.Bookmark.DoesNotExist:
                 response_data = {
-                    'message': 'Supplied menu item ID does not match bookmark',
+                    'message': 'Bookmark not found with the specified bookmarkid.',
                 }
-                status_code = status.HTTP_400_BAD_REQUEST
-                    
-                return Response(response_data, status=status_code)
+                return Response(response_data, status=status.HTTP_404_NOT_FOUND)
+            
+            except Exception as ex:
+                response_data = {
+                    'message': 'An error occurred while processing the request.',
+                    'error': str(ex),
+                }
+                return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         
 
