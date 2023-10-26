@@ -9,5 +9,20 @@ from restaurants.serializers import MenuItemListSerializer
 
 # Create your views here.
 
-# DO WE WANT front end to submit one API request or 2 every time they want stuff
-# So we either consolidate reviews and ratings into one feedback object or make them request twice for everything
+# class ReviewViewSet(viewsets.ModelViewSet):
+#     permission_classes = []
+
+#     # def get_queryset(self):
+#     #     user = self.request.user
+#     #     if user.user_type == 'patron':
+#     #         return models.Patron.objects.filter(user=user)
+#     #     else:
+#     #         return models.Patron.objects.none()
+        
+#     def get_serializer_class(self):
+#         if self.action == 'list' or self.action == 'retrieve':
+#             return serializers.ReviewsGetSerializer
+#         return serializers.ReviewsSerializer
+
+#     def perform_create(self, serializer):
+#         serializer.save(patron=self.request.user)

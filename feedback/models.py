@@ -9,6 +9,12 @@ from decimal import Decimal
 User = get_user_model()
 
 
+# Why does review have menu item history attribute
+# Shouldnt menu item history attribute have a feedback object?
+# This way when adding to history,
+#   1. feedback object is created before history object
+#   2. history object can display review but review cant display history entry?
+
 class Reviews(models.Model):
     #When patron delete his account, the reviews still remains.
     #when menu_item deleted, the reviews will not available.
