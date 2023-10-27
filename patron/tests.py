@@ -12,7 +12,7 @@ class PatronCreateTestCase(APITestCase):
     # Set up function for all the tests for this view
     def setUp(self):
         self.factory = APIRequestFactory()
-        self.view = PatronViewSet.as_view() # This line is a problem
+        self.view = PatronViewSet.as_view({'get': 'list'}) # This line is a problem
         self.url = reverse('patron')
         self.user = User.objects.create(
             email = 'test@sample.com',
