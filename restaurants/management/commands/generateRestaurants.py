@@ -24,7 +24,11 @@ class Command(GenerateCommand):
             'Pizza', 'Wings', 'Hotdogs', 'Cafe', 'Coffee Shop', 'Steakhouse']
 
         #Get Valid Values for PK Field attributes
+        monarch_acc_id = self.User.objects.get(email='monarch@odu.edu').id
+
         valid_owners = list(self.User.objects.filter(user_type='restaurant').values_list('id',flat=True))
+        valid_owners.remove(monarch_acc_id)
+
         valid_tags = list(RestTag.objects.values_list('id',flat=True))
         
         data_list = []
