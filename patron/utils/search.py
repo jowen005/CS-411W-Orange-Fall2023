@@ -97,17 +97,18 @@ def advancedSearch(query_string:str, callorie_range:tuple=(0,10000), price_range
 
     #now it gets complicated and hard to track what the query should look like                                
     #theoretically we can save the query string until last weirdly
-    for queryElement in query_string.split(" "):
-        #input should be clean before getting here but JUST IN CASE we'll do a little input sanitization
-        queryElement = queryElement.replace('\"','')
-        queryElement = queryElement.strip()
+    if (query_string != ""):
+        for queryElement in query_string.split(" "):
+            #input should be clean before getting here but JUST IN CASE we'll do a little input sanitization
+            queryElement = queryElement.replace('\"','')
+            queryElement = queryElement.strip()
 
-        if(queryElement[0] == '-'):
-            #remove the first character ("-")
-            queryElement = queryElement[1:]
-            MenuItems = MenuItems.exclude(item_name__icontains = queryElement)
-        else:
-            MenuItems = MenuItems.filter(item_name__icontains = queryElement)
+            if(queryElement[0] == '-'):
+                #remove the first character ("-")
+                queryElement = queryElement[1:]
+                MenuItems = MenuItems.exclude(item_name__icontains = queryElement)
+            else:
+                MenuItems = MenuItems.filter(item_name__icontains = queryElement)
     
     #for debug purposes remove when finished
     print(MenuItems.query)
