@@ -10,7 +10,6 @@ from restaurants.serializers import MenuItemListSerializer
 # Create your views here.
 
 class PatronViewSet(viewsets.ModelViewSet):
-    serializer_class = serializers.PatronSerializer
     permission_classes = [permissions.IsAuthPatronAndIsUser]
 
     def get_queryset(self):
@@ -20,12 +19,16 @@ class PatronViewSet(viewsets.ModelViewSet):
         else:
             return models.Patron.objects.none()
         
+    def get_serializer_class(self):
+        if self.action == 'list' or self.action == 'retrieve':
+            return serializers.PatronGetSerializer
+        return serializers.PatronSerializer
+
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
 
 class SearchHistoryViewSet(viewsets.ModelViewSet):
-    serializer_class = serializers.PatronSearchHistorySerializer
     permission_classes = [permissions.IsAuthPatronIsUserNoUpdate]
 
     def get_queryset(self):
@@ -34,33 +37,52 @@ class SearchHistoryViewSet(viewsets.ModelViewSet):
             return models.PatronSearchHistory.objects.filter(patron=user)
         else:
             return models.PatronSearchHistory.objects.none()
+        
+    def get_serializer_class(self):
+        if self.action == 'list' or self.action == 'retrieve':
+            return serializers.PatronSearchHistoryGetSerializer
+        return serializers.PatronSearchHistorySerializer
     
-    def perform_create(self, serializer):
+    def create(self, request, *args, **kwargs):
+        
+        history_serializer = self.get_serializer(data=request.data)
+            
+        # Catch if Search object is invalid
+        try:
+            history_serializer.is_valid(raise_exception=True)
+
+        except serializers.ValidationError as e:
+            response_data = {
+                'message': 'Invalid input data.',
+                'errors': e.detail,
+            }
+            return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
+        
         #Call Search function with self.request.data which returns menu item IDs
         search_results = [1, 2, 3]
 
-        #If search was ok
+        # Handle if results were returned
         if len(search_results) > 0:
-            serializer.save(patron=self.request.user)
+            
+            history_serializer.save(patron=self.request.user)
 
             objects = MenuItem.objects.filter(id__in=search_results)
             menu_item_serializer = MenuItemListSerializer(objects, many=True)
-
+            
             response_data = {
                 'message': ' Search successfully performed.',
                 'results': menu_item_serializer.data,
             }
-
-            status_code = status.HTTP_201_CREATED
-            
-            return Response(response_data, status=status_code)
+            return Response(response_data, status=status.HTTP_201_CREATED)
         
-        response_data = {'message': 'Search Failed'}
+        # Handle if no results were returned or search failed
+        response_data = {
+            'message': 'No Results or Search Failed'
+        }
         return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
 
 
 class BookmarkViewSet(viewsets.ModelViewSet):
-    serializer_class = serializers.BookmarkSerializer
     permission_classes = [permissions.IsAuthPatronIsUserNoUpdate]
 
     def get_queryset(self):
@@ -70,23 +92,97 @@ class BookmarkViewSet(viewsets.ModelViewSet):
         else:
             return models.Bookmark.objects.none()
     
+    def get_serializer_class(self):
+        if self.action == 'list' or self.action == 'retrieve':
+            return serializers.BookmarkGetSerializer
+        return serializers.BookmarkSerializer
+
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(patron=self.request.user)
 
 
 class MenuItemHistoryViewSet(viewsets.ModelViewSet):
-    serializer_class = serializers.MenuItemHistorySerializer
     permission_classes = [permissions.IsAuthPatronIsUserNoUpdate]
 
     def get_queryset(self):
         user = self.request.user
         if user.user_type == 'patron':
-            return models.MealHistory.objects.filter(patron=user)
+            return models.MenuItemHistory.objects.filter(patron=user)
         else:
-            return models.MealHistory.objects.none()
+            return models.MenuItemHistory.objects.none()
     
+    def get_serializer_class(self):
+        if self.action == 'list' or self.action == 'retrieve':
+            return serializers.MenuItemHistoryGetSerializer
+        return serializers.MenuItemHistorySerializer
+
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(patron=self.request.user)
+
+    def create(self, request, *args, **kwargs):
+        bookmarkid = request.data.pop("bookmarkid")
+        history_serializer = self.get_serializer(data=request.data)
+        
+        # Catch if menu item history is invalid
+        try:
+            history_serializer.is_valid(raise_exception=True)
+
+        except serializers.ValidationError as e:
+            response_data = {
+                'message': 'Invalid input data.',
+                'errors': e.detail,
+            }
+            return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Handle if NOT adding from bookmarks
+        if request.data["bookmarkid"] == 0:     # 0 is invalid ID, meaning not added from bookmarks
+            history_serializer.save(patron=self.request.user)
+            response_data = {
+                'message': 'Successfully added to meal history.',
+                'results': history_serializer.data,
+            }
+            return Response(response_data, status=status.HTTP_201_CREATED)
+        
+        # Handle if adding from bookmarks
+        else:
+            # Catch if bookmark ID is invalid
+            try:
+                bookmark = models.Bookmark.objects.get(id=bookmarkid)
+
+                # Handle if specified menu item is the same as menu item in bookmark
+                if request.data["menu_item"] == bookmark.menu_item.id:
+                    
+                    bookmark.delete()
+                    history_serializer.save(patron=self.request.user)
+
+                    response_data = {
+                        'message': 'Successfully added to meal history and removed from bookmarks.',
+                        'results': history_serializer.data,
+                    }
+                    return Response(response_data, status=status.HTTP_201_CREATED)
+                
+                else:
+                    response_data = {
+                        'message': 'Supplied menu item ID does not match bookmark',
+                    }
+                    return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
+                
+            except models.Bookmark.DoesNotExist:
+                response_data = {
+                    'message': 'Bookmark not found with the specified bookmarkid.',
+                }
+                return Response(response_data, status=status.HTTP_404_NOT_FOUND)
+            
+            except Exception as ex:
+                response_data = {
+                    'message': 'An error occurred while processing the request.',
+                    'error': str(ex),
+                }
+                return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        
+
+
 
 
 

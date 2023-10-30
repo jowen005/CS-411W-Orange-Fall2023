@@ -101,12 +101,12 @@ class Command(GenerateCommand):
         valid_cook_style_tags = list(CookStyleTag.objects.values_list('id',flat=True))
         valid_taste_tags = list(TasteTag.objects.values_list('id',flat=True))
 
-        for tag in AllergyTag.objects.all():
-            print(f'{tag.id} - {tag.title}')
+        # for tag in AllergyTag.objects.all():
+        #     print(f'{tag.id} - {tag.title}')
 
-        print('\n')
-        for tag in RestrictionTag.objects.all():
-            print(f'{tag.id} - {tag.title}')
+        # print('\n')
+        # for tag in RestrictionTag.objects.all():
+        #     print(f'{tag.id} - {tag.title}')
 
         data_list = []
         for _ in range(count):
@@ -132,7 +132,7 @@ class Command(GenerateCommand):
             # allergy_indices = {allergy_value: index + 1 for index, allergy_value in enumerate(allergy_values)}
 
             allergy_indices = {value: allergy_ids[index] for index, value in enumerate(allergy_values)}
-            print(allergy_indices)
+            # print(allergy_indices)
             
             #print("Allergen values:", allergy_indices)
             allergy_tags = set()
@@ -169,7 +169,7 @@ class Command(GenerateCommand):
             def_restriction_values = list(RestrictionTag.objects.values_list('title', flat=True).order_by('id'))
             def_restriction_ids = list(RestrictionTag.objects.values_list('id', flat=True).order_by('id'))
             restriction_indices = {value: def_restriction_ids[index] for index, value in enumerate(def_restriction_values)}
-            print(f'{restriction_indices}\n')
+            # print(f'{restriction_indices}\n')
             
             #print("Updated restriction_tags_id:", restriction_indices)
             # Initialize a mapping to store the index (+1) of each common restriction value
