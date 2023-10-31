@@ -6,7 +6,7 @@ class Command(LoadCommand):
     DEFAULT_JSON_PATH = 'json_files/menuitemSetup.json'
 
     def loadTagList(self,tagValue,modelTags):
-        #read the allergy values and ids from DB     
+        #read the Tags values and ids from DB     
         values = list(modelTags.objects.values_list('title', flat=True).order_by('id'))
         ids = list(modelTags.objects.values_list('id', flat=True).order_by('id'))
         indices = {value: ids[index] for index, value in enumerate(values)}
@@ -17,7 +17,7 @@ class Command(LoadCommand):
                     tag_id.add(indices[value])
         return tag_id
     def loadTagStr(self, tagValue,modelTags):
-        #read the allergy values and ids from DB     
+        #read the Tags values and ids from DB     
         values = list(modelTags.objects.values_list('title', flat=True).order_by('id'))
         ids = list(modelTags.objects.values_list('id', flat=True).order_by('id'))
         indices = {value: ids[index] for index, value in enumerate(values)}
