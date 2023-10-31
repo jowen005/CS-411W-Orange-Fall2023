@@ -1,0 +1,111 @@
+from restaurants.models import Restaurant, MenuItem, FoodTypeTag, CookStyleTag, AllergyTag, RestrictionTag, TasteTag, IngredientTag
+from lcc_project.commands.load import LoadCommand, add_file_path
+
+@add_file_path
+class Command(LoadCommand):
+    DEFAULT_JSON_PATH = 'json_files/menuitemSetup.json'
+
+    def loadTagList(self,tagValue,modelTags):
+        #read the allergy values and ids from DB     
+        values = list(modelTags.objects.values_list('title', flat=True).order_by('id'))
+        ids = list(modelTags.objects.values_list('id', flat=True).order_by('id'))
+        indices = {value: ids[index] for index, value in enumerate(values)}
+        tag_id = set()
+        #check load the ids
+        for value in tagValue:
+            if value in values:
+                    tag_id.add(indices[value])
+        return tag_id
+    def loadTagStr(self, tagValue,modelTags):
+        #read the allergy values and ids from DB     
+        values = list(modelTags.objects.values_list('title', flat=True).order_by('id'))
+        ids = list(modelTags.objects.values_list('id', flat=True).order_by('id'))
+        indices = {value: ids[index] for index, value in enumerate(values)}
+        tag_id = indices.get(tagValue,None)
+        return tag_id
+    
+    def load(self, data_list):
+        for obj in data_list:
+            item_name = obj.pop('item_name')
+            restaurant_name = obj.pop('restaurant_name')
+            rest_names = list(Restaurant.objects.values_list('name', flat=True).order_by('id'))
+            rest_ids = list(Restaurant.objects.values_list('id', flat=True).order_by('id'))
+            indices = {value: rest_ids[index] for index, value in enumerate(rest_names)}
+            restaurant_id = indices.get(restaurant_name,None)
+            
+            # Check the restaurant name and assign the item accordingly
+            if  restaurant_name == "Monarch Wings and Things":
+                restaurant = Restaurant.objects.get(pk=restaurant_id)
+                foodType = obj.pop('food_type_tag_id')
+                food_type_tag_id = self.loadTagStr(foodType,FoodTypeTag)
+                taste = obj.pop('taste_tags')
+                taste_tags_id = self.loadTagList([taste],TasteTag)
+                cookStyle = obj.pop('cook_style_tags_id')
+                cook_style_tags_id = self.loadTagStr(cookStyle,CookStyleTag)
+                allergy = obj.pop('menu_allergy_tag')
+                menu_allergy_tag_id = self.loadTagList([allergy],AllergyTag)
+                restriction = obj.pop('menu_restriction_id')
+                menu_restriction_id = self.loadTagList([restriction],RestrictionTag)
+                ingredients = obj.pop('ingredients_tag')
+                ingredients_tag_id = self.loadTagList([ingredients],IngredientTag)
+
+                # Retrieve objects referenced by primary keys
+                food_type_tag = FoodTypeTag.objects.get(pk=food_type_tag_id)
+                cook_style_tags = CookStyleTag.objects.get(pk=cook_style_tags_id)
+                
+                menu_restriction_tag = [RestrictionTag.objects.get(pk=id) for id in menu_restriction_id]
+                menu_allergy_tag = [AllergyTag.objects.get(pk=id) for id in menu_allergy_tag_id]
+                ingredients_tag = [IngredientTag.objects.get(pk=id) for id in ingredients_tag_id]
+                taste_tags = [TasteTag.objects.get(pk=id) for id in taste_tags_id]
+
+                # Create the MenuItem object for "Monarch Wings and Things"
+                item = MenuItem.objects.create(
+                    restaurant=restaurant,
+                    food_type_tag=food_type_tag,
+                    cook_style_tags=cook_style_tags,
+                    item_name=item_name,
+                    **obj
+                )
+                # Set the many-to-many relationships
+                item.taste_tags.set(taste_tags)
+                item.ingredients_tag.set(ingredients_tag)
+                item.menu_allergy_tag.set(menu_allergy_tag)
+                item.menu_restriction_tag.set(menu_restriction_tag)
+                # Create the object for "Monarch Butterflies"
+            elif restaurant_name == "Monarch Butterflies":
+                restaurant = Restaurant.objects.get(pk=restaurant_id)
+                foodType = obj.pop('food_type_tag_id')
+                food_type_tag_id = self.loadTagStr(foodType,FoodTypeTag)
+                taste = obj.pop('taste_tags')
+                taste_tags_id = self.loadTagList([taste],TasteTag)
+                cookStyle = obj.pop('cook_style_tags_id')
+                cook_style_tags_id = self.loadTagStr(cookStyle,CookStyleTag)
+                allergy = obj.pop('menu_allergy_tag')
+                menu_allergy_tag_id = self.loadTagList([allergy],AllergyTag)
+                restriction = obj.pop('menu_restriction_id')
+                menu_restriction_id = self.loadTagList([restriction],RestrictionTag)
+                ingredients = obj.pop('ingredients_tag')
+                ingredients_tag_id = self.loadTagList([ingredients],IngredientTag)
+
+                # Retrieve objects referenced by primary keys
+                food_type_tag = FoodTypeTag.objects.get(pk=food_type_tag_id)
+                cook_style_tags = CookStyleTag.objects.get(pk=cook_style_tags_id)
+                
+                menu_restriction_tag = [RestrictionTag.objects.get(pk=id) for id in menu_restriction_id]
+                menu_allergy_tag = [AllergyTag.objects.get(pk=id) for id in menu_allergy_tag_id]
+                ingredients_tag = [IngredientTag.objects.get(pk=id) for id in ingredients_tag_id]
+                taste_tags = [TasteTag.objects.get(pk=id) for id in taste_tags_id]
+
+                # Create the MenuItem object for "Monarch Butterflies"
+                item = MenuItem.objects.create(
+                    restaurant=restaurant,
+                    food_type_tag=food_type_tag,
+                    cook_style_tags=cook_style_tags,
+                    item_name=item_name,
+                    **obj
+                )
+                # Set the many-to-many relationships
+                item.taste_tags.set(taste_tags)
+                item.ingredients_tag.set(ingredients_tag)
+                item.menu_allergy_tag.set(menu_allergy_tag)
+                item.menu_restriction_tag.set(menu_restriction_tag)
