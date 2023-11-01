@@ -14,7 +14,7 @@ User = get_user_model()
 class PatronGetSerializer(serializers.ModelSerializer):
     name = serializers.CharField(max_length=255)
 
-    gender = serializers.CharField(max_length=10)
+    gender = serializers.ChoiceField(choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')])
     zipcode = serializers.CharField(max_length=10)
 
     patron_restriction_tag = rs.RestrictionTagSerializer(many=True)

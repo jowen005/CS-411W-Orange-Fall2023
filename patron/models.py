@@ -12,7 +12,7 @@ class Patron(models.Model):
     name = models.CharField(max_length=255)
     dob = models.DateField()
     calorie_limit = models.PositiveIntegerField()
-    gender = models.CharField(max_length=10)
+    gender = models.CharField(max_length=6, choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')])
 
     # price_preference = models.CharField(max_length=5, choices=[('$', '$'), ('$$', '$$'), ('$$$', '$$$')])
     price_max = models.PositiveIntegerField(null=True)
