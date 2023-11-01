@@ -57,21 +57,28 @@ class Command(LoadCommand):
                 menu_allergy_tag = [AllergyTag.objects.get(pk=id) for id in menu_allergy_tag_id]
                 ingredients_tag = [IngredientTag.objects.get(pk=id) for id in ingredients_tag_id]
                 taste_tags = [TasteTag.objects.get(pk=id) for id in taste_tags_id]
-
-                # Create the MenuItem object for "Monarch Wings and Things"
-                item = MenuItem.objects.create(
-                    restaurant=restaurant,
-                    food_type_tag=food_type_tag,
-                    cook_style_tags=cook_style_tags,
-                    item_name=item_name,
-                    **obj
-                )
-                # Set the many-to-many relationships
-                item.taste_tags.set(taste_tags)
-                item.ingredients_tag.set(ingredients_tag)
-                item.menu_allergy_tag.set(menu_allergy_tag)
-                item.menu_restriction_tag.set(menu_restriction_tag)
+                #check if menu item exited
+                try:
+                    item = MenuItem.objects.get(item_name=item_name)
+                    for attr, value in obj.items():
+                        setattr(item, attr, value)
+                    item.save()
+                # Create the MenuItem object for "Monarch Wings and Things" if object dose not exit
+                except MenuItem.DoesNotExist:
+                    item = MenuItem.objects.create(
+                        restaurant=restaurant,
+                        food_type_tag=food_type_tag,
+                        cook_style_tags=cook_style_tags,
+                        item_name=item_name,
+                        **obj
+                    )
+                    # Set the many-to-many relationships
+                    item.taste_tags.set(taste_tags)
+                    item.ingredients_tag.set(ingredients_tag)
+                    item.menu_allergy_tag.set(menu_allergy_tag)
+                    item.menu_restriction_tag.set(menu_restriction_tag)
                 # Create the object for "Monarch Butterflies"
+            
             elif restaurant_name == "Monarch Butterflies":
                 restaurant = Restaurant.objects.get(pk=restaurant_id)
                 foodType = obj.pop('food_type_tag_id')
@@ -95,7 +102,21 @@ class Command(LoadCommand):
                 menu_allergy_tag = [AllergyTag.objects.get(pk=id) for id in menu_allergy_tag_id]
                 ingredients_tag = [IngredientTag.objects.get(pk=id) for id in ingredients_tag_id]
                 taste_tags = [TasteTag.objects.get(pk=id) for id in taste_tags_id]
-
+            #check if menu item exited
+            try:
+                item = MenuItem.objects.get(item_name=item_name)
+                for attr, value in obj.items():
+                    setattr(item, attr, value)
+                item.save()
+            # Create the MenuItem object for "Monarch Wings and Things" if object dose not exit
+            except MenuItem.DoesNotExist:
+                item = MenuItem.objects.create(
+                    restaurant=restaurant,
+                    food_type_tag=food_type_tag,
+                    cook_style_tags=cook_style_tags,
+                    item_name=item_name,
+                    **obj
+                )
                 # Create the MenuItem object for "Monarch Butterflies"
                 item = MenuItem.objects.create(
                     restaurant=restaurant,
@@ -109,3 +130,6 @@ class Command(LoadCommand):
                 item.ingredients_tag.set(ingredients_tag)
                 item.menu_allergy_tag.set(menu_allergy_tag)
                 item.menu_restriction_tag.set(menu_restriction_tag)
+        print("-"*50)
+        print("loadDefaultMenuItem Report")
+        print("-"*50)
