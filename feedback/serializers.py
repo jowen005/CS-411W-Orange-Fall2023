@@ -11,13 +11,12 @@ User = get_user_model()
 
 # Serializer for combined Review model
 class ReviewsGetSerializer(serializers.ModelSerializer):
-    menuItem_history = serializers.PrimaryKeyRelatedField(queryset=pm.MenuItemHistory.objects.all())
     
     menu_item = rs.MenuItemListSerializer()
     # menu_item = serializers.PrimaryKeyRelatedField(queryset=rm.MenuItem.objects.all())
     
-    patron_review = serializers.CharField(max_length=255)
-    ratings = serializers.ChoiceField(
+    review = serializers.CharField(max_length=255)
+    rating = serializers.ChoiceField(
         choices = [('1', '1'), ('2', '2'), ('3', '3'),('4', '4'),('5', '5')],
     )
 
@@ -27,13 +26,12 @@ class ReviewsGetSerializer(serializers.ModelSerializer):
         read_only_fields = ['patron']
 
 class ReviewsSerializer(serializers.ModelSerializer):
-    menuItem_history = serializers.PrimaryKeyRelatedField(queryset=pm.MenuItemHistory.objects.all())
     
     # menu_item = rs.MenuItemListSerializer()
     menu_item = serializers.PrimaryKeyRelatedField(queryset=rm.MenuItem.objects.all())
     
-    patron_review = serializers.CharField(max_length=255)
-    ratings = serializers.ChoiceField(
+    review = serializers.CharField(max_length=255)
+    rating = serializers.ChoiceField(
         choices = [('1', '1'), ('2', '2'), ('3', '3'),('4', '4'),('5', '5')],
     )
 

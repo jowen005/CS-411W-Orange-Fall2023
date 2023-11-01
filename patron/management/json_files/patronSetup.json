@@ -14,9 +14,9 @@
 
         ],
         "patron_taste_tag": [
-            "spicey",
+            "spicy",
             "sweet",
-            "omami"
+            "umami"
         ]
     },
     {
@@ -34,7 +34,7 @@
             "peanuts"
         ],
         "patron_taste_tag": [
-            "spicey",
+            "spicy",
             "sour"
         ]
     },
@@ -53,7 +53,7 @@
             "tree_nuts"
         ],
         "patron_taste_tag": [
-            "omami"
+            "umami"
         ]
     },
     {
@@ -90,7 +90,7 @@
             
         ],
         "patron_taste_tag": [
-            "omami"
+            "umami"
         ]
     }
 ]

@@ -3,6 +3,7 @@ from restaurants.models import MenuItem,RestrictionTag,AllergyTag,TasteTag,Ingre
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
 from decimal import Decimal
+from feedback.models import Reviews
 
 User = get_user_model()
 
@@ -91,7 +92,10 @@ class PatronSearchHistory(models.Model):
 class MenuItemHistory(models.Model):
     """A MenuItem history associated with a menu item"""
     patron = models.ForeignKey(User, on_delete=models.CASCADE, related_name='meal_history')
-    menu_item = models.ForeignKey(MenuItem, on_delete=models.SET_NULL,null=True)  
+    
+    review = models.OneToOneField(Reviews, on_delete=models.SET_NULL, null=True)
+    
+    menu_item = models.ForeignKey(MenuItem, on_delete=models.SET_NULL, null=True)  
     MenuItemHS_datetime = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

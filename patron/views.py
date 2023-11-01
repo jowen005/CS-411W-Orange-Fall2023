@@ -6,6 +6,7 @@ from rest_framework import status, viewsets
 from . import models, serializers, permissions
 from restaurants.models import RestrictionTag, AllergyTag, TasteTag, IngredientTag, MenuItem
 from restaurants.serializers import MenuItemListSerializer
+from feedback.models import Reviews
 
 # Create your views here.
 
@@ -120,7 +121,16 @@ class MenuItemHistoryViewSet(viewsets.ModelViewSet):
         serializer.save(patron=self.request.user)
 
     def create(self, request, *args, **kwargs):
-        bookmarkid = request.data.pop("bookmarkid")
+        
+        bookmarkid = request.data.pop("bookmarkid", 0)
+        review = Reviews.objects.get(id=request.data['review'])
+
+        if request.data['menu_item'] != review.menu_item.id:
+            response_data = {
+                'message': 'Menu Item referenced by review does not match supplied menu item.'
+            }
+            return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
+
         history_serializer = self.get_serializer(data=request.data)
         
         # Catch if menu item history is invalid
@@ -135,7 +145,7 @@ class MenuItemHistoryViewSet(viewsets.ModelViewSet):
             return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
         
         # Handle if NOT adding from bookmarks
-        if request.data["bookmarkid"] == 0:     # 0 is invalid ID, meaning not added from bookmarks
+        if bookmarkid == 0:     # 0 is invalid ID, meaning not added from bookmarks
             history_serializer.save(patron=self.request.user)
             response_data = {
                 'message': 'Successfully added to meal history.',

@@ -1,6 +1,5 @@
 from django.db import models
 from restaurants.models import MenuItem
-from patron.models import MenuItemHistory
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
 from decimal import Decimal
@@ -9,19 +8,13 @@ from decimal import Decimal
 User = get_user_model()
 
 
-# Why does review have menu item history attribute
-# Shouldnt menu item history attribute have a feedback object?
-# This way when adding to history,
-#   1. feedback object is created before history object
-#   2. history object can display review but review cant display history entry?
-
 class Reviews(models.Model):
     #When patron delete his account, the reviews still remains.
     #when menu_item deleted, the reviews will not available.
     #when menuItem_history deleted, the reviews still remains.
     patron = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE, null=True) 
-    menuItem_history = models.ForeignKey(MenuItemHistory, on_delete=models.SET_NULL,null=True)
+    menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE, null=True)
+    
     review = models.CharField(max_length=255,null=True)
     rating = models.IntegerField(
         choices = [('1', '1'), ('2', '2'), ('3', '3'),('4', '4'),('5', '5')], null=True
@@ -36,9 +29,9 @@ class Reviews(models.Model):
 
         # Calculate the new average rating for the associated menu item
         menu_item = self.menu_item
-        ratings = Reviews.objects.filter(menu_item=menu_item)
-        total_ratings = sum(float(r.ratings) for r in ratings)
-        average_rating = total_ratings / len(ratings)
+        reviews = Reviews.objects.filter(menu_item=menu_item)
+        total_ratings = sum(float(r.rating) for r in reviews)
+        average_rating = total_ratings / len(reviews)
 
         # Update the average_rating field in the MenuItem model
         menu_item.average_rating = average_rating

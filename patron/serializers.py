@@ -3,6 +3,8 @@ from . import models
 from django.contrib.auth import get_user_model
 import restaurants.serializers as rs
 import restaurants.models as rm
+import feedback.serializers as fs
+import feedback.models as fm
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 
@@ -149,6 +151,8 @@ class BookmarkSerializer(serializers.ModelSerializer):
 
 class MenuItemHistoryGetSerializer(serializers.ModelSerializer):
     menu_item = rs.MenuItemListSerializer()
+    review = fs.ReviewsSerializer()
+    # review = fs.ReviewsGetSerializer()
     # menu_item = serializers.PrimaryKeyRelatedField(queryset=rm.MenuItem.objects.all())
 
     class Meta:
@@ -164,6 +168,7 @@ class MenuItemHistoryGetSerializer(serializers.ModelSerializer):
 class MenuItemHistorySerializer(serializers.ModelSerializer):
     # menu_item = rs.MenuItemListSerializer()
     menu_item = serializers.PrimaryKeyRelatedField(queryset=rm.MenuItem.objects.all())
+    review = serializers.PrimaryKeyRelatedField(queryset=fm.Reviews.objects.all())
 
     class Meta:
         model = models.MenuItemHistory
