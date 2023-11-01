@@ -31,12 +31,14 @@ class RestaurantTests(APITestCase):
                             username='patron', password="password", user_type='patron')
         cls.patron_access = create_jwt_pair_for_user(cls.patron_user)['access']
 
+        # Create rest tags
         cls.rest_tag_names = ["Fast Food", "Bar", "Southwest", "American", "Ice Cream Parlor"]
-        cls.rest_tags = []
+        cls.rest_tags = [] # List for created rest tag names
 
         for tag in cls.rest_tag_names:
-            models.RestTag.objects.create(title=tag)
-            cls.rest_tags.append(models.RestTag.objects.get(title=tag))
+            models.RestTag.objects.create(title=tag) # Create rest tags
+            # Append the names of the created rest tags to the rest_tags list to use for data initialization below
+            cls.rest_tags.append(models.RestTag.objects.get(title=tag)) 
 
     
         cls.data = [
