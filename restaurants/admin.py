@@ -18,3 +18,12 @@ admin.site.register(TasteTag)
 
 from .models import MenuItem
 admin.site.register(MenuItem)
+
+from .models import RestrictionTag
+admin.site.register(RestrictionTag)
+
+from .models import AllergyTag
+admin.site.register(AllergyTag)
+
+from .models import IngredientTag
+admin.site.register(IngredientTag)

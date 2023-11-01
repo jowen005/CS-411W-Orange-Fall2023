@@ -16,7 +16,7 @@ class Command(LoadCommand):
 
         PresentRestTags = list(RestTag.objects.values_list('title',flat=True))
         PresentFoodTags = list(FoodTypeTag.objects.values_list('title',flat=True))
-        PresentCookStyleags = list(CookStyleTag.objects.values_list('title',flat=True))
+        PresentCookStyleTags = list(CookStyleTag.objects.values_list('title',flat=True))
         PresentAllergyTags = list(AllergyTag.objects.values_list('title',flat=True))
         PresentTasteTags = list(TasteTag.objects.values_list('title',flat=True))
         PresentRestrictionTags = list(RestrictionTag.objects.values_list('title',flat=True))
@@ -31,6 +31,7 @@ class Command(LoadCommand):
         newRestrTags = 0
         newIngrTags = 0
 
+        #TO-DO should probably compair the database before and after instead of using a counter just to be sure they were actually added.
         for el in TAGS['RestTag']:
             elementsEvaluated += 1
             if not(el in PresentRestTags):
@@ -43,7 +44,7 @@ class Command(LoadCommand):
                 FoodTypeTag.objects.create(title=str(el))
         for el in TAGS['CookStyleTag']:
             elementsEvaluated += 1
-            if not(el in PresentCookStyleags):
+            if not(el in PresentCookStyleTags):
                 newCookTags += 1
                 CookStyleTag.objects.create(title=str(el))
         for el in TAGS['AllergyTag']:
@@ -71,7 +72,7 @@ class Command(LoadCommand):
         print("loadMenuTags Report")
         print("-"*50)
 
-        print(str(elementsEvaluated) + " elements evelauated.")
+        print(str(elementsEvaluated) + " elements evaluated.")
         print("\t" + str(newRestTags) + " new restaurant  tags added.")
         print("\t" + str(newFoodTags) + " new food        tags added.")
         print("\t" + str(newCookTags) + " new cook style  tags added.")

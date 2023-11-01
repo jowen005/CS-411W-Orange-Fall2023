@@ -3,6 +3,7 @@ from restaurants.models import MenuItem,RestrictionTag,AllergyTag,TasteTag,Ingre
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
 from decimal import Decimal
+from feedback.models import Reviews
 
 User = get_user_model()
 
@@ -12,11 +13,14 @@ class Patron(models.Model):
     dob = models.DateField()
     calorie_limit = models.PositiveIntegerField()
     gender = models.CharField(max_length=10)
-    price_preference = models.CharField(max_length=5, choices=[('$', '$'), ('$$', '$$'), ('$$$', '$$$')])
+
+    # price_preference = models.CharField(max_length=5, choices=[('$', '$'), ('$$', '$$'), ('$$$', '$$$')])
+    price_max = models.PositiveIntegerField(null=True)
+
     zipcode = models.CharField(max_length=10)
     patron_restriction_tag = models.ManyToManyField(RestrictionTag)
     patron_allergy_tag = models.ManyToManyField(AllergyTag)
-    # disliked_ingredients = models.ManyToManyField(IngredientTag)
+    disliked_ingredients = models.ManyToManyField(IngredientTag)
     patron_taste_tag = models.ManyToManyField(TasteTag)
     
     def __str__(self):
@@ -48,7 +52,20 @@ class PatronSearchHistory(models.Model):
     patron = models.ForeignKey(User,on_delete=models.CASCADE,related_name = 'search_history')
     query = models.CharField(max_length=255) 
     calorie_limit = models.PositiveIntegerField(null=True, blank=True)
-    dietary_restriction = models.CharField(max_length=255, blank=True)
+
+    #Replace this
+    # dietary_restriction = models.CharField(max_length=255, blank=True)
+
+    #With this
+    dietary_restriction_tags = models.ManyToManyField(RestrictionTag)
+    allergy_tags = models.ManyToManyField(AllergyTag)
+    disliked_ingredients = models.ManyToManyField(IngredientTag)
+    patron_taste_tags = models.ManyToManyField(TasteTag)
+
+    #conversion from price level to price min max
+    # QS - in backend
+    # AS - in frontend
+    
     # store the price range number which min to max. 
     price_min = models.DecimalField(
         max_digits=8,  # Total number of digits
@@ -72,11 +89,14 @@ class PatronSearchHistory(models.Model):
     class Meta:
         db_table = 'PatronSearchHistory'
 
-class MealHistory(models.Model):
-    """A meal history associated with a menu item"""
+class MenuItemHistory(models.Model):
+    """A MenuItem history associated with a menu item"""
     patron = models.ForeignKey(User, on_delete=models.CASCADE, related_name='meal_history')
-    menu_item = models.ForeignKey(MenuItem, on_delete=models.SET_NULL,null=True)  
-    mealHS_datetime = models.DateTimeField(auto_now_add=True)
+    
+    review = models.OneToOneField(Reviews, on_delete=models.SET_NULL, null=True)
+    
+    menu_item = models.ForeignKey(MenuItem, on_delete=models.SET_NULL, null=True)  
+    MenuItemHS_datetime = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f'{self.patron.username} - {self.menu_item}'
@@ -85,4 +105,4 @@ class MealHistory(models.Model):
         return self.search_datetime.strftime('%d/%m/%y %H:%M:%S')
 
     class Meta:
-        db_table = 'MealHistory'
+        db_table = 'MenuItemHistory'

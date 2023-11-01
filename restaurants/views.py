@@ -24,6 +24,8 @@ class RestaurantViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == 'list':
             return serializers.RestaurantListSerializer
+        if self.action == 'retrieve':
+            return serializers.RestaurantGetSerializer
         return serializers.RestaurantSerializer
 
 
@@ -48,6 +50,8 @@ class MenuItemViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == 'list':
             return serializers.MenuItemListSerializer
+        if self.action == 'retrieve':
+            return serializers.MenuItemGetSerializer
         return serializers.MenuItemSerializer
 
 
