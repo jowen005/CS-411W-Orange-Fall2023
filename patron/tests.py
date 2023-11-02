@@ -163,6 +163,45 @@ class PatronTests(APITestCase):
         cls.detail_url = reverse(f'{cls.basename}-detail', kwargs={'pk': 1})
         cls.invalid_url = reverse(f'{cls.basename}-detail', kwargs={'pk': 10}) #retrieve, update, delete
 
+    # Test if patron user accounts can access their patron profiles
+    def test_list_patron_with_patron(self):
+        pat0_response = self.client.get(self.list_url, HTTP_AUTHORIZATION=f'Bearer {self.patron0_access}')
+        pat1_response = self.client.get(self.list_url, HTTP_AUTHORIZATION=f'Bearer {self.patron1_access}')
+        pat2_response = self.client.get(self.list_url, HTTP_AUTHORIZATION=f'Bearer {self.patron2_access}')
+
+        #Pat0 Tests
+        self.assertEqual(pat0_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(pat0_response.data), 1)
+
+        pat_owned = list(models.Patron.objects.filter(user=self.patron0_user).values_list('id',flat=True))
+        for obj in pat0_response.data:
+            self.assertTrue(obj["id"] in pat_owned)
+            pat_owned.remove(obj["id"])
+
+        self.assertEqual(len(pat_owned), 0)
+
+        #Pat1 Tests
+        self.assertEqual(pat1_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(pat1_response.data), 1)
+
+        pat_owned = list(models.Patron.objects.filter(user=self.patron1_user).values_list('id',flat=True))
+        for obj in pat1_response.data:
+            self.assertTrue(obj["id"] in pat_owned)
+            pat_owned.remove(obj["id"])
+
+        self.assertEqual(len(pat_owned), 0)
+
+        #Pat2 Tests
+        self.assertEqual(pat2_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(pat2_response.data), 1)
+
+        pat_owned = list(models.Patron.objects.filter(user=self.patron2_user).values_list('id',flat=True))
+        for obj in pat2_response.data:
+            self.assertTrue(obj["id"] in pat_owned)
+            pat_owned.remove(obj["id"])
+
+        self.assertEqual(len(pat_owned), 0)
+
 
     # def test_list_patron(self):
     #     patron_response = self.client.get(self.list_url, HTTP_AUTHORIZATION=f'Bearer {self.patron0_access}')
