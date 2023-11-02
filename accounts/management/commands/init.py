@@ -17,7 +17,7 @@ class Command(BaseCommand):
         call_command('loadMenuTags')
         call_command('loadDefaultPatrons')
         call_command('loadDefaultRestaurants')
-        
+        call_command('loadDefaultMenuItem')
 
         self.stdout.write(self.style.SUCCESS(f'All commands were called'))
 

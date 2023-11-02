@@ -19,8 +19,8 @@
     {
         "item_name": "Chocolate Ice Cream Cone with Nuts",
         "restaurant_name": "Monarch Wings and Things",
-        "price": 300,
-        "calories": 4.75,
+        "price": 4.75,
+        "calories": 300,
 
         "food_type_tag_id": "dessert",
         "taste_tags": "sweet",
