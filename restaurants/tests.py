@@ -171,7 +171,6 @@ class MenuItemTests(APITestCase):
         self.assertEqual(patron_response.status_code, status.HTTP_200_OK)
         self.assertEqual(patron_response.data['item_name'], expected_menuitem.item_name)
 
-
     def test_update_menuitem_rest(self):
         pass
 
