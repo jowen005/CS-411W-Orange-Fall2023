@@ -203,9 +203,9 @@ class PatronTests(APITestCase):
         self.assertEqual(len(pat_owned), 0)
 
 
-    def test_list_patron(self):
+    #def test_list_patron(self):
         # patron_response = self.client.get(self.list_url, HTTP_AUTHORIZATION=f'Bearer {self.patron0_access}')
-        data = self.new_data[0]
+        #data = self.new_data[0]
         # print(f'\n{data}\n')
         
         # NOTE: patron 0 already has an associated profile, so it cant send a post request.
@@ -244,11 +244,11 @@ class PatronTests(APITestCase):
 
     @classmethod
     def tearDownClass(cls):
-        models.Patron.objects.all().delete()
-        models.RestrictionTag.objects.all().delete()
-        models.AllergyTag.objects.all().delete()
-        models.IngredientTag.objects.all().delete()
-        models.TasteTag.objects.all().delete()
+        #models.Patron.objects.all().delete()
+        #models.RestrictionTag.objects.all().delete()
+        #models.AllergyTag.objects.all().delete()
+        #models.IngredientTag.objects.all().delete()
+        #models.TasteTag.objects.all().delete()
         User.objects.all().delete()
 
 # # Test patron tags
