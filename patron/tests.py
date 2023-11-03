@@ -1,14 +1,14 @@
-# from rest_framework.test import APITestCase
-# from rest_framework.test import APIRequestFactory
-# from django.urls import reverse
-# from rest_framework import status
+from rest_framework.test import APITestCase
+from rest_framework.test import APIRequestFactory
+from django.urls import reverse
+from rest_framework import status
 # from .views import PatronViewSet
-# from django.contrib.auth import get_user_model
-# from accounts.tokens import create_jwt_pair_for_user
-# from rest_framework import status
-# from . import models
+from django.contrib.auth import get_user_model
+from accounts.tokens import create_jwt_pair_for_user
+from rest_framework import status
+from . import models
 
-# User = get_user_model()
+User = get_user_model()
 
 # Test patron view set
 class PatronTests(APITestCase):
@@ -156,12 +156,12 @@ class PatronTests(APITestCase):
             }
         ]
 
-#         #Url Stuff
-#         cls.basename = 'patron'
-#         cls.list_url = reverse(f'{cls.basename}-list') #list and create (get, post)
+        #Url Stuff
+        cls.basename = 'patron'
+        cls.list_url = reverse(f'{cls.basename}-list') #list and create (get, post)
           
-#         cls.detail_url = reverse(f'{cls.basename}-detail', kwargs={'pk': 1})
-#         cls.invalid_url = reverse(f'{cls.basename}-detail', kwargs={'pk': 10}) #retrieve, update, delete
+        cls.detail_url = reverse(f'{cls.basename}-detail', kwargs={'pk': 1})
+        cls.invalid_url = reverse(f'{cls.basename}-detail', kwargs={'pk': 10}) #retrieve, update, delete
 
     # Test if patron user accounts can access their patron profiles
     def test_list_patron_with_patron(self):
@@ -203,14 +203,18 @@ class PatronTests(APITestCase):
         self.assertEqual(len(pat_owned), 0)
 
 
-    # def test_list_patron(self):
-    #     patron_response = self.client.get(self.list_url, HTTP_AUTHORIZATION=f'Bearer {self.patron0_access}')
-    #     patron_response = self.client.post(self.list_url, self.data, HTTP_AUTHORIZATION=f'Bearer {self.patron0_access}')
+    def test_list_patron(self):
+        # patron_response = self.client.get(self.list_url, HTTP_AUTHORIZATION=f'Bearer {self.patron0_access}')
+        data = self.new_data[0]
+        # print(f'\n{data}\n')
+        
+        # NOTE: patron 0 already has an associated profile, so it cant send a post request.
+        # patron_response = self.client.post(self.list_url, self.new_data[0], HTTP_AUTHORIZATION=f'Bearer {self.patron0_access}')
 
-    #     self.assertEqual(patron_response.status_code, status.HTTP_200_OK)
+        # self.assertEqual(patron_response.status_code, status.HTTP_200_OK)
 
-    #     profile = models.Patron.objects.filter(user=patron_response.user)
-    #     self.assertEqual(patron_response.data['name'], profile.name)
+        # profile = models.Patron.objects.filter(user=patron_response.user)
+        # self.assertEqual(patron_response.data['name'], profile.name)
 
 
 #     # def patron_test_status(self):
@@ -238,9 +242,14 @@ class PatronTests(APITestCase):
 #     #     # Test to see if patron is created
 #     #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-#     @classmethod
-#     def tearDownClass(self):
-#         User.objects.all().delete()
+    @classmethod
+    def tearDownClass(cls):
+        models.Patron.objects.all().delete()
+        models.RestrictionTag.objects.all().delete()
+        models.AllergyTag.objects.all().delete()
+        models.IngredientTag.objects.all().delete()
+        models.TasteTag.objects.all().delete()
+        User.objects.all().delete()
 
 # # Test patron tags
 # # class PatronTagTestCase(APITestCase):
