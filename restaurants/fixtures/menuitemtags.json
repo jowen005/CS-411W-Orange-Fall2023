@@ -1,0 +1,139 @@
+[
+    {
+        "model":"restaurants.FoodTypeTag",
+        "pk": 1,
+        "fields": {
+            "title":"Appetizer"
+        }
+    },
+    {
+        "model":"restaurants.FoodTypeTag",
+        "pk": 2,
+        "fields": {
+            "title":"Entree"
+        }
+    },
+    {
+        "model":"restaurants.FoodTypeTag",
+        "pk": 3,
+        "fields": {
+            "title":"Dessert"
+        }
+    },
+
+
+    {
+        "model":"restaurants.CookStyleTag",
+        "pk": 1,
+        "fields": {
+            "title":"Fried"
+        }
+    },
+    {
+        "model":"restaurants.CookStyleTag",
+        "pk": 2,
+        "fields": {
+            "title":"Grilled"
+        }
+    },
+    {
+        "model":"restaurants.CookStyleTag",
+        "pk": 3,
+        "fields": {
+            "title":"Baked"
+        }
+    },
+
+
+    {
+        "model":"restaurants.TasteTag",
+        "pk": 1,
+        "fields": {
+            "title":"Sweet"
+        }
+    },
+    {
+        "model":"restaurants.TasteTag",
+        "pk": 2,
+        "fields": {
+            "title":"Spicy"
+        }
+    },
+    {
+        "model":"restaurants.TasteTag",
+        "pk": 3,
+        "fields": {
+            "title":"Salty"
+        }
+    },
+
+
+    {
+        "model":"restaurants.RestrictionTag",
+        "pk": 1,
+        "fields": {
+            "title":"Halal"
+        }
+    },
+    {
+        "model":"restaurants.RestrictionTag",
+        "pk": 2,
+        "fields": {
+            "title":"Vegan"
+        }
+    },
+    {
+        "model":"restaurants.RestrictionTag",
+        "pk": 3,
+        "fields": {
+            "title":"Keto"
+        }
+    },
+
+
+    {
+        "model":"restaurants.AllergyTag",
+        "pk": 1,
+        "fields": {
+            "title":"Peanuts"
+        }
+    },
+    {
+        "model":"restaurants.AllergyTag",
+        "pk": 2,
+        "fields": {
+            "title":"Wheat"
+        }
+    },
+    {
+        "model":"restaurants.AllergyTag",
+        "pk": 3,
+        "fields": {
+            "title":"Shellfish"
+        }
+    },
+
+
+    {
+        "model":"restaurants.IngredientTag",
+        "pk": 1,
+        "fields": {
+            "title":"Beef"
+        }
+    },
+    {
+        "model":"restaurants.IngredientTag",
+        "pk": 2,
+        "fields": {
+            "title":"Cheese"
+        }
+    },
+    {
+        "model":"restaurants.IngredientTag",
+        "pk": 3,
+        "fields": {
+            "title":"Lettuce"
+        }
+    }
+
+]

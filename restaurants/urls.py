@@ -24,6 +24,7 @@ menu_router.register('menuitems', views.MenuItemViewSet, basename='menuitems')
 urlpatterns = [
     path('handshake/', views.handshake, name='handshake'),
     path('', include(router.urls)),
+    path('menuitems/<int:pk>/', views.MenuItemRetrieveAPIView.as_view(), name='menuitems-retrieve'),
     path('<int:restaurant_id>/', include(menu_router.urls))
 ]
 

@@ -1,7 +1,7 @@
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, generics
 
 from . import models, serializers, permissions
 
@@ -31,7 +31,7 @@ class RestaurantViewSet(viewsets.ModelViewSet):
 
 class MenuItemViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.MenuItemSerializer
-    permission_classes = [permissions.IsAuthRestIsOwnerAndIsRest]
+    permission_classes = [permissions.MenuItemPermission]
 
     def get_queryset(self):
         user = self.request.user
@@ -39,6 +39,8 @@ class MenuItemViewSet(viewsets.ModelViewSet):
             requested_id = self.kwargs.get('restaurant_id')
             restaurant = models.Restaurant.objects.get(pk=requested_id)
             return models.MenuItem.objects.filter(restaurant=restaurant)
+        # elif user.user_type == 'patron' or user.user_type == 'admin':
+        #     return models.MenuItem.objects.all()
         else:
             return models.Restaurant.objects.none()
 
@@ -53,6 +55,12 @@ class MenuItemViewSet(viewsets.ModelViewSet):
         if self.action == 'retrieve':
             return serializers.MenuItemGetSerializer
         return serializers.MenuItemSerializer
+
+
+class MenuItemRetrieveAPIView(generics.RetrieveAPIView):
+    queryset = models.MenuItem.objects.all()
+    serializer_class = serializers.MenuItemGetSerializer
+    permission_classes = [permissions.IsAuth]
 
 
 class RestTagViewSet(viewsets.ModelViewSet):
