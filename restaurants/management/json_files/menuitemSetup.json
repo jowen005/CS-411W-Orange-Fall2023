@@ -1,0 +1,70 @@
+[
+    {  
+        "item_name": "BBQ Wings",
+        "restaurant_name": "Monarch Wings and Things",
+        "price": 11.25,
+        "calories": 500,
+
+        "food_type_tag_id": "entree",
+        "taste_tags": ["sweet","salty"],
+        "cook_style_tags_id": "fried",
+
+        "menu_restriction_id": ["kosher","halal","keto"],
+        "ingredients_tag": ["chicken","corn_oil","eggs","corn_starch"],
+        "menu_allergy_tag": ["eggs"],
+        
+        "time_of_day_available": "Anytime",
+        "is_modifiable": false
+    },
+    {
+        "item_name": "Chocolate Ice Cream Cone with Nuts",
+        "restaurant_name": "Monarch Wings and Things",
+        "price": 4.75,
+        "calories": 300,
+
+        "food_type_tag_id": "dessert",
+        "taste_tags": "sweet",
+        "cook_style_tags_id": "fried",
+
+        "menu_restriction_id": ["kosher","halal"],
+        "ingredients_tag": ["butter","cane_sugar","cream", "milk","peanuts"],
+        "menu_allergy_tag": ["tree_nuts","milk","eggs"],
+        
+        "time_of_day_available": "Anytime",
+        "is_modifiable": false 
+    },
+    {
+        "item_name": "Blackened Chicken Salad",
+        "restaurant_name": "Monarch Butterflies",
+        "price": 8.75,
+        "calories": 260,
+
+        "food_type_tag_id": "entree",
+        "taste_tags": ["salty"],
+        "cook_style_tags_id": "blackened",
+
+        "menu_restriction_id": ["halal","kosher"],
+        "ingredients_tag": ["basil","beans","black_pepper","chicken","corn_oil","lettuce","onion"],
+        "menu_allergy_tag": ["soybeans"],
+    
+        "time_of_day_available": "Anytime",
+        "is_modifiable": true
+    },
+    {
+        "item_name": "Vegetable and Noodle Soup",
+        "restaurant_name": "Monarch Butterflies",
+        "price": 8.75,
+        "calories": 125,
+
+        "food_type_tag_id": "entree",
+        "taste_tags": ["salty"],
+        "cook_style_tags_id": "broiled",
+
+        "menu_restriction_id": ["vegan","halal","kosher"],
+        "ingredients_tag": ["mushroom","soy","tomato","wheat","spinach"],
+        "menu_allergy_tag": [],
+        
+        "time_of_day_available": "Anytime",
+        "is_modifiable": false
+    }
+]
