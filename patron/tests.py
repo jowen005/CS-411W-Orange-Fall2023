@@ -110,7 +110,7 @@ class PatronTests(APITestCase):
                 "patron_taste_tag":[]
             }
         ]
-        # Create the patron restriction tags
+        # Create the tags
         for obj in cls.data:
             patron_restriction_tags = obj.pop('patron_restriction_tag')
             patron_allergy_tags = obj.pop('patron_allergy_tag')
@@ -121,25 +121,6 @@ class PatronTests(APITestCase):
             instance.patron_allergy_tag.set(patron_allergy_tags)
             instance.disliked_ingredients.set(disliked_ingredients_tags)
             instance.patron_taste_tag.set(patron_taste_tags)
-
-
-        # # Create the patron allergy tags
-        # for obj in cls.data:
-        #     patron_allergy_tags = obj.pop('patron_allergy_tag')
-        #     instance = models.Patron.objects.create(**obj)
-        #     instance.patron_allergy_tag.set(patron_allergy_tags)
-
-        # # Create the disliked ingredient tags
-        # for obj in cls.data:
-        #     disliked_ingredients_tags = obj.pop('disliked_ingredients')
-        #     instance = models.Patron.objects.create(**obj)
-        #     instance.disliked_ingredients.set(disliked_ingredients_tags)
-
-        # # Create the patron taste tags
-        # for obj in cls.data:
-        #     patron_taste_tags = obj.pop('patron_taste_tag')
-        #     instance = models.Patron.objects.create(**obj)
-        #     instance.patron_taste_tag.set(patron_taste_tags)
 
         #new data
         cls.new_data = [
@@ -201,6 +182,21 @@ class PatronTests(APITestCase):
             pat_owned.remove(obj["id"])
 
         self.assertEqual(len(pat_owned), 0)
+
+    # Test if admin and restaurant users cannot access patron accounts
+    def test_list_patron_with_other_user(self):
+        admin_response = self.client.get(self.list_url, HTTP_AUTHORIZATION=f'Bearer {self.admin_access}')
+        restaurant_response = self.client.get(self.list_url, HTTP_AUTHORIZATION=f'Bearer {self.restaurant_access}')
+
+        # Admin test
+        self.assertEqual(admin_response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(admin_response.data["detail"], "You do not have permission to perform this action.")
+
+        # Restaurant test
+        self.assertEqual(restaurant_response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(restaurant_response.data["detail"], "You do not have permission to perform this action.")
+
+
 
 
     # def test_list_patron(self):
