@@ -60,15 +60,18 @@ class LoginView(APIView):
         try:
             #Uses default authenticate method
             user = authenticate(email=email, password=password)
-            tokens = create_jwt_pair_for_user(user)
-            response = {
-                "message": "Login Successful",
-                "user_type": user.user_type,
-                "tokens":tokens
-            }
-            return Response(data=response, status=status.HTTP_200_OK)
+            if user is not None:
+                tokens = create_jwt_pair_for_user(user)
+                response = {
+                    "message": "Login Successful",
+                    "user_type": user.user_type,
+                    "tokens":tokens
+                }
+                return Response(data=response, status=status.HTTP_200_OK)
+            else:
+                raise AuthenticationFailed('Invalid Credentials')
         except AuthenticationFailed as e:
-            return Response(data={'email':str(e)})
+            return Response(data={'details':str(e)})
         
 
 # class LoginView(APIView):
