@@ -159,6 +159,7 @@ class MenuItemGetSerializer(serializers.ModelSerializer):
     menu_restriction_tag = RestrictionTagSerializer(many=True)
     menu_allergy_tag = AllergyTagSerializer(many=True)
     ingredients_tag = IngredientTagSerializer(many=True)
+    restaurant = RestaurantMenuItemSerializer()
 
     # food_type_tag = serializers.PrimaryKeyRelatedField(queryset=models.FoodTypeTag.objects.all())
     # taste_tags = serializers.PrimaryKeyRelatedField(queryset=models.TasteTag.objects.all(), many=True)
@@ -178,7 +179,7 @@ class MenuItemGetSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.MenuItem
         fields = '__all__'
-        read_only_fields = ['restaurant']
+        # read_only_fields = ['restaurant']
 
 
 

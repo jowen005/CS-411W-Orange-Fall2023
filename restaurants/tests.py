@@ -139,7 +139,27 @@ class MenuItemTests(APITestCase):
         self.assertEqual(patron_response.data["detail"], "This user is not of type restaurant.")
 
     def test_retrieve_owned_menuitem_rest(self):
-        pass
+        detail_url_owned = reverse(f'{self.basename}-detail', kwargs={'restaurant_id': 1, 'pk': 1})     
+        detail_url_mismatch = reverse(f'{self.basename}-detail', kwargs={'restaurant_id': 2, 'pk': 2})  #Wrong RestID for MenuItemID
+        detail_url_notowned = reverse(f'{self.basename}-detail', kwargs={'restaurant_id': 3, 'pk': 4})  #User does not own RestID
+        detail_url_invalid = self.invalid_rest0_url     # MenuItemID has an invalid value (too high)
+
+        r0_owned_rid1_response = self.client.get(detail_url_owned, HTTP_AUTHORIZATION=f'Bearer {self.restaurant0_access}')
+        r0_mismatch_rid2_response = self.client.get(detail_url_mismatch, HTTP_AUTHORIZATION=f'Bearer {self.restaurant0_access}')
+        r0_notowned_rid3_response = self.client.get(detail_url_notowned, HTTP_AUTHORIZATION=f'Bearer {self.restaurant0_access}')
+        r0_invalid_rid1_response = self.client.get(detail_url_invalid, HTTP_AUTHORIZATION=f'Bearer {self.restaurant0_access}')
+
+        self.assertEqual(r0_owned_rid1_response.status_code, status.HTTP_200_OK)
+        expected_menuitem = models.MenuItem.objects.get(id=1)
+        self.assertEqual(r0_owned_rid1_response.data['item_name'], expected_menuitem.item_name)
+        self.assertEqual(r0_owned_rid1_response.data['restaurant']['id'], expected_menuitem.restaurant.id)
+        
+        self.assertEqual(r0_mismatch_rid2_response.status_code, status.HTTP_404_NOT_FOUND)
+
+        self.assertEqual(r0_notowned_rid3_response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(r0_notowned_rid3_response.data['detail'], "This restaurant does not have access to the specified restaurant's menu items.")
+
+        self.assertEqual(r0_invalid_rid1_response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_retrieve_owned_menuitem_nonrest(self):
         detail_url = reverse(f'{self.basename}-detail', kwargs={'restaurant_id': 1, 'pk': 1})
@@ -172,7 +192,30 @@ class MenuItemTests(APITestCase):
         self.assertEqual(patron_response.data['item_name'], expected_menuitem.item_name)
 
     def test_update_menuitem_rest(self):
-        pass
+        detail_url_owned = reverse(f'{self.basename}-detail', kwargs={'restaurant_id': 1, 'pk': 1})     
+        detail_url_mismatch = reverse(f'{self.basename}-detail', kwargs={'restaurant_id': 2, 'pk': 2})  #Wrong RestID for MenuItemID
+        detail_url_notowned = reverse(f'{self.basename}-detail', kwargs={'restaurant_id': 3, 'pk': 4})  #User does not own RestID
+        detail_url_invalid = self.invalid_rest0_url     # MenuItemID has an invalid value (too high)
+
+        data = self.new_menuitems[0]
+
+        r0_owned_rid1_response = self.client.put(detail_url_owned, data, HTTP_AUTHORIZATION=f'Bearer {self.restaurant0_access}')
+        r0_mismatch_rid2_response = self.client.put(detail_url_mismatch, data, HTTP_AUTHORIZATION=f'Bearer {self.restaurant0_access}')
+        r0_notowned_rid3_response = self.client.put(detail_url_notowned, data, HTTP_AUTHORIZATION=f'Bearer {self.restaurant0_access}')
+        r0_invalid_rid1_response = self.client.put(detail_url_invalid, data, HTTP_AUTHORIZATION=f'Bearer {self.restaurant0_access}')
+
+        self.assertEqual(r0_owned_rid1_response.status_code, status.HTTP_200_OK)
+        # expected_menuitem = models.MenuItem.objects.get(id=1)
+        expected_rest = models.Restaurant.objects.get(id=1)
+        self.assertEqual(r0_owned_rid1_response.data['item_name'], data['item_name'])
+        self.assertEqual(r0_owned_rid1_response.data['restaurant'], expected_rest.id)
+        
+        self.assertEqual(r0_mismatch_rid2_response.status_code, status.HTTP_404_NOT_FOUND)
+
+        self.assertEqual(r0_notowned_rid3_response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(r0_notowned_rid3_response.data['detail'], "This restaurant does not have access to the specified restaurant's menu items.")
+
+        self.assertEqual(r0_invalid_rid1_response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_update_menuitem_nonrest(self):
         detail_url = reverse(f'{self.basename}-detail', kwargs={'restaurant_id': 1, 'pk': 1})
@@ -188,7 +231,27 @@ class MenuItemTests(APITestCase):
         self.assertEqual(patron_response.data["detail"], "This user is not of type restaurant.")
 
     def test_delete_menuitem_rest(self):
-        pass
+        detail_url_owned = reverse(f'{self.basename}-detail', kwargs={'restaurant_id': 1, 'pk': 1})     
+        detail_url_mismatch = reverse(f'{self.basename}-detail', kwargs={'restaurant_id': 2, 'pk': 2})  #Wrong RestID for MenuItemID
+        detail_url_notowned = reverse(f'{self.basename}-detail', kwargs={'restaurant_id': 3, 'pk': 4})  #User does not own RestID
+        detail_url_invalid = self.invalid_rest0_url     # MenuItemID has an invalid value (too high)
+
+        r0_owned_rid1_response = self.client.delete(detail_url_owned, HTTP_AUTHORIZATION=f'Bearer {self.restaurant0_access}')
+        r0_mismatch_rid2_response = self.client.delete(detail_url_mismatch, HTTP_AUTHORIZATION=f'Bearer {self.restaurant0_access}')
+        r0_notowned_rid3_response = self.client.delete(detail_url_notowned, HTTP_AUTHORIZATION=f'Bearer {self.restaurant0_access}')
+        r0_invalid_rid1_response = self.client.delete(detail_url_invalid, HTTP_AUTHORIZATION=f'Bearer {self.restaurant0_access}')
+
+        self.assertEqual(r0_owned_rid1_response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(models.MenuItem.objects.filter(id=1).exists())
+        
+        self.assertEqual(r0_mismatch_rid2_response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertTrue(models.MenuItem.objects.filter(id=2).exists())
+
+        self.assertEqual(r0_notowned_rid3_response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(r0_notowned_rid3_response.data['detail'], "This restaurant does not have access to the specified restaurant's menu items.")
+        self.assertTrue(models.MenuItem.objects.filter(id=4).exists())
+
+        self.assertEqual(r0_invalid_rid1_response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_menuitem_nonrest(self):
         detail_url = reverse(f'{self.basename}-detail', kwargs={'restaurant_id': 1, 'pk': 1})
@@ -206,9 +269,6 @@ class MenuItemTests(APITestCase):
     def tearDownClass(cls):
         super().tearDownClass()
 
-
-
-    
 
 class RestaurantTests(APITestCase):
     fixtures = ['users.json', 'resttags.json', 'restaurants.json']
