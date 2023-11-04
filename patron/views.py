@@ -2,6 +2,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, APIView
 from rest_framework import status, viewsets
+from .utils.search import advancedSearch
 
 from . import models, serializers, permissions
 from restaurants.models import RestrictionTag, AllergyTag, TasteTag, IngredientTag, MenuItem
@@ -51,6 +52,7 @@ class SearchHistoryViewSet(viewsets.ModelViewSet):
         # Catch if Search object is invalid
         try:
             history_serializer.is_valid(raise_exception=True)
+            history_serializer.save(patron=self.request.user)
 
         except serializers.ValidationError as e:
             response_data = {
@@ -59,13 +61,27 @@ class SearchHistoryViewSet(viewsets.ModelViewSet):
             }
             return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
         
-        #Call Search function with self.request.data which returns menu item IDs
-        search_results = [1, 2, 3]
+        
+        # NOTE: Call Search function with self.request.data which returns menu item IDs
+        # search_results = [1, 2, 3]
+        instance = history_serializer.instance
+        search_obj = history_serializer.data
+        search_obj['search_datetime'] = instance.search_datetime
+        search_obj.pop('id')
+        search_obj.pop('patron')
+
+        print(f'\n\n{search_obj}\n\n')
+
+        # 'query', 'calorie_limit', 'dietary_restriction_tags', 
+        # 'allergy_tags', 'patron_taste_tags', 'disliked_ingredients', 
+        # 'price_min', 'price_max', 'search_datetime'
+
+        search_results = advancedSearch(**search_obj)
 
         # Handle if results were returned
         if len(search_results) > 0:
             
-            history_serializer.save(patron=self.request.user)
+            
 
             objects = MenuItem.objects.filter(id__in=search_results)
             menu_item_serializer = MenuItemListSerializer(objects, many=True)
