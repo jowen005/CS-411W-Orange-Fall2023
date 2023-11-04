@@ -29,7 +29,7 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
                                         #AND NOT(IngredientTag IN list(disliked_ingredients))
                                         #AND (RestrictionTag IN list(dietary_restriction_tags))
     if patron_taste_tags is not None:
-        MenuItems = MenuItems.filter(patron_taste_tags__in = patron_taste_tags)
+        MenuItems = MenuItems.filter(taste_tags__in = patron_taste_tags)
         #current SQL query should look like SELECT * from MenuItems
                                         #WHERE NOT (AllergyTag IN list(allergy_tags));
                                         #AND NOT(IngredientTag IN list(disliked_ingredients))
