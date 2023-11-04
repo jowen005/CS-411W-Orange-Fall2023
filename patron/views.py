@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, APIView
 from rest_framework import status, viewsets
 from .utils.search import advancedSearch
+from rest_framework.serializers import ValidationError
 
 from . import models, serializers, permissions
 from restaurants.models import RestrictionTag, AllergyTag, TasteTag, IngredientTag, MenuItem
@@ -54,7 +55,7 @@ class SearchHistoryViewSet(viewsets.ModelViewSet):
             history_serializer.is_valid(raise_exception=True)
             history_serializer.save(patron=self.request.user)
 
-        except serializers.ValidationError as e:
+        except ValidationError as e:
             response_data = {
                 'message': 'Invalid input data.',
                 'errors': e.detail,
