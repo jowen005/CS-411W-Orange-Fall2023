@@ -12,7 +12,21 @@
         "street_name": "124 University Avenue",
         "city": "Norfolk",
         "state": "VA",
-        "zip_code": "23529"
+        "zip_code": "23529",
+        "mon_open":"08:00:00",
+        "mon_close":"23:00:00",
+        "tue_open":"08:00:00",
+        "tue_close":"23:00:00",
+        "wed_open":"08:00:00",
+        "wed_close":"23:00:00",
+        "thu_open":"08:00:00",
+        "thu_close":"23:00:00",
+        "fri_open":"08:00:00",
+        "fri_close":"23:00:00",
+        "sat_open":"08:00:00",
+        "sat_close":"23:00:00",
+        "sun_open":"08:00:00",
+        "sun_close":"23:00:00"
     },
     {
         "owner_email": "monarch@odu.edu",
@@ -27,6 +41,20 @@
         "street_name": "123 University Avenue",
         "city": "Norfolk",
         "state": "VA",
-        "zip_code": "23529"
+        "zip_code": "23529",
+        "mon_open":"08:00:00",
+        "mon_close":"23:00:00",
+        "tue_open":"08:00:00",
+        "tue_close":"23:00:00",
+        "wed_open":"08:00:00",
+        "wed_close":"23:00:00",
+        "thu_open":"08:00:00",
+        "thu_close":"23:00:00",
+        "fri_open":"08:00:00",
+        "fri_close":"23:00:00",
+        "sat_open":"08:00:00",
+        "sat_close":"23:00:00",
+        "sun_open":"08:00:00",
+        "sun_close":"23:00:00"
     }
 ]

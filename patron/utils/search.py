@@ -1,5 +1,5 @@
 from restaurants.models import MenuItem
-from restaurants.models import Restaurant
+from restaurants.models import FoodTypeTag,CookStyleTag,Restaurant
 from patron.models import Patron
 
 #this function will hit the database twice, once to pull the patron profile and again with the actual search query.
@@ -9,37 +9,38 @@ from patron.models import Patron
 #name kept as advanced search for compatibility reasons
 def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, price_max:float=100000.0,
                    dietary_restriction_tags:list=None, allergy_tags:list=None, disliked_ingredients:list=None,
-                   patron_taste_tags:list=None, search_DateTime=None, time_of_day_available=None):
+                   patron_taste_tags:list=None, search_datetime=None, time_of_day_available=None):
     
     #todo add nullable functionality for the optional sections.  || DONE
     MenuItems = MenuItem.objects.all()
+
+    #return MenuItems.values_list("id",flat=True)
     #the most restrictive tag is likely the allergy tags so we'll filter on that first
     if allergy_tags is not None:
         MenuItems = MenuItems.exclude(menu_allergy_tag__in = allergy_tags)
-        
     if disliked_ingredients is not None:
         MenuItems = MenuItems.exclude(ingredients_tag__in = disliked_ingredients)
 
     #note to self this may need to be reworked as a loop to ensure that ALL restriction tags are match
     #todo test the above theory.
-    if dietary_restriction_tags is not None:
+    print("=========================================================")
+    print(str(dietary_restriction_tags))
+    print( (dietary_restriction_tags is not None) and (len(dietary_restriction_tags) > 0))
+    if (dietary_restriction_tags is not None) and (len(dietary_restriction_tags) > 0):
         MenuItems = MenuItems.filter(menu_restriction_tag__in = dietary_restriction_tags)
         #current SQL query should look like SELECT * from MenuItems
                                         #WHERE NOT (AllergyTag IN list(allergy_tags));
                                         #AND NOT(IngredientTag IN list(disliked_ingredients))
                                         #AND (RestrictionTag IN list(dietary_restriction_tags))
-    if patron_taste_tags is not None:
-        MenuItems = MenuItems.filter(patron_taste_tags__in = patron_taste_tags)
+    if (patron_taste_tags is not None) and (len(patron_taste_tags) > 0):
+        MenuItems = MenuItems.filter(taste_tags__in = patron_taste_tags)
         #current SQL query should look like SELECT * from MenuItems
                                         #WHERE NOT (AllergyTag IN list(allergy_tags));
                                         #AND NOT(IngredientTag IN list(disliked_ingredients))
                                         #AND (RestrictionTag IN list(dietary_restriction_tags))
                                         #AND (patron_taste_tags IN list(patron_taste_tags))
 
-    #if style is not None:
-    #    MenuItems = MenuItems.filter(cook_style_tags__in = style)
-        
-    if price_range is not None:        
+    if price_min is not None and price_max is not None:        
         MenuItems = MenuItems.filter(price__range = (price_min,price_max))
 
     if calorie_limit is not None:        
@@ -47,7 +48,9 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
                                        
     #theoretically we can save the query string until last weirdly
     #nice to have --> synonym dictonary for fuzzy logic on the search query.
-    #todo: set styletags and food_type_tags
+    #todo: convert title to ID tag
+    cook_style_tags = list(CookStyleTag.objects.values_list('title',flat=True))
+    food_type_tags = list(FoodTypeTag.objects.values_list('title',flat=True))
     if (query != ""):
         query = query.lower()
         for queryElement in query.split(" "):
@@ -63,48 +66,65 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
                 elif(queryElement in food_type_tags):
                     MenuItems = MenuItems.exclude(food_type_tag = queryElement)
                 else:
-                    MenuItems = MenuItems.exclude(item_name__contains = queryElement)
+                    MenuItems = MenuItems.exclude(item_name__icontains = queryElement)
             else:
                 if(queryElement in cook_style_tags):
                     MenuItems = MenuItems.filter(cook_style_tags = queryElement)
                 elif(queryElement in food_type_tags):
                     MenuItems = MenuItems.filter(food_type_tag = queryElement)
                 else:
-                    MenuItems = MenuItems.filter(item_name__contains = queryElement)
-                
+                    MenuItems = MenuItems.filter(item_name__icontains = queryElement)   
+
     if(time_of_day_available != None):
         MenuItems = MenuItems.filter(time_of_day_available__in = [time, 'Anytime'])
-    
-    #datetime_object = datetime.strptime(search_DateTime, '%Y-%m-%d %H:%M:%S')
-    weekday = search_DateTime.weekday()
+
+    #datetime_object = datetime.strptime(search_datetime, '%Y-%m-%d %H:%M:%S')
+    weekday = search_datetime.weekday()
     
     #might be better ways to do this, more research is needed
     #get all restuarants of menu items we've already searched
-    Restaurants = Restaurant.objects.filter(id__in = MenuItems.values_list("Restaurant",flat=True))
-    
+    Restaurants = Restaurant.objects.filter(id__in = MenuItems.values_list("restaurant",flat=True))
+    targetTime = search_datetime#.time #.strftime("%H:%M:%S")
+
+    print(Restaurants.values_list("id",flat=True))
+     #todo: convert this to checking unix time stamp instead
     if(weekday == 0): #monday
-        Restaurants = Restaurants.filter(mon_open__gte = search_DateTime.time)
-        Restaurants = Restaurants.filter(mon_close__lte = search_DateTime.time)
+        print("monday")
+        Restaurants = Restaurants.filter(mon_open__hour__lte = targetTime.hour)
+        #Restaurants = Restaurants.filter(mon_open__minute__lte = targetTime.minute)
+        Restaurants = Restaurants.filter(mon_close__hour__gte = targetTime.hour)
     elif(weekday == 1): #tuesday
-        Restaurants = Restaurants.filter(tue_open__gte = search_DateTime.time)
-        Restaurants = Restaurants.filter(tue_close__lte = search_DateTime.time)
+        print("tuesday")
+        Restaurants = Restaurants.filter(tue_open__hour__lte = targetTime.hour)
+        Restaurants = Restaurants.filter(tue_close__hour__gte = targetTime.hour)
     elif(weekday == 2): #wednesday
-        Restaurants = Restaurants.filter(wed_open__gte = search_DateTime.time)
-        Restaurants = Restaurants.filter(wed_close__lte = search_DateTime.time)
+        print("wednesday")
+        Restaurants = Restaurants.filter(wed_open__hour__lte = targetTime.hour)
+        Restaurants = Restaurants.filter(wed_close__hour__gte = targetTime.hour)
     elif(weekday == 3): #thursday
-        Restaurants = Restaurants.filter(thu_open__gte = search_DateTime.time)
-        Restaurants = Restaurants.filter(thu_close__lte = search_DateTime.time)
+        print("thursday")
+        Restaurants = Restaurants.filter(thu_open__hour__lte = targetTime.hour)
+        Restaurants = Restaurants.filter(thu_close__hour__gte = targetTime.hour)
     elif(weekday == 4): #friday
-        Restaurants = Restaurants.filter(fri_open__gte = search_DateTime.time)
-        Restaurants = Restaurants.filter(fri_close__lte = search_DateTime.time)
+        print("friday")
+        Restaurants = Restaurants.filter(fri_open__hour__lte = targetTime.hour)
+        Restaurants = Restaurants.filter(fri_close__hour__gte = targetTime.hour)
     elif(weekday == 5): #saturday
-        Restaurants = Restaurants.filter(sat_open__gte = search_DateTime.time)
-        Restaurants = Restaurants.filter(sat_close__lte = search_DateTime.time)
+        print("saturday")
+        print(Restaurants.values_list("id",flat=True))
+        print(((Restaurants.values_list("sat_open",flat=True))[0]).hour)
+        Restaurants = Restaurants.filter(sat_open__hour__lte = targetTime.hour)
+        Restaurants = Restaurants.filter(sat_close__hour__gte = targetTime.hour)
     elif(weekday == 6): #sunday
-        Restaurants = Restaurants.filter(sun_open__gte = search_DateTime.time)
-        Restaurants = Restaurants.filter(sun_close__lte = search_DateTime.time)
+        print("sunday")
+        Restaurants = Restaurants.filter(sun_open__hour__lte = targetTime.hour)
+        Restaurants = Restaurants.filter(sun_close__hour__gte = targetTime.hour)
     
-    MenuItems = MenuItems.filter(Restaurant__in = Restaurants.values_list("id",flat=True))
+    print(Restaurants.values_list("id",flat=True))
+    
+    #return MenuItems.values_list("id",flat=True) 
+    MenuItems = MenuItems.filter(restaurant__in = Restaurants.values_list("id",flat=True))
+
     #for debug purposes remove when finished
     #print(MenuItems.query)
     #now we should finally be ready to evaluate the query and ping the database

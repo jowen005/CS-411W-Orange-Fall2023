@@ -46,6 +46,20 @@ class Command(GenerateCommand):
                 "city": "Virginia Beach",
                 "state": "VA",
                 "zip_code": random.choice(valid_vb_zip_codes),
+                "mon_open":"08:00:00",
+                "mon_close":"23:00:00",
+                "tue_open":"08:00:00",
+                "tue_close":"23:00:00",
+                "wed_open":"08:00:00",
+                "wed_close":"23:00:00",
+                "thu_open":"08:00:00",
+                "thu_close":"23:00:00",
+                "fri_open":"08:00:00",
+                "fri_close":"23:00:00",
+                "sat_open":"08:00:00",
+                "sat_close":"23:00:00",
+                "sun_open":"08:00:00",
+                "sun_close":"23:00:00",
             }
 
             data_list.append(data)
