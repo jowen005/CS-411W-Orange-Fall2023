@@ -16,8 +16,8 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
 
     #return MenuItems.values_list("id",flat=True)
     #the most restrictive tag is likely the allergy tags so we'll filter on that first
-    if allergy_tags is not None:
-        MenuItems = MenuItems.exclude(menu_allergy_tag__in = allergy_tags)
+    if (allergy_tags is not None) and (len(allergy_tags) > 0):
+        MenuItems = MenuItems.filter(menu_allergy_tag__in = allergy_tags)
     if disliked_ingredients is not None:
         MenuItems = MenuItems.exclude(ingredients_tag__in = disliked_ingredients)
 
@@ -112,7 +112,7 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
     elif(weekday == 5): #saturday
         print("saturday")
         print(Restaurants.values_list("id",flat=True))
-        print(((Restaurants.values_list("sat_open",flat=True))[0]).hour)
+        #print(((Restaurants.values_list("sat_open",flat=True))[0]).hour)
         Restaurants = Restaurants.filter(sat_open__hour__lte = targetTime.hour)
         Restaurants = Restaurants.filter(sat_close__hour__gte = targetTime.hour)
     elif(weekday == 6): #sunday
