@@ -112,7 +112,7 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
     elif(weekday == 5): #saturday
         print("saturday")
         print(Restaurants.values_list("id",flat=True))
-        print(((Restaurants.values_list("sat_open",flat=True))[0]).hour)
+        #print(((Restaurants.values_list("sat_open",flat=True))[0]).hour)
         Restaurants = Restaurants.filter(sat_open__hour__lte = targetTime.hour)
         Restaurants = Restaurants.filter(sat_close__hour__gte = targetTime.hour)
     elif(weekday == 6): #sunday
