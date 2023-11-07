@@ -13,10 +13,7 @@ class Patron(models.Model):
     dob = models.DateField()
     calorie_limit = models.PositiveIntegerField()
     gender = models.CharField(max_length=6, choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')])
-
-    # price_preference = models.CharField(max_length=5, choices=[('$', '$'), ('$$', '$$'), ('$$$', '$$$')])
     price_max = models.PositiveIntegerField(null=True)
-
     zipcode = models.CharField(max_length=10)
     patron_restriction_tag = models.ManyToManyField(RestrictionTag)
     patron_allergy_tag = models.ManyToManyField(AllergyTag)
@@ -70,14 +67,14 @@ class PatronSearchHistory(models.Model):
     price_min = models.DecimalField(
         max_digits=8,  # Total number of digits
         decimal_places=2,  # Maximum of 2 decimal places
-        validators=[MinValueValidator(0.01)],  # Positive only
+        validators=[MinValueValidator(0)],  # Positive only
         null=True,  # Allow null values
         blank=True
     )
     price_max = models.DecimalField(
         max_digits=8,  # Total number of digits
         decimal_places=2,  # Maximum of 2 decimal places
-        validators=[MinValueValidator(0.01)],  # Positive only
+        validators=[MinValueValidator(0)],  # Positive only
         null=True,  # Allow null values
         blank=True
     )
