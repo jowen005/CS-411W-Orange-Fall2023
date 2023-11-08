@@ -12,19 +12,15 @@ User = get_user_model()
 
 # Test patron view set
 class PatronTests(APITestCase):
+    # Import fixtures for this set of tests
+    fixtures = ['users.json']
     # Set up function for all the tests for this view
     @classmethod
     def setUpClass(cls):
-        # self.factory = APIRequestFactory()
-        # self.view = PatronViewSet.as_view() # This line is a problem
+        super().setUpClass()
 
         # Create users and access tokens
-        cls.patron0_user = User.objects.create_user(
-            email = 'patron0@app.com',
-            username = 'patron0',
-            password = 'password',
-            user_type = 'patron'
-        )
+        cls.patron0_user = User.objects.get(email="patron0@app.com")
         cls.patron0_access = create_jwt_pair_for_user(cls.patron0_user)['access']
 
         cls.patron1_user = User.objects.create_user(
