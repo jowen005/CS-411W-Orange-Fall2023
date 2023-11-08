@@ -47,7 +47,7 @@ class Command(BaseCommand):
             with open(APP_DIR/self.TAG_RELATIONS_PATH) as infile:
                 tag_relations = json.load(infile)
         except IOError:
-            self.stdout.write(self.style.ERROR(f"Input of tag relation file failed"))
+            self.stdout.write(self.style.ERROR(f"Input of tag relation file failed!"))
             exit()
 
         user, profile = self.verify_user(userid[0])
@@ -58,11 +58,7 @@ class Command(BaseCommand):
         bookmark_report = self.generate_bookmark_traffic(user)
         self.output_reports(search_report, bookmark_report)
 
-        # # Export Data
-        # with open(APP_DIR/self.DEFAULT_JSON_PATH, 'w') as outfile:
-        #     json.dump(f'{profile}', outfile, indent=4)
-
-        # self.stdout.write(self.style.SUCCESS(f'The command successfully completed!'))
+        self.stdout.write(self.style.SUCCESS(f"{num_searches} search(es) were performed!"))
 
 
     def verify_user(self, userid: int):
