@@ -37,7 +37,7 @@ class Command(GenerateCommand):
                 "dob" : str(self.fake.date_of_birth(minimum_age=18, maximum_age=70)),
                 "calorie_limit" : int(self.fake.random_int(min=200, max=1500)),
                 "gender" : self.fake.random_element(elements=('Male', 'Female', 'Other')),
-                "price_max": self.fake.random_element(elements=('$', '$$', '$$$')),
+                "price_max": int(self.fake.random_int(min=10, max=100)),
                 "zipcode": random.choice(valid_vb_zip_codes),
                 "patron_restriction_tag": list(set(self.fake.random_choices(elements=valid_restriction_tags))),
                 "patron_allergy_tag": list(set(self.fake.random_choices(elements=valid_allergy_tags))),
