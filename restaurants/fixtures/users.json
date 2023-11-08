@@ -1,0 +1,44 @@
+[
+    {
+        "model": "accounts.user",
+        "pk": 1,
+        "fields": {
+            "email": "restaurant0@app.com",
+            "username": "restaurant0",
+            "password": "password",
+            "user_type": "restaurant"
+        }
+    },
+    {
+        "model": "accounts.user",
+        "pk": 2,
+        "fields": {
+            "email": "restaurant1@app.com",
+            "username": "restaurant1",
+            "password": "password",
+            "user_type": "restaurant"
+        }
+    },
+    {
+        "model": "accounts.user",
+        "pk": 3,
+        "fields": {
+            "email": "admin@app.com",
+            "username": "admin",
+            "password": "password",
+            "user_type": "admin",
+            "is_superuser": true,
+            "is_staff": true
+        }
+    },
+    {
+        "model": "accounts.user",
+        "pk": 4,
+        "fields": {
+            "email": "patron@app.com",
+            "username": "patron",
+            "password": "password",
+            "user_type": "patron"
+        }
+    }
+]

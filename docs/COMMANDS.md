@@ -20,6 +20,7 @@
   * **python3 manage.py loadDefaultAccounts** --> loads the default patron, restaurant, and admin accounts
   * **python3 manage.py loadDefaultPatrons** --> loads the default patron profiles
   * **python3 manage.py loadDefaultRestaurants** --> loads the default restaurants
+  * **python3 manage.py loadDefaultMenuItems** --> (WIP)
 
 * **python3 manage.py generateRestaurants _int_** --> generates randomized restaurant information into restaurantBuffer.json
 * **python3 manage.py loadRestaurants** --> loads restaurant json objects from restaurantBuffer.json (default) or a specified file (-f=_filepath_)

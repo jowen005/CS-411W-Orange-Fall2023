@@ -61,7 +61,6 @@ class Command(LoadCommand):
             updated_menuItems.append(item_name + " -> " + str(restaurant_name))
             for attr, value in obj.items():
                 setattr(item, attr, value)
-            item.save()
         except MenuItem.DoesNotExist:
             created_menuItems.append(item_name + " -> " + str(restaurant_name))
             item = MenuItem.objects.create(
@@ -71,11 +70,13 @@ class Command(LoadCommand):
                 item_name=item_name,
                 **obj
             )
-            # Set the many-to-many relationships
-            item.taste_tags.set(taste_tags)
-            item.ingredients_tag.set(ingredients_tag)
-            item.menu_allergy_tag.set(menu_allergy_tag)
-            item.menu_restriction_tag.set(menu_restriction_tag)
+        # Set the many-to-many relationships
+        item.taste_tags.set(taste_tags)
+        item.ingredients_tag.set(ingredients_tag)
+        item.menu_allergy_tag.set(menu_allergy_tag)
+        item.menu_restriction_tag.set(menu_restriction_tag)
+
+        item.save()
 
     def load(self, data_list):
         updated_menuItems = []

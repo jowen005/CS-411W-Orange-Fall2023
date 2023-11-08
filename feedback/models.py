@@ -16,8 +16,10 @@ class Reviews(models.Model):
     menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE, null=True)
     
     review = models.CharField(max_length=255,null=True)
-    rating = models.IntegerField(
-        choices = [('1', '1'), ('2', '2'), ('3', '3'),('4', '4'),('5', '5')], null=True
+    rating = models.DecimalField(
+        max_digits=8,  # Total number of digits
+        decimal_places=2,  # Maximum of 2 decimal places
+        default=0.0
     )
     review_datetime = models.DateTimeField(auto_now_add=True)
 

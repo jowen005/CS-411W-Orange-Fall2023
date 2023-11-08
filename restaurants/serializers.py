@@ -23,6 +23,19 @@ class RestaurantListSerializer(serializers.ModelSerializer):
         fields = ['id', 'name']
 
 
+class RestaurantMenuItemSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(max_length=100)
+    price_level = serializers.ChoiceField(choices=[
+        ('$','$'),
+        ('$$','$$'),
+        ('$$$','$$$'),
+    ])
+
+    class Meta:
+        model = models.Restaurant
+        fields = ['id', 'name', 'price_level']
+
+
 class RestaurantGetSerializer(serializers.ModelSerializer):
     name = serializers.CharField(max_length=100)
     rating = serializers.DecimalField(max_digits=3, decimal_places=2)
@@ -127,13 +140,13 @@ class IngredientTagSerializer(serializers.ModelSerializer):
 class MenuItemListSerializer(serializers.ModelSerializer):
     item_name = serializers.CharField(max_length=100)
     #calories
-    #restuarant name
+    restaurant = RestaurantMenuItemSerializer()
     #avg rating
     #price
 
     class Meta:
         model = models.MenuItem
-        fields = ['id', 'item_name', 'calories', 'average_rating', 'price']
+        fields = ['id', 'item_name', 'calories', 'average_rating', 'price', 'restaurant']
 
 
 class MenuItemGetSerializer(serializers.ModelSerializer):
@@ -146,6 +159,7 @@ class MenuItemGetSerializer(serializers.ModelSerializer):
     menu_restriction_tag = RestrictionTagSerializer(many=True)
     menu_allergy_tag = AllergyTagSerializer(many=True)
     ingredients_tag = IngredientTagSerializer(many=True)
+    restaurant = RestaurantMenuItemSerializer()
 
     # food_type_tag = serializers.PrimaryKeyRelatedField(queryset=models.FoodTypeTag.objects.all())
     # taste_tags = serializers.PrimaryKeyRelatedField(queryset=models.TasteTag.objects.all(), many=True)
@@ -165,7 +179,7 @@ class MenuItemGetSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.MenuItem
         fields = '__all__'
-        read_only_fields = ['restaurant']
+        # read_only_fields = ['restaurant']
 
 
 

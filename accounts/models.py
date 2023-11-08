@@ -47,17 +47,3 @@ class User(AbstractUser):
     def __str__(self):
         return self.email
     
-
-#Do we need these separate? dont contain any different attributes right now
-# class RestaurantUser(User):
-#     pass
-    
-
-# class CustomerUser(User):
-#     pass
-    
-
-# class AdminUser(User):
-#     pass
-    
-

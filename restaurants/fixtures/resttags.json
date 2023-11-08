@@ -1,0 +1,37 @@
+[
+    {
+        "model":"restaurants.RestTag",
+        "pk": 1,
+        "fields": {
+            "title": "Fast Food"
+        }
+    },
+    {
+        "model":"restaurants.RestTag",
+        "pk": 2,
+        "fields": {
+            "title": "Bar"
+        }
+    },
+    {
+        "model":"restaurants.RestTag",
+        "pk": 3,
+        "fields": {
+            "title": "Southwest"
+        }
+    },
+    {
+        "model":"restaurants.RestTag",
+        "pk": 4,
+        "fields": {
+            "title": "American"
+        }
+    },
+    {
+        "model":"restaurants.RestTag",
+        "pk": 5,
+        "fields": {
+            "title": "Ice Cream Parlor"
+        }
+    }
+]

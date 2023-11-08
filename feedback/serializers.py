@@ -16,8 +16,13 @@ class ReviewsGetSerializer(serializers.ModelSerializer):
     # menu_item = serializers.PrimaryKeyRelatedField(queryset=rm.MenuItem.objects.all())
     
     review = serializers.CharField(max_length=255)
-    rating = serializers.ChoiceField(
-        choices = [('1', '1'), ('2', '2'), ('3', '3'),('4', '4'),('5', '5')],
+    #rating = serializers.ChoiceField(
+        #choices = [('1', '1'), ('2', '2'), ('3', '3'),('4', '4'),('5', '5')],
+    #)
+    rating = serializers.DecimalField(
+        max_digits=8,  # Total number of digits
+        decimal_places=2,  # Maximum of 2 decimal places
+        default=0.0
     )
 
     class Meta:
@@ -31,8 +36,13 @@ class ReviewsSerializer(serializers.ModelSerializer):
     menu_item = serializers.PrimaryKeyRelatedField(queryset=rm.MenuItem.objects.all())
     
     review = serializers.CharField(max_length=255)
-    rating = serializers.ChoiceField(
-        choices = [('1', '1'), ('2', '2'), ('3', '3'),('4', '4'),('5', '5')],
+    #rating = serializers.ChoiceField(
+        #choices = [('1', '1'), ('2', '2'), ('3', '3'),('4', '4'),('5', '5')],
+    #)
+    rating = serializers.DecimalField(
+        max_digits=8,  # Total number of digits
+        decimal_places=2,  # Maximum of 2 decimal places
+        default=0.0
     )
 
     class Meta:
