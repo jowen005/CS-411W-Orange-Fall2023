@@ -1,0 +1,17 @@
+[
+    {
+        "model": "patron.Patron",
+        "pk": 1,
+        "fields": {
+            "user": 1,
+            "name": "Stan",
+            "dob": "2003-07-10",
+            "calorie_limit": 3000,
+            "gender":"Male",
+            "price_max":20,
+            "zipcode":23508,
+            "patron_restriction_tags":[4]
+
+        }
+    }
+]

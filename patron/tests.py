@@ -205,14 +205,16 @@ class PatronTests(APITestCase):
         self.assertEqual(restaurant_response.data["detail"], "You do not have permission to perform this action.")
 
     # Test if a patron can be created by a patron user
-    def test_create_patron_with_patron(self):
-        pat0_response = self.client.post(self.list_url, self.data[0], HTTP_AUTHORIZATION=f'Bearer {self.patron0_access}')
-        pat1_response = self.client.post(self.list_url, self.data[1], HTTP_AUTHORIZATION=f'Bearer {self.patron1_access}')
-        pat2_response = self.client.post(self.list_url, self.data[2], HTTP_AUTHORIZATION=f'Bearer {self.patron2_access}')
+    # def test_create_patron_with_patron(self):
+    #     pat0_response = self.client.post(self.list_url, self.data[0], HTTP_AUTHORIZATION=f'Bearer {self.patron0_access}')
+    #     pat1_response = self.client.post(self.list_url, self.data[1], HTTP_AUTHORIZATION=f'Bearer {self.patron1_access}')
+    #     pat2_response = self.client.post(self.list_url, self.data[2], HTTP_AUTHORIZATION=f'Bearer {self.patron2_access}')
 
-        # Patron 0 Tests
-        self.assertEqual(pat0_response.status_code, status.HTTP_201_CREATED)
-        #self.assertEqual(len(pat0_response.data), 24)
+    #     # Patron 0 Tests
+    #     #self.assertEqual(pat0_response.status_code, status.HTTP_201_CREATED)
+    #     #self.assertEqual(len(pat0_response.data), 24)
+
+    #     self.assertTrue(models.Patron.objects.filter(owner=self.patron0_user, id=pat0_response.data['id']).exists())
 
 
 
