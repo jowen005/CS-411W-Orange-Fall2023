@@ -110,13 +110,20 @@
             "title":"Kosher"
         }
     },
+    {
+        "model":"restaurants.RestrictionTag",
+        "pk": 5,
+        "fields": {
+            "title":"Gluten Free"
+        }
+    },
 
 
     {
         "model":"restaurants.AllergyTag",
         "pk": 1,
         "fields": {
-            "title":"Peanuts"
+            "title":"Tree Nut"
         }
     },
     {
@@ -140,6 +147,20 @@
             "title":"Soy"
         }
     },
+    {
+        "model":"restaurants.AllergyTag",
+        "pk": 5,
+        "fields": {
+            "title":"Gluten"
+        }
+    },
+    {
+        "model":"restaurants.AllergyTag",
+        "pk": 6,
+        "fields": {
+            "title":"Lactose"
+        }
+    },
 
 
     {
@@ -161,6 +182,13 @@
         "pk": 3,
         "fields": {
             "title":"Lettuce"
+        }
+    },
+    {
+        "model":"restaurants.IngredientTag",
+        "pk": 4,
+        "fields": {
+            "title":"Caramel"
         }
     }
 
