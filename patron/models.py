@@ -38,7 +38,7 @@ class Bookmark(models.Model):
 
 
     def __str__(self):
-        return f'{self.patron.username} - {self.item_name}'
+        return f'{self.patron.username} - {self.menu_item.item_name}'
 
     class Meta:
         db_table = 'Bookmarks'
@@ -96,7 +96,7 @@ class MenuItemHistory(models.Model):
     MenuItemHS_datetime = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.patron.username} - {self.menu_item}'
+        return f'{self.patron.username} - {self.menu_item.item_name}'
     
     def formatted_datetime(self):
         return self.search_datetime.strftime('%d/%m/%y %H:%M:%S')
