@@ -17,12 +17,9 @@ class Reviews(models.Model):
     
     review = models.CharField(max_length=255,null=True)
     rating = models.DecimalField(
-        choices = [('0','0'),('0.5','0.5'),('1', '1'), ('1.5','1.5'),
-                   ('2', '2'), ('2.5','2.5'),('3', '3'),('3.5','3.5'),
-                   ('4', '4'),('4.5','4.5'),('5', '5')], 
         max_digits=8,  # Total number of digits
         decimal_places=2,  # Maximum of 2 decimal places
-        null=True
+        default=0.0
     )
     review_datetime = models.DateTimeField(auto_now_add=True)
 
