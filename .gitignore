@@ -7,3 +7,4 @@ secret*.json
 docker-compose.override.yml
 # **/json_files/
 **/json_files/*Buffer.json
+.expo/settings.json
