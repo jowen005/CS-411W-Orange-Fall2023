@@ -261,13 +261,14 @@ class PatronTests(APITestCase):
 
     @classmethod
     def tearDownClass(cls):
-        models.RestrictionTag.objects.all().delete()
-        models.AllergyTag.objects.all().delete()
-        models.IngredientTag.objects.all().delete()
-        models.TasteTag.objects.all().delete()
-        models.Patron.objects.all().delete()
+        # models.RestrictionTag.objects.all().delete()
+        # models.AllergyTag.objects.all().delete()
+        # models.IngredientTag.objects.all().delete()
+        # models.TasteTag.objects.all().delete()
+        # models.Patron.objects.all().delete()
        
-        User.objects.all().delete()
+        # User.objects.all().delete()
+        super().tearDownClass()
 
 # # Test patron tags
 # # class PatronTagTestCase(APITestCase):
