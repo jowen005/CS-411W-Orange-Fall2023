@@ -54,7 +54,7 @@ class LoadCommand(BaseCommand, ABC):
 
         self.load(data_list)
 
-        self.stdout.write(self.style.SUCCESS(f'All Objects were successfully loaded\n'))
+        self.stdout.write(self.style.SUCCESS(f'All Objects were successfully loaded'))
 
     @abstractmethod
     def load(self, data_list):

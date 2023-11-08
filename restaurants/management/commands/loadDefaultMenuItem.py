@@ -36,15 +36,15 @@ class Command(LoadCommand):
         foodType = obj.pop('food_type_tag_id')
         food_type_tag_id = self.loadTagStr(foodType, FoodTypeTag)
         taste = obj.pop('taste_tags')
-        taste_tags_id = self.loadTagList([taste], TasteTag)
+        taste_tags_id = self.loadTagList(taste, TasteTag)
         cookStyle = obj.pop('cook_style_tags_id')
         cook_style_tags_id = self.loadTagStr(cookStyle, CookStyleTag)
         allergy = obj.pop('menu_allergy_tag')
-        menu_allergy_tag_id = self.loadTagList([allergy], AllergyTag)
+        menu_allergy_tag_id = self.loadTagList(allergy, AllergyTag)
         restriction = obj.pop('menu_restriction_id')
-        menu_restriction_id = self.loadTagList([restriction], RestrictionTag)
+        menu_restriction_id = self.loadTagList(restriction, RestrictionTag)
         ingredients = obj.pop('ingredients_tag')
-        ingredients_tag_id = self.loadTagList([ingredients], IngredientTag)
+        ingredients_tag_id = self.loadTagList(ingredients, IngredientTag)
 
         # Retrieve objects referenced by primary keys
         food_type_tag = FoodTypeTag.objects.get(pk=food_type_tag_id)
@@ -61,7 +61,6 @@ class Command(LoadCommand):
             updated_menuItems.append(item_name + " -> " + str(restaurant_name))
             for attr, value in obj.items():
                 setattr(item, attr, value)
-            item.save()
         except MenuItem.DoesNotExist:
             created_menuItems.append(item_name + " -> " + str(restaurant_name))
             item = MenuItem.objects.create(
@@ -71,11 +70,13 @@ class Command(LoadCommand):
                 item_name=item_name,
                 **obj
             )
-            # Set the many-to-many relationships
-            item.taste_tags.set(taste_tags)
-            item.ingredients_tag.set(ingredients_tag)
-            item.menu_allergy_tag.set(menu_allergy_tag)
-            item.menu_restriction_tag.set(menu_restriction_tag)
+        # Set the many-to-many relationships
+        item.taste_tags.set(taste_tags)
+        item.ingredients_tag.set(ingredients_tag)
+        item.menu_allergy_tag.set(menu_allergy_tag)
+        item.menu_restriction_tag.set(menu_restriction_tag)
+
+        item.save()
 
     def load(self, data_list):
         updated_menuItems = []

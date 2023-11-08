@@ -13,7 +13,6 @@ router.register('restrictiontags', views.RestrictionTagViewSet, basename='restri
 router.register('allergytags', views.AllergyTagViewSet, basename='allergytags')
 router.register('ingredienttags', views.IngredientTagViewSet, basename='ingredienttags')
 
-
 #Must go last
 router.register('', views.RestaurantViewSet, basename='restaurants')
 
@@ -23,6 +22,7 @@ menu_router.register('menuitems', views.MenuItemViewSet, basename='menuitems')
 
 urlpatterns = [
     path('handshake/', views.handshake, name='handshake'),
+    path('tags/', views.AllTagsListAPIView.as_view(), name='tags-list'),
     path('', include(router.urls)),
     path('menuitems/<int:pk>/', views.MenuItemRetrieveAPIView.as_view(), name='menuitems-retrieve'),
     path('<int:restaurant_id>/', include(menu_router.urls))

@@ -72,12 +72,12 @@ class PatronSearchHistoryGetSerializer(serializers.ModelSerializer):
     price_min = serializers.DecimalField(
         max_digits=8,  # Total number of digits
         decimal_places=2,  # Maximum of 2 decimal places
-        validators=[MinValueValidator(0.01)],  # Positive only
+        validators=[MinValueValidator(0)],  # Positive only
     )
     price_max = serializers.DecimalField(
         max_digits=8,  # Total number of digits
         decimal_places=2,  # Maximum of 2 decimal places
-        validators=[MinValueValidator(0.01)],  # Positive only
+        validators=[MinValueValidator(0)],  # Positive only
     )
 
     class Meta:
@@ -106,12 +106,12 @@ class PatronSearchHistorySerializer(serializers.ModelSerializer):
     price_min = serializers.DecimalField(
         max_digits=8,  # Total number of digits
         decimal_places=2,  # Maximum of 2 decimal places
-        validators=[MinValueValidator(0.01)],  # Positive only
+        validators=[MinValueValidator(0)],  # Positive only
     )
     price_max = serializers.DecimalField(
         max_digits=8,  # Total number of digits
         decimal_places=2,  # Maximum of 2 decimal places
-        validators=[MinValueValidator(0.01)],  # Positive only
+        validators=[MinValueValidator(0)],  # Positive only
     )
 
     class Meta:
