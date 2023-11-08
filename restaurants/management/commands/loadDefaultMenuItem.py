@@ -13,6 +13,8 @@ class Command(LoadCommand):
         tag_id = set()
         # Check and load the ids
         for value in tagValue:
+            print(value)
+            print(tagValue)
             if value in values:
                 tag_id.add(indices[value])
         return tag_id
@@ -36,15 +38,15 @@ class Command(LoadCommand):
         foodType = obj.pop('food_type_tag_id')
         food_type_tag_id = self.loadTagStr(foodType, FoodTypeTag)
         taste = obj.pop('taste_tags')
-        taste_tags_id = self.loadTagList([taste], TasteTag)
+        taste_tags_id = self.loadTagList(taste, TasteTag)
         cookStyle = obj.pop('cook_style_tags_id')
         cook_style_tags_id = self.loadTagStr(cookStyle, CookStyleTag)
         allergy = obj.pop('menu_allergy_tag')
-        menu_allergy_tag_id = self.loadTagList([allergy], AllergyTag)
+        menu_allergy_tag_id = self.loadTagList(allergy, AllergyTag)
         restriction = obj.pop('menu_restriction_id')
-        menu_restriction_id = self.loadTagList([restriction], RestrictionTag)
+        menu_restriction_id = self.loadTagList(restriction, RestrictionTag)
         ingredients = obj.pop('ingredients_tag')
-        ingredients_tag_id = self.loadTagList([ingredients], IngredientTag)
+        ingredients_tag_id = self.loadTagList(ingredients, IngredientTag)
 
         # Retrieve objects referenced by primary keys
         food_type_tag = FoodTypeTag.objects.get(pk=food_type_tag_id)
