@@ -36,7 +36,7 @@ class Command(GenerateCommand):
             #Generate and Store Data
             data = {
                 "owner": random.choice(valid_owners),
-                "name": f"{self.fake.first_name()}'s {random.choice(valid_rest_suffix)}",
+                "name": f"{self.fake.first_name()}'s {random.choice(valid_rest_suffix)}".rstrip(),
                 "rating": float(self.fake.numerify(text='#.##')),
                 "tags": list(set(self.fake.random_choices(elements=valid_tags))),
                 "price_level": self.fake.random_element(elements=('$', '$$', '$$$')),
