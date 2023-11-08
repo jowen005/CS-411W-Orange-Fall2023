@@ -13,8 +13,6 @@ class Command(LoadCommand):
         tag_id = set()
         # Check and load the ids
         for value in tagValue:
-            print(value)
-            print(tagValue)
             if value in values:
                 tag_id.add(indices[value])
         return tag_id
