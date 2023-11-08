@@ -46,7 +46,9 @@
             "email":"admin@app.com",
             "username":"testAdmin",
             "password":"password",
-            "user_type":"admin"
+            "user_type":"admin",
+            "is_superuser": true,
+            "is_staff": true
         }
     }
 ]

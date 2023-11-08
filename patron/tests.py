@@ -7,91 +7,103 @@ from django.contrib.auth import get_user_model
 from accounts.tokens import create_jwt_pair_for_user
 from rest_framework import status
 from . import models
+#from ..restaurants.models import 
 
 User = get_user_model()
 
 # Test patron view set
 class PatronTests(APITestCase):
     # Import fixtures for this set of tests
-    fixtures = ['users.json']
+    fixtures = ['users.json', 'menuitemtags.json']
     # Set up function for all the tests for this view
     @classmethod
     def setUpClass(cls):
-        super().setUpClass()
+        super().setUpClass() # Calls fixtures before setting up class
 
         # Create users and access tokens
         cls.patron0_user = User.objects.get(email="patron0@app.com")
         cls.patron0_access = create_jwt_pair_for_user(cls.patron0_user)['access']
 
-        cls.patron1_user = User.objects.create_user(
-            email = 'patron1@app.com',
-            username = 'patron1',
-            password = 'password',
-            user_type = 'patron'
-        )
+        # cls.patron1_user = User.objects.create_user(
+        #     email = 'patron1@app.com',
+        #     username = 'patron1',
+        #     password = 'password',
+        #     user_type = 'patron'
+        # )
+        cls.patron1_user = User.objects.get(email="patron1@app.com")
         cls.patron1_access = create_jwt_pair_for_user(cls.patron1_user)['access']
 
-        cls.patron2_user = User.objects.create_user(
-            email = 'patron2@app.com',
-            username = 'patron2',
-            password = 'password',
-            user_type = 'patron'
-        )
+        # cls.patron2_user = User.objects.create_user(
+        #     email = 'patron2@app.com',
+        #     username = 'patron2',
+        #     password = 'password',
+        #     user_type = 'patron'
+        # )
+        cls.patron2_user = User.objects.get(email="patron2@app.com")
         cls.patron2_access = create_jwt_pair_for_user(cls.patron2_user)['access']
 
-        cls.restaurant_user = User.objects.create_user(
-            email = 'restaurant@app.com',
-            username = 'testRestaurant',
-            password = 'password',
-            user_type = 'restaurant'
-        )
+        # cls.restaurant_user = User.objects.create_user(
+        #     email = 'restaurant@app.com',
+        #     username = 'testRestaurant',
+        #     password = 'password',
+        #     user_type = 'restaurant'
+        # )
+        cls.restaurant_user = User.objects.get(email="restaurant@app.com")
         cls.restaurant_access = create_jwt_pair_for_user(cls.restaurant_user)['access']
 
-        cls.admin_user = User.objects.create_user(
-            email = 'admin@app.com',
-            username = 'testAdmin',
-            password = 'password',
-            user_type = 'admin'
-        )
+        # cls.admin_user = User.objects.create_user(
+        #     email = 'admin@app.com',
+        #     username = 'testAdmin',
+        #     password = 'password',
+        #     user_type = 'admin'
+        # )
+        cls.admin_user = User.objects.get(email="admin@app.com")
         cls.admin_access = create_jwt_pair_for_user(cls.admin_user)['access']
 
         #create tags
-        cls.restriction_tag_names = ["Kosher", "Halal", "Vegetarian", "Vegan", "Pescatarian", "Gluten Free"]
-        cls.allergy_tag_names = ["Tree Nut", "Lactose", "Soy", "Egg", "Shellfish", "Glucose"]
-        cls.disliked_ingredient_tags = ["Cheese", "Caramel", "Sardines", "Beef", "Pork", "Celery"]
-        cls.patron_taste_tag_names = ["Fruity", "Savory", "Sweet", "Umami", "Asian Cuisine", "Italian Cuisine"]
+        # cls.restriction_tag_names = ["Kosher", "Halal", "Vegetarian", "Vegan", "Pescatarian", "Gluten Free"]
+        # cls.allergy_tag_names = ["Tree Nut", "Lactose", "Soy", "Egg", "Shellfish", "Glucose"]
+        # cls.disliked_ingredient_tags = ["Cheese", "Caramel", "Sardines", "Beef", "Pork", "Celery"]
+        # cls.patron_taste_tag_names = ["Fruity", "Savory", "Sweet", "Umami", "Asian Cuisine", "Italian Cuisine"]
         # Lists to store tags in for data input
-        cls.restriction_tags = []
-        cls.allergy_tags = []
-        cls.disliked_ingredients = []
-        cls.patron_taste_tags = []
+        # cls.restriction_tags = []
+        # cls.allergy_tags = []
+        # cls.disliked_ingredients = []
+        # cls.patron_taste_tags = []
 
-        # Create restriction tags and append them to restriction tag list
-        for tag in cls.restriction_tag_names:
-            models.RestrictionTag.objects.create(title=tag)
-            cls.restriction_tags.append(models.RestrictionTag.objects.get(title=tag)) 
+        # Grab tags for entry in new patrons
+        restrict_tag_dict = {tag.title: tag.id for tag in models.RestrictionTag.objects.all()}
+        allergy_tag_dict = {tag.title: tag.id for tag in models.AllergyTag.objects.all()}
+        disliked_ingredients_dict = {tag.title: tag.id for tag in models.IngredientTag.objects.all()}
+        taste_tag_dict = {tag.title: tag.id for tag in models.TasteTag.objects.all()}
 
-        # Create allergy tags and append them to allergy tag list
-        for tag in cls.allergy_tag_names:
-            models.AllergyTag.objects.create(title=tag)
-            cls.allergy_tags.append(models.AllergyTag.objects.get(title=tag)) 
 
-        # Create disliked ingredient tags and append them to disliked ingredient tag list
-        for tag in cls.disliked_ingredient_tags:
-            models.IngredientTag.objects.create(title=tag)
-            cls.disliked_ingredients.append(models.IngredientTag.objects.get(title=tag))
+        # # Create restriction tags and append them to restriction tag list
+        # for tag in cls.restriction_tag_names:
+        #     models.RestrictionTag.objects.create(title=tag)
+        #     cls.restriction_tags.append(models.RestrictionTag.objects.get(title=tag)) 
 
-        # Create taste tags and append them to taste tag list
-        for tag in cls.patron_taste_tag_names:
-            models.TasteTag.objects.create(title=tag)
-            cls.patron_taste_tags.append(models.TasteTag.objects.get(title=tag))  
+        # # Create allergy tags and append them to allergy tag list
+        # for tag in cls.allergy_tag_names:
+        #     models.AllergyTag.objects.create(title=tag)
+        #     cls.allergy_tags.append(models.AllergyTag.objects.get(title=tag)) 
+
+        # # Create disliked ingredient tags and append them to disliked ingredient tag list
+        # for tag in cls.disliked_ingredient_tags:
+        #     models.IngredientTag.objects.create(title=tag)
+        #     cls.disliked_ingredients.append(models.IngredientTag.objects.get(title=tag))
+
+        # # Create taste tags and append them to taste tag list
+        # for tag in cls.patron_taste_tag_names:
+        #     models.TasteTag.objects.create(title=tag)
+        #     cls.patron_taste_tags.append(models.TasteTag.objects.get(title=tag))  
 
         #create data objects to instantiate
         cls.data = [
             {
                 "user":cls.patron0_user, "name":"Stan", "dob":"2003-07-10", "calorie_limit": 3000, "gender":"Male",
-                "price_max":20, "zipcode":23508, "patron_restriction_tag":[cls.restriction_tags[0]], "patron_allergy_tag":[cls.allergy_tags[2]],
-                "disliked_ingredients":[cls.disliked_ingredients[2]], "patron_taste_tag":[cls.patron_taste_tags[0], cls.patron_taste_tags[1]]
+                "price_max":20, "zipcode":23508, "patron_restriction_tag":[restrict_tag_dict['Kosher']], "patron_allergy_tag":[allergy_tag_dict['Soy']],
+                "disliked_ingredients":[disliked_ingredients_dict['Lettuce']], "patron_taste_tag":[taste_tag_dict['Fruity'], taste_tag_dict['Savory']]
             },
             {
                 "user":cls.patron1_user, "name":"Max", "dob":"2004-06-15", "calorie_limit": 450, "gender": "Male", 
