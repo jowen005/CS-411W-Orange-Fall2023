@@ -14,11 +14,14 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
     #todo add nullable functionality for the optional sections.  || DONE
     MenuItems = MenuItem.objects.all()
 
-    #return MenuItems.values_list("id",flat=True)
+    print("=========================================================")
+    print(MenuItems.values_list("menu_allergy_tag"))
+    print("=========================================================")
+    print(MenuItems.values_list("ingredients_tag"))
     #the most restrictive tag is likely the allergy tags so we'll filter on that first
     if (allergy_tags is not None) and (len(allergy_tags) > 0):
         MenuItems = MenuItems.filter(menu_allergy_tag__in = allergy_tags)
-    if disliked_ingredients is not None:
+    if (disliked_ingredients is not None) and (len(disliked_ingredients) > 0):
         MenuItems = MenuItems.exclude(ingredients_tag__in = disliked_ingredients)
 
     #note to self this may need to be reworked as a loop to ensure that ALL restriction tags are match
@@ -28,21 +31,11 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
     print( (dietary_restriction_tags is not None) and (len(dietary_restriction_tags) > 0))
     if (dietary_restriction_tags is not None) and (len(dietary_restriction_tags) > 0):
         MenuItems = MenuItems.filter(menu_restriction_tag__in = dietary_restriction_tags)
-        #current SQL query should look like SELECT * from MenuItems
-                                        #WHERE NOT (AllergyTag IN list(allergy_tags));
-                                        #AND NOT(IngredientTag IN list(disliked_ingredients))
-                                        #AND (RestrictionTag IN list(dietary_restriction_tags))
     if (patron_taste_tags is not None) and (len(patron_taste_tags) > 0):
         MenuItems = MenuItems.filter(taste_tags__in = patron_taste_tags)
-        #current SQL query should look like SELECT * from MenuItems
-                                        #WHERE NOT (AllergyTag IN list(allergy_tags));
-                                        #AND NOT(IngredientTag IN list(disliked_ingredients))
-                                        #AND (RestrictionTag IN list(dietary_restriction_tags))
-                                        #AND (patron_taste_tags IN list(patron_taste_tags))
-
+        
     if price_min is not None and price_max is not None:        
         MenuItems = MenuItems.filter(price__range = (price_min,price_max))
-
     if calorie_limit is not None:        
         MenuItems = MenuItems.filter(calories__lte = calorie_limit)
                                        
@@ -85,12 +78,12 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
     #get all restuarants of menu items we've already searched
     Restaurants = Restaurant.objects.filter(id__in = MenuItems.values_list("restaurant",flat=True))
     targetTime = search_datetime#.time #.strftime("%H:%M:%S")
-
+    print("90")
     print(Restaurants.values_list("id",flat=True))
      #todo: convert this to checking unix time stamp instead
     if(weekday == 0): #monday
         print("monday")
-        Restaurants = Restaurants.filter(mon_open__hour__lte = targetTime.hour)
+        Restaurants = Restaurants.filter(mon_open__time__lte = targetTime.time)
         #Restaurants = Restaurants.filter(mon_open__minute__lte = targetTime.minute)
         Restaurants = Restaurants.filter(mon_close__hour__gte = targetTime.hour)
     elif(weekday == 1): #tuesday
