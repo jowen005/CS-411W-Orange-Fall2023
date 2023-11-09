@@ -1,6 +1,8 @@
 from restaurants.models import MenuItem
 from restaurants.models import FoodTypeTag,CookStyleTag,Restaurant
 from patron.models import Patron
+from datetime import datetime, time, timedelta
+import pytz
 
 #this function will hit the database twice, once to pull the patron profile and again with the actual search query.
 #since all the values set by the patron profile are specified in an advanced search patron_ID is not provided
@@ -20,7 +22,9 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
     print(MenuItems.values_list("ingredients_tag"))
     #the most restrictive tag is likely the allergy tags so we'll filter on that first
     if (allergy_tags is not None) and (len(allergy_tags) > 0):
-        MenuItems = MenuItems.filter(menu_allergy_tag__in = allergy_tags)
+        for allergy in allergy_tags:
+            MenuItems = MenuItems.filter(menu_allergy_tag = allergy)
+    #print(MenuItems.values_list("id",flat=True))
     if (disliked_ingredients is not None) and (len(disliked_ingredients) > 0):
         MenuItems = MenuItems.exclude(ingredients_tag__in = disliked_ingredients)
 
@@ -38,6 +42,8 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
         MenuItems = MenuItems.filter(price__range = (price_min,price_max))
     if calorie_limit is not None:        
         MenuItems = MenuItems.filter(calories__lte = calorie_limit)
+    
+    print("44 " + str(MenuItems.values_list("id",flat=True)))
     # print(MenuItems) #NOTE                            
     #theoretically we can save the query string until last weirdly
     #nice to have --> synonym dictonary for fuzzy logic on the search query.
@@ -67,7 +73,7 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
                     MenuItems = MenuItems.filter(food_type_tag = queryElement)
                 else:
                     MenuItems = MenuItems.filter(item_name__icontains = queryElement)   
-
+    print("74 " + str(MenuItems.values_list("id",flat=True)))
     # print(f'{MenuItems}') #NOTE
     if(time_of_day_available != None):
         MenuItems = MenuItems.filter(time_of_day_available__in = [time, 'Anytime'])
@@ -78,7 +84,8 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
     #might be better ways to do this, more research is needed
     #get all restuarants of menu items we've already searched
     Restaurants = Restaurant.objects.filter(id__in = MenuItems.values_list("restaurant",flat=True))
-    targetTime = search_datetime#.time #.strftime("%H:%M:%S")
+    targetTime = search_datetime - timedelta(hours=5)#.time #.strftime("%H:%M:%S")
+    
     print("90")
     print(Restaurants.values_list("id",flat=True))
      #todo: convert this to checking unix time stamp instead
@@ -105,7 +112,7 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
         Restaurants = Restaurants.filter(fri_close__hour__gte = targetTime.hour)
     elif(weekday == 5): #saturday
         print("saturday") #NOTE
-        print(Restaurants.values_list("id",flat=True))
+        #print(Restaurants.values_list("id",flat=True))
         #print(((Restaurants.values_list("sat_open",flat=True))[0]).hour)
         Restaurants = Restaurants.filter(sat_open__hour__lte = targetTime.hour)
         Restaurants = Restaurants.filter(sat_close__hour__gte = targetTime.hour)
@@ -113,11 +120,12 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
         print("sunday") #NOTE
         Restaurants = Restaurants.filter(sun_open__hour__lte = targetTime.hour)
         Restaurants = Restaurants.filter(sun_close__hour__gte = targetTime.hour)
-    
+    print("120 " + str(MenuItems.values_list("id",flat=True)))
     # print(Restaurants.values_list("id",flat=True)) #NOTE
     # print(f'{MenuItems}') #NOTE
     #return MenuItems.values_list("id",flat=True) 
     MenuItems = MenuItems.filter(restaurant__in = Restaurants.values_list("id",flat=True))
+    print("bleep " + str(Restaurants.values_list("id",flat=True)))
     # print(f'{MenuItems}') #NOTE
     #for debug purposes remove when finished
     #print(MenuItems.query)
