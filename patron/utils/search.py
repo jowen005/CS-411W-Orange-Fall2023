@@ -34,9 +34,11 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
     # print(str(dietary_restriction_tags)) #NOTE
     # print( (dietary_restriction_tags is not None) and (len(dietary_restriction_tags) > 0)) #NOTE
     if (dietary_restriction_tags is not None) and (len(dietary_restriction_tags) > 0):
-        MenuItems = MenuItems.filter(menu_restriction_tag__in = dietary_restriction_tags)
+        for restriction in dietary_restriction_tags:
+            MenuItems = MenuItems.filter(menu_restriction_tag = restriction)
     if (patron_taste_tags is not None) and (len(patron_taste_tags) > 0):
-        MenuItems = MenuItems.filter(taste_tags__in = patron_taste_tags)
+        for taste in patron_taste_tags:
+            MenuItems = MenuItems.filter(taste_tags = taste)
         
     if price_min is not None and price_max is not None:        
         MenuItems = MenuItems.filter(price__range = (price_min,price_max))
