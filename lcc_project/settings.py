@@ -17,8 +17,16 @@ import json
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Specify the correct secrets filepath in the secret_path.json
 try:
-    with open(BASE_DIR/'secrets.json') as handle:
+    with open(BASE_DIR/'secret_path.json') as handle:
+        PATHS = json.load(handle)
+except IOError:
+    PATHS = {}
+
+# Specify secrets in whatever file is specified above
+try:
+    with open(BASE_DIR/PATHS['secrets']) as handle:
         SECRETS = json.load(handle)
 except IOError:
     SECRETS = {}
