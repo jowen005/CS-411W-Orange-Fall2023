@@ -24,15 +24,11 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
     if (allergy_tags is not None) and (len(allergy_tags) > 0):
         for allergy in allergy_tags:
             MenuItems = MenuItems.filter(menu_allergy_tag = allergy)
-    #print(MenuItems.values_list("id",flat=True))
     if (disliked_ingredients is not None) and (len(disliked_ingredients) > 0):
         MenuItems = MenuItems.exclude(ingredients_tag__in = disliked_ingredients)
 
     #note to self this may need to be reworked as a loop to ensure that ALL restriction tags are match
-    #todo test the above theory.
-    # print("=========================================================") #NOTE
-    # print(str(dietary_restriction_tags)) #NOTE
-    # print( (dietary_restriction_tags is not None) and (len(dietary_restriction_tags) > 0)) #NOTE
+    #todo test the above theory. done, testing validated theory.  function changed. 
     if (dietary_restriction_tags is not None) and (len(dietary_restriction_tags) > 0):
         for restriction in dietary_restriction_tags:
             MenuItems = MenuItems.filter(menu_restriction_tag = restriction)
@@ -44,9 +40,6 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
         MenuItems = MenuItems.filter(price__range = (price_min,price_max))
     if calorie_limit is not None:        
         MenuItems = MenuItems.filter(calories__lte = calorie_limit)
-    
-    print("44 " + str(MenuItems.values_list("id",flat=True)))
-    # print(MenuItems) #NOTE                            
     #theoretically we can save the query string until last weirdly
     #nice to have --> synonym dictonary for fuzzy logic on the search query.
     #todo: convert title to ID tag
@@ -74,19 +67,17 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
                 elif(queryElement in food_type_tags):
                     MenuItems = MenuItems.filter(food_type_tag = queryElement)
                 else:
-                    MenuItems = MenuItems.filter(item_name__icontains = queryElement)   
-    print("74 " + str(MenuItems.values_list("id",flat=True)))
+                    MenuItems = MenuItems.filter(item_name__icontains = queryElement)
     # print(f'{MenuItems}') #NOTE
     if(time_of_day_available != None):
         MenuItems = MenuItems.filter(time_of_day_available__in = [time, 'Anytime'])
     # print(f'{MenuItems}') #NOTE
-    #datetime_object = datetime.strptime(search_datetime, '%Y-%m-%d %H:%M:%S')
     weekday = search_datetime.weekday()
     
     #might be better ways to do this, more research is needed
     #get all restuarants of menu items we've already searched
     Restaurants = Restaurant.objects.filter(id__in = MenuItems.values_list("restaurant",flat=True))
-    targetTime = search_datetime - timedelta(hours=5)#.time #.strftime("%H:%M:%S")
+    targetTime = search_datetime - timedelta(hours=5)
     
     print("90")
     print(Restaurants.values_list("id",flat=True))
@@ -113,41 +104,12 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
         Restaurants = Restaurants.filter(fri_close__time__gte = targetTime.time)
     elif(weekday == 5): #saturday
         print("saturday") #NOTE
-        #print(Restaurants.values_list("id",flat=True))
-        #print(((Restaurants.values_list("sat_open",flat=True))[0]).time)
         Restaurants = Restaurants.filter(sat_open__time__lte = targetTime.time)
         Restaurants = Restaurants.filter(sat_close__time__gte = targetTime.time)
     elif(weekday == 6): #sunday
         print("sunday") #NOTE
         Restaurants = Restaurants.filter(sun_open__time__lte = targetTime.time)
         Restaurants = Restaurants.filter(sun_close__time__gte = targetTime.time)
-    print("120 " + str(MenuItems.values_list("id",flat=True)))
-    # print(Restaurants.values_list("id",flat=True)) #NOTE
-    # print(f'{MenuItems}') #NOTE
-    #return MenuItems.values_list("id",flat=True) 
     MenuItems = MenuItems.filter(restaurant__in = Restaurants.values_list("id",flat=True))
-    print("bleep " + str(Restaurants.values_list("id",flat=True)))
-    # print(f'{MenuItems}') #NOTE
-    #for debug purposes remove when finished
-    #print(MenuItems.query)
     #now we should finally be ready to evaluate the query and ping the database
     return MenuItems.values_list("id",flat=True)
-    
-### DEPRECIATED
-
-# def quickSearch(patron_ID, query):
-#     patron = Patrons.objects.get(patron_ID)
-#     calorie_limit = (0,patron.calorie_limit)
-#     if(patron.price_preference == '$'):
-#         price_max = 25.0
-#     if(patron.price_preference == '$$'):
-#         price_max = 50.0
-#     if(patron.price_preference == '$$$'):
-#         price_max = 1000.0
-#     dietary_restriction_tags = list(patron.patron_restriction_tag)
-#     allergy_tags = list(patron.patron_allergy_tag)
-#     disliked_ingredients = list(patron.disliked_ingredients)
-#     patron_taste_tags = list(patron.patron_taste_tag)
-
-#     return advancedSearch(query ,calorie_limit,price_max,dietary_restriction_tags,allergy_tags,disliked_ingredients,patron_taste_tags)
-
