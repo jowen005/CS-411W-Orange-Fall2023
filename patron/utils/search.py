@@ -112,4 +112,5 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
         Restaurants = Restaurants.filter(sun_close__time__gte = targetTime.time)
     MenuItems = MenuItems.filter(restaurant__in = Restaurants.values_list("id",flat=True))
     #now we should finally be ready to evaluate the query and ping the database
+    print(menuItems.query)
     return MenuItems.values_list("id",flat=True)
