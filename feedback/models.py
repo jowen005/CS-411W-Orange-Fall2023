@@ -42,7 +42,22 @@ class Reviews(models.Model):
     class Meta:
         db_table = 'Reviews'
 
+class AppSatisfaction(models.Model):
+        # When patron or restaurant user deletes their account the review still remains
+        user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 
+        review = models.CharField(max_length=255,null=True)
+        # WE'RE NOT CALCULATING AN AVERAGE RATING, CORRECT?
+        rating = models.IntegerField(choices= [(1, '1 Star'), (2, '2 Stars'), (3, '3 Stars'), (4, '4 Stars'), (5, '5 Stars')])
+
+        review_datetime = models.DateTimeField(auto_now_add=True)
+
+        def formatted_datetime(self):
+            return self.review_datetime.strftime('%d/%m/%y %H:%M:%S')
+    
+        def save(self, *args, **kwargs):
+            super().save(*args, **kwargs)  # Call the parent class's save method
+        
 # class Reviews(models.Model):
 #     #When patron delete his account, the reviews still remains.
 #     #when menu_item deleted, the reviews will not available.
