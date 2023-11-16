@@ -102,31 +102,31 @@ class Command(BaseCommand):
 
             search_obj = self.format_search_object(search_inst)
 
-            print(f'Search Object submitted to search:\n\t{search_obj}') #NOTE
+            print(f'Search Object submitted to search:\n\t{search_obj}\n') #NOTE
 
             # Perform Search
-            search_results = advancedSearch(**search_obj)
-            menu_item_results = list(rm.MenuItem.objects.filter(id__in=search_results))
+            result_ids = list(advancedSearch(**search_obj))
+            # menu_item_results = list(rm.MenuItem.objects.filter(id__in=search_results))
 
-            print(f'Results: {menu_item_results}\n') #NOTE
+            print(f'Result IDs: {result_ids}\n') #NOTE
 
             # Bookmark Menu Items
-            remaining_results, bookmarks = self.generate_bookmarks(user, menu_item_results)
+            remaining_result_ids, bookmarks = self.generate_bookmarks(user, result_ids)
             if bookmarks is None:
                 self.stdout.write(self.style.ERROR(f"No results found on Search {idx}."))
-                search_report[idx]['results'] = len(menu_item_results)
+                search_report[idx]['results'] = len(result_ids)
                 search_report[idx]['bookmark'] = 0
                 search_report[idx]['itemhistory'] = 0
                 continue
 
-            print(f'Remaining Results: {remaining_results}') #NOTE
-            print(f'Bookmarks: {bookmarks}') #NOTE
+            print(f'Remaining Results: {remaining_result_ids}\n') #NOTE
+            
 
             # Add Items to Menu Item History
-            items_added = self.generate_item_history(user, remaining_results)
+            items_added = self.generate_item_history(user, remaining_result_ids)
             if items_added is None:
                 self.stdout.write(self.style.ERROR(f"All results have been bookmarked on Search {idx}."))
-                search_report[idx]['results'] = len(menu_item_results)
+                search_report[idx]['results'] = len(result_ids)
                 search_report[idx]['bookmark'] = len(bookmarks)
                 search_report[idx]['itemhistory'] = 0
                 continue
@@ -134,11 +134,9 @@ class Command(BaseCommand):
             print(f'Items Added: {items_added}') #NOTE
 
             #Collect Reports
-            search_report[idx]['results'] = len(menu_item_results)
+            search_report[idx]['results'] = len(result_ids)
             search_report[idx]['bookmark'] = len(bookmarks)
             search_report[idx]['itemhistory'] = len(items_added)
-
-        print(f'Search Report: {search_report}') #NOTE
 
         return search_report
     
@@ -146,15 +144,18 @@ class Command(BaseCommand):
     def generate_quick_search(self, user: User, profile: pm.Patron, tag_relations, valid_queries):
         # Remove possible queries that conflict with tag selections
         for ingred in list(profile.disliked_ingredients.all()):
-            valid_queries.pop(ingred.title, None)
+            if ingred.title in valid_queries:
+                valid_queries.remove(ingred.title)
                 
         for restr in list(profile.patron_restriction_tag.all()): 
             for conflict in tag_relations['restrictions'][f'{restr.title}']:
-                valid_queries.pop(conflict, None)
+                if conflict in valid_queries:
+                    valid_queries.remove(conflict)
 
         for allergy in list(profile.patron_allergy_tag.all()):
             for conflict in tag_relations['allergies'][f'{allergy.title}']:
-                valid_queries.pop(allergy.title, None)
+                if conflict in valid_queries:
+                    valid_queries.remove(conflict)
 
         # Add Quick Search object to Search History
         search_data = {
@@ -173,7 +174,9 @@ class Command(BaseCommand):
         search_inst.patron_taste_tags.set(profile.patron_taste_tag.all())
         search_inst.disliked_ingredients.set(profile.disliked_ingredients.all())
 
-        print(f'Search Instance: {search_inst}\n\t{search_inst.dietary_restriction_tags.all()}\n\t{search_inst.allergy_tags.all()}\n\t{search_inst.patron_taste_tags.all()}\n\t{search_inst.disliked_ingredients.all()}\n') #NOTE
+        print(f'Search Tags for {search_inst}\n\tRestrc: {list(search_inst.dietary_restriction_tags.all())}\n\t'+ #NOTE
+              f'Allerg: {list(search_inst.allergy_tags.all())}\n\tTaste:  {list(search_inst.patron_taste_tags.all())}\n\t'+ #NOTE
+              f'DisIng: {list(search_inst.disliked_ingredients.all())}') #NOTE
 
         return search_inst
     
@@ -196,8 +199,8 @@ class Command(BaseCommand):
         selected_ingred_tags = random.sample(valid_ingred_tags, 
                                     k=random.choices(num_selections, weights=[3,2,1], k=1)[0])
         
-        print(f'Tag Selections: \n\t{selected_restrict_tags}\n\t{selected_allergy_tags}\n\t{selected_taste_tags}\n\t{selected_ingred_tags}\n') #NOTE
-        print(f'Valid Queries: {valid_queries}')
+        # print(f'Tag Selections: \n\t{selected_restrict_tags}\n\t{selected_allergy_tags}\n\t{selected_taste_tags}\n\t{selected_ingred_tags}\n')
+        # print(f'Valid Queries: {valid_queries}')
         
         # Remove possible queries that conflict with tag selections
         for ingred in selected_ingred_tags:
@@ -233,7 +236,9 @@ class Command(BaseCommand):
         search_inst.patron_taste_tags.set(selected_taste_tags)
         search_inst.disliked_ingredients.set(selected_ingred_tags)
 
-        print(f'Search Instance: {search_inst}\n\t{search_inst.dietary_restriction_tags}\n\t{search_inst.allergy_tags}\n\t{search_inst.patron_taste_tags}\n\t{search_inst.disliked_ingredients}\n') #NOTE
+        print(f'Search Tags for {search_inst}\n\tRestrc: {list(search_inst.dietary_restriction_tags.all())}\n\t'+ #NOTE
+              f'Allerg: {list(search_inst.allergy_tags.all())}\n\tTaste:  {list(search_inst.patron_taste_tags.all())}\n\t'+ #NOTE
+              f'DisIng: {list(search_inst.disliked_ingredients.all())}') #NOTE
 
         return search_inst
     
@@ -248,12 +253,20 @@ class Command(BaseCommand):
         return search_obj
     
 
-    def generate_bookmarks(self, user: User, menu_item_results):
-        num_results = len(menu_item_results)
+    def generate_bookmarks(self, user: User, result_ids):
+        # num_nonbookmark_results = len(result_ids)
+        # find menu items that have not been bookmarked
+        bookmark_item_ids = list(pm.Bookmark.objects.filter(patron=user).values_list('menu_item', flat=True))
+        nonbookmarked_results = [item for item in result_ids if item not in bookmark_item_ids]
+        num_nonbookmark_results = len(nonbookmarked_results)
+        
+        print(f'Bookmark Item IDs: {bookmark_item_ids}') #NOTE
+        print(f'NonBookmarked Results: {nonbookmarked_results}') #NOTE
+        print(f'Number of nonbookmarked results: {num_nonbookmark_results}\n') #NOTE
 
-        if num_results == 0:
-            return menu_item_results, None
-        elif num_results == 1:
+        if num_nonbookmark_results == 0:
+            return result_ids, None
+        elif num_nonbookmark_results == 1:
             selections = [0, 1]
             weights = [1, 2]
         else:
@@ -261,24 +274,29 @@ class Command(BaseCommand):
             weights= [1, 5, 2]
 
         num_bookmarks = random.choices(selections, weights=weights, k=1)[0]
+        bookmarks = []
 
         print(f'Number of bookmarks to be selected: {num_bookmarks}') #NOTE
 
-        bookmarks = []
-
         # Create Bookmark
         if num_bookmarks != 0:
-            for item in random.sample(menu_item_results, k=num_bookmarks):
-                menu_item_results.remove(item)
+
+            # grab random bookmarkable items
+            for item_id in random.sample(nonbookmarked_results, k=num_bookmarks):
+                result_ids.remove(item_id)
+
+                item = rm.MenuItem.objects.get(id=item_id)
                 bookmarks.append(pm.Bookmark.objects.create(patron=user, menu_item=item))
 
-                print(f'Menu Item Bookmarked: {item}') #NOTE
+                print(f'Menu Item Bookmarked: {item_id}') #NOTE
 
-        return menu_item_results, bookmarks
+        print(f'Successful Bookmarks: {bookmarks}\n') #NOTE
+
+        return result_ids, bookmarks
 
 
-    def generate_item_history(self, user: User, menu_item_results):
-        num_results = len(menu_item_results)
+    def generate_item_history(self, user: User, result_ids):
+        num_results = len(result_ids)
 
         if num_results == 0:
             return None
@@ -292,8 +310,10 @@ class Command(BaseCommand):
         print(f'Number of items to be added: {num_adds}') #NOTE
         
         if num_adds != 0:
-            for item in random.sample(menu_item_results, k=num_adds): # num_adds == 1 (loop for robustness)
-                menu_item_results.remove(item)
+            for item_id in random.sample(result_ids, k=num_adds): # num_adds == 1 (loop for robustness)
+                result_ids.remove(item_id)
+
+                item = rm.MenuItem.objects.get(id=item_id)
                 
                 # Generate and Create Feedback object
                 rating = random.choices(self.possible_ratings, weights=self.rating_weights, k=1)[0]
@@ -308,12 +328,14 @@ class Command(BaseCommand):
 
                 feedback_obj = Reviews.objects.create(**feedback_data)
 
-                print(f'Feedback Object: {feedback_obj}') #NOTE
+                print(f'Feedback Object Successful: {feedback_obj}') #NOTE
 
                 # Create Menu Item History Object
                 items_added.append(pm.MenuItemHistory.objects.create(patron=user, review=feedback_obj, menu_item=item))
 
-                print(f'Menu Item Added: {item}') #NOTE
+                print(f'Menu Item Added: {item_id}') #NOTE
+
+            print(f'Successful Adds: {items_added}\n') #NOTE
 
         return items_added
 
@@ -322,12 +344,10 @@ class Command(BaseCommand):
 
         print('='*100) #NOTE
         print(f'Bookmark Traffic') #NOTE
-        print('='*100) #NOTE
+        print('='*100+'\n') #NOTE
 
         valid_bookmarks = list(pm.Bookmark.objects.all())
         items_added = []
-
-        print(f'Valid Bookmarks: {valid_bookmarks}') #NOTE
 
         num_bookmarks = len(valid_bookmarks)
 
@@ -360,8 +380,6 @@ class Command(BaseCommand):
 
             feedback_obj = Reviews.objects.create(**feedback_data)
 
-            print(f'Feedback Object: {feedback_obj}') #NOTE
-
             items_added.append(pm.MenuItemHistory.objects.create(patron=user, review=feedback_obj, menu_item=item))
 
             print(f'Menu Item Added: {item}') #NOTE
@@ -369,6 +387,8 @@ class Command(BaseCommand):
         bookmark_report = {}
         bookmark_report['itemsadded'] = len(items_added)
         bookmark_report['itemsremaining'] = num_bookmarks - num_selections
+
+        print('\n') #NOTE
 
         return bookmark_report
     

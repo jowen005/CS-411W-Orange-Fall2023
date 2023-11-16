@@ -17,8 +17,10 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
     MenuItems = MenuItem.objects.all()
 
     print("=========================================================")
-    print(MenuItems.values_list("menu_allergy_tag"))
+    print('Search Logs')
     print("=========================================================")
+    print(MenuItems.values_list("menu_allergy_tag"))
+    print("---------------------------------------------------------")
     print(MenuItems.values_list("ingredients_tag"))
     #the most restrictive tag is likely the allergy tags so we'll filter on that first
     if (allergy_tags is not None) and (len(allergy_tags) > 0):
@@ -130,6 +132,7 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
     #for debug purposes remove when finished
     #print(MenuItems.query)
     #now we should finally be ready to evaluate the query and ping the database
+    print("========================================================\n")
     return MenuItems.values_list("id",flat=True)
     
 ### DEPRECIATED
