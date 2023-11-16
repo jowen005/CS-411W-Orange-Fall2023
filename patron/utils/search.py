@@ -90,38 +90,37 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
     
     print("90")
     print(Restaurants.values_list("id",flat=True))
-     #todo: convert this to checking unix time stamp instead
+     #todo: convert this to checking unix time stamp instead #done
     if(weekday == 0): #monday
         print("monday")
         Restaurants = Restaurants.filter(mon_open__time__lte = targetTime.time)
-        #Restaurants = Restaurants.filter(mon_open__minute__lte = targetTime.minute)
-        Restaurants = Restaurants.filter(mon_close__hour__gte = targetTime.hour)
+        Restaurants = Restaurants.filter(mon_close__time__gte = targetTime.time)
     elif(weekday == 1): #tuesday
         print("tuesday") #NOTE
-        Restaurants = Restaurants.filter(tue_open__hour__lte = targetTime.hour)
-        Restaurants = Restaurants.filter(tue_close__hour__gte = targetTime.hour)
+        Restaurants = Restaurants.filter(tue_open__time__lte = targetTime.time)
+        Restaurants = Restaurants.filter(tue_close__time__gte = targetTime.time)
     elif(weekday == 2): #wednesday
         print("wednesday") #NOTE
-        Restaurants = Restaurants.filter(wed_open__hour__lte = targetTime.hour)
-        Restaurants = Restaurants.filter(wed_close__hour__gte = targetTime.hour)
+        Restaurants = Restaurants.filter(wed_open__time__lte = targetTime.time)
+        Restaurants = Restaurants.filter(wed_close__time__gte = targetTime.time)
     elif(weekday == 3): #thursday
         print("thursday") #NOTE
-        Restaurants = Restaurants.filter(thu_open__hour__lte = targetTime.hour)
-        Restaurants = Restaurants.filter(thu_close__hour__gte = targetTime.hour)
+        Restaurants = Restaurants.filter(thu_open__time__lte = targetTime.time)
+        Restaurants = Restaurants.filter(thu_close__time__gte = targetTime.time)
     elif(weekday == 4): #friday
         print("friday") #NOTE
-        Restaurants = Restaurants.filter(fri_open__hour__lte = targetTime.hour)
-        Restaurants = Restaurants.filter(fri_close__hour__gte = targetTime.hour)
+        Restaurants = Restaurants.filter(fri_open__time__lte = targetTime.time)
+        Restaurants = Restaurants.filter(fri_close__time__gte = targetTime.time)
     elif(weekday == 5): #saturday
         print("saturday") #NOTE
         #print(Restaurants.values_list("id",flat=True))
-        #print(((Restaurants.values_list("sat_open",flat=True))[0]).hour)
-        Restaurants = Restaurants.filter(sat_open__hour__lte = targetTime.hour)
-        Restaurants = Restaurants.filter(sat_close__hour__gte = targetTime.hour)
+        #print(((Restaurants.values_list("sat_open",flat=True))[0]).time)
+        Restaurants = Restaurants.filter(sat_open__time__lte = targetTime.time)
+        Restaurants = Restaurants.filter(sat_close__time__gte = targetTime.time)
     elif(weekday == 6): #sunday
         print("sunday") #NOTE
-        Restaurants = Restaurants.filter(sun_open__hour__lte = targetTime.hour)
-        Restaurants = Restaurants.filter(sun_close__hour__gte = targetTime.hour)
+        Restaurants = Restaurants.filter(sun_open__time__lte = targetTime.time)
+        Restaurants = Restaurants.filter(sun_close__time__gte = targetTime.time)
     print("120 " + str(MenuItems.values_list("id",flat=True)))
     # print(Restaurants.values_list("id",flat=True)) #NOTE
     # print(f'{MenuItems}') #NOTE
