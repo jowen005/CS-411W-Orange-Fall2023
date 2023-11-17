@@ -50,6 +50,27 @@ class ReviewsSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['patron']
 
+# Does App Satisfaction even need a get serializer, nothing is taken from another model's serializers
+class AppSatisfactionGetSerializer(serializers.ModelSerializer):
+    review = serializers.CharField(max_length=255)
+
+    rating = serializers.ChoiceField(choices= [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)])
+
+    class Meta:
+        model = models.Reviews
+        fields = '__all__'
+        read_only_fields = ['user']
+
+class AppSatisfactionSerializer(serializers.ModelSerializer):
+    review = serializers.CharField(max_length=255)
+
+    rating = serializers.ChoiceField(choices= [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)])
+
+    class Meta:
+        model = models.Reviews
+        fields = '__all__'
+        read_only_fields = ['user']
+
 
 # Serializer for Reviews model
 # class ReviewsSerializer(serializers.ModelSerializer):

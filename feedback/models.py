@@ -47,8 +47,8 @@ class AppSatisfaction(models.Model):
         user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 
         review = models.CharField(max_length=255,null=True)
-        # WE'RE NOT CALCULATING AN AVERAGE RATING, CORRECT?
-        rating = models.IntegerField(choices= [(1, '1 Star'), (2, '2 Stars'), (3, '3 Stars'), (4, '4 Stars'), (5, '5 Stars')])
+        
+        rating = models.IntegerField(choices= [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)])
 
         review_datetime = models.DateTimeField(auto_now_add=True)
 
