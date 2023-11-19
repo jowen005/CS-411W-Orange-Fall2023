@@ -19,6 +19,31 @@ class Patron(models.Model):
     patron_allergy_tag = models.ManyToManyField(AllergyTag)
     disliked_ingredients = models.ManyToManyField(IngredientTag)
     patron_taste_tag = models.ManyToManyField(TasteTag)
+    calorie_level = models.PositiveBigIntegerField()
+
+    CALORIE_LEVEL_RANGES = [
+        (0, 199, 1),
+        (200, 399, 2),
+        (400, 599, 3),
+        (600,799,4),
+        (800,999,5),
+        (1000,1199,6),
+        (1200,1399,7),
+        (1400,1599,8),
+        (1600,1799,9),
+        (1800, 2000, 10),
+        (2001, float('inf'), 11),
+    ]
+
+    def calculate_calorie_level(self):
+        for start, end, level in self.CALORIE_LEVEL_RANGES:
+            if start <= self.calorie_limit <= end:
+                return level
+
+    def save(self, *args, **kwargs):
+        self.calorie_level = self.calculate_calorie_level()
+        super(Patron, self).save(*args, **kwargs)
+
     
     def __str__(self):
         return self.name
@@ -79,6 +104,32 @@ class PatronSearchHistory(models.Model):
         blank=True
     )
     search_datetime = models.DateTimeField(auto_now_add=True)
+    calorie_level = models.PositiveBigIntegerField()
+
+    CALORIE_LEVEL_RANGES = [
+        (0, 199, 1),
+        (200, 399, 2),
+        (400, 599, 3),
+        (600,799,4),
+        (800,999,5),
+        (1000,1199,6),
+        (1200,1399,7),
+        (1400,1599,8),
+        (1600,1799,9),
+        (1800, 2000, 10),
+        (2001, float('inf'), 11),
+    ]
+
+    def calculate_calorie_level(self):
+        for start, end, level in self.CALORIE_LEVEL_RANGES:
+            if start <= self.calorie_limit <= end:
+                return level
+
+    def save(self, *args, **kwargs):
+        self.calorie_level = self.calculate_calorie_level()
+        super(PatronSearchHistory, self).save(*args, **kwargs)
+
+    
 
     def formatted_datetime(self):
         return self.search_datetime.strftime('%d/%m/%y %H:%M:%S')
