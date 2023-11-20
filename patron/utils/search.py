@@ -16,10 +16,10 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
     #todo add nullable functionality for the optional sections.  || DONE
     MenuItems = MenuItem.objects.all()
 
-    print("=========================================================")
-    print(MenuItems.values_list("menu_allergy_tag"))
-    print("=========================================================")
-    print(MenuItems.values_list("ingredients_tag"))
+    #print("=========================================================")
+    #print(MenuItems.values_list("menu_allergy_tag"))
+    #print("=========================================================")
+    #print(MenuItems.values_list("ingredients_tag"))
     #the most restrictive tag is likely the allergy tags so we'll filter on that first
     if (allergy_tags is not None) and (len(allergy_tags) > 0):
         for allergy in allergy_tags:
@@ -79,38 +79,41 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
     Restaurants = Restaurant.objects.filter(id__in = MenuItems.values_list("restaurant",flat=True))
     targetTime = search_datetime - timedelta(hours=5)
     
-    print("90")
-    print(Restaurants.values_list("id",flat=True))
-     #todo: convert this to checking unix time stamp instead #done
+     #todo: convert this to checking unix time stamp instead
+    #weekday = 7
     if(weekday == 0): #monday
         print("monday")
-        Restaurants = Restaurants.filter(mon_open__time__lte = targetTime.time)
-        Restaurants = Restaurants.filter(mon_close__time__gte = targetTime.time)
+        Restaurants = Restaurants.filter(mon_open__hour__lte = targetTime.hour)
+        Restaurants = Restaurants.filter(mon_close__hour__gte = targetTime.hour)
     elif(weekday == 1): #tuesday
         print("tuesday") #NOTE
-        Restaurants = Restaurants.filter(tue_open__time__lte = targetTime.time)
-        Restaurants = Restaurants.filter(tue_close__time__gte = targetTime.time)
+        Restaurants = Restaurants.filter(tue_open__hour__lte = targetTime.hour)
+        Restaurants = Restaurants.filter(tue_close__hour__gte = targetTime.hour)
     elif(weekday == 2): #wednesday
         print("wednesday") #NOTE
-        Restaurants = Restaurants.filter(wed_open__time__lte = targetTime.time)
-        Restaurants = Restaurants.filter(wed_close__time__gte = targetTime.time)
+        Restaurants = Restaurants.filter(wed_open__hour__lte = targetTime.hour)
+        Restaurants = Restaurants.filter(wed_close__hour__gte = targetTime.hour)
     elif(weekday == 3): #thursday
         print("thursday") #NOTE
-        Restaurants = Restaurants.filter(thu_open__time__lte = targetTime.time)
-        Restaurants = Restaurants.filter(thu_close__time__gte = targetTime.time)
+        Restaurants = Restaurants.filter(thu_open__hour__lte = targetTime.hour)
+        Restaurants = Restaurants.filter(thu_close__hour__gte = targetTime.hour)
     elif(weekday == 4): #friday
         print("friday") #NOTE
-        Restaurants = Restaurants.filter(fri_open__time__lte = targetTime.time)
-        Restaurants = Restaurants.filter(fri_close__time__gte = targetTime.time)
+        Restaurants = Restaurants.filter(fri_open__hour__lte = targetTime.hour)
+        Restaurants = Restaurants.filter(fri_close__hour__gte = targetTime.hour)
     elif(weekday == 5): #saturday
         print("saturday") #NOTE
-        Restaurants = Restaurants.filter(sat_open__time__lte = targetTime.time)
-        Restaurants = Restaurants.filter(sat_close__time__gte = targetTime.time)
+        Restaurants = Restaurants.filter(sat_open__hour__lte = targetTime.hour)
+        Restaurants = Restaurants.filter(sat_close__hour__gte = targetTime.hour)
     elif(weekday == 6): #sunday
         print("sunday") #NOTE
-        Restaurants = Restaurants.filter(sun_open__time__lte = targetTime.time)
-        Restaurants = Restaurants.filter(sun_close__time__gte = targetTime.time)
+        Restaurants = Restaurants.filter(sun_open__hour__lte = targetTime.hour)
+        Restaurants = Restaurants.filter(sun_close__hour__gte = targetTime.hour)
     MenuItems = MenuItems.filter(restaurant__in = Restaurants.values_list("id",flat=True))
     #now we should finally be ready to evaluate the query and ping the database
-    print(menuItems.query)
-    return MenuItems.values_list("id",flat=True)
+    #print(MenuItems.query)
+    #not sure where duplicates are being made or how so hears a quick and dirty solution
+    IDs = set()
+    for id in MenuItems.values_list("id",flat=True):
+        IDs.add(id)
+    return list(IDs)
