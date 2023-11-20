@@ -20,7 +20,7 @@ class Command(GenerateCommand):
             "beans": ["vegetarian", "vegan", "halal", "kosher", "keto", "pescetarian", "dairy-free", "paleo", "soybeans"],
             "beef": ["halal", "kosher"],
             "beef_broth": ["halal", "kosher"],
-            "bell-pepper": ["vegetarian", "vegan", "halal", "kosher", "keto", "pescetarian", "dairy-free", "paleo"],
+            "bell_pepper": ["vegetarian", "vegan", "halal", "kosher", "keto", "pescetarian", "dairy-free", "paleo"],
             "black_pepper": ["vegetarian", "vegan", "halal", "kosher", "keto", "pescetarian", "dairy-free", "paleo"],
             "butter": ["vegetarian", "halal", "kosher", "keto", "pescetarian"],
             "butterfly": ["vegetarian", "vegan", "keto", "pescetarian", "dairy-free", "paleo"], 
@@ -83,7 +83,7 @@ class Command(GenerateCommand):
         }
 
         valid_ingredient_tag = [
-            "anchovy_paste", "banana", "basil", "beans", "beef", "beef_broth", "bell-pepper", "black_pepper",
+            "anchovy_paste", "banana", "basil", "beans", "beef", "beef_broth", "bell_pepper", "black_pepper",
             "butter", "butterfly", "butternut_squash", "cane_sugar", "canola_oil", "carrot", "cheese", "chicken",
             "chicken_broth", "chickpeas", "chili_powder", "cinnamon", "chocolate", "corn", "corn_oil", "corn_starch",
             "cream", "cricket", "duck", "eggs", "fish", "garlic", "gluten", "high_fructose_corn_syrup", "honey",
