@@ -19,7 +19,7 @@ class Patron(models.Model):
     patron_allergy_tag = models.ManyToManyField(AllergyTag)
     disliked_ingredients = models.ManyToManyField(IngredientTag)
     patron_taste_tag = models.ManyToManyField(TasteTag)
-    calorie_level = models.PositiveBigIntegerField()
+    calorie_level = models.PositiveIntegerField(null=True)
 
     CALORIE_LEVEL_RANGES = [
         (0, 199, 1),
@@ -31,8 +31,8 @@ class Patron(models.Model):
         (1200,1399,7),
         (1400,1599,8),
         (1600,1799,9),
-        (1800, 2000, 10),
-        (2001, float('inf'), 11),
+        (1800, 1999, 10),
+        (2000, float('inf'), 11),
     ]
 
     def calculate_calorie_level(self):
@@ -104,8 +104,8 @@ class PatronSearchHistory(models.Model):
         blank=True
     )
     search_datetime = models.DateTimeField(auto_now_add=True)
-    calorie_level = models.PositiveBigIntegerField()
-
+    
+    calorie_level = models.PositiveIntegerField(null=True)
     CALORIE_LEVEL_RANGES = [
         (0, 199, 1),
         (200, 399, 2),
@@ -116,8 +116,8 @@ class PatronSearchHistory(models.Model):
         (1200,1399,7),
         (1400,1599,8),
         (1600,1799,9),
-        (1800, 2000, 10),
-        (2001, float('inf'), 11),
+        (1800, 1999, 10),
+        (2000, float('inf'), 11),
     ]
 
     def calculate_calorie_level(self):
