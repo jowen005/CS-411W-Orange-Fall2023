@@ -249,6 +249,7 @@ class Command(BaseCommand):
         search_obj['search_datetime'] = search_inst.search_datetime
         search_obj.pop('id')
         search_obj.pop('patron')
+        search_obj.pop('calorie_level')
 
         return search_obj
     
