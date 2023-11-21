@@ -70,6 +70,7 @@ class SearchHistoryViewSet(viewsets.ModelViewSet):
         search_obj['search_datetime'] = instance.search_datetime
         search_obj.pop('id')
         search_obj.pop('patron')
+        search_obj.pop('calorie_level')
 
         print(f'\n\n{search_obj}\n\n')
 
