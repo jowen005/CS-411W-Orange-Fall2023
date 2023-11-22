@@ -139,7 +139,7 @@ class MenuItem(models.Model):
     restaurant = models.ForeignKey('Restaurant', on_delete=models.CASCADE, related_name='menu_items')
 
     average_rating = models.DecimalField(max_digits=3, decimal_places=2, null=True)
-    #number_of_rating = models.PositiveIntegerField(default=0)
+    #number_of_rating = models.PositiveIntegerField(default=0) #TODO
     price = models.DecimalField(max_digits=6, decimal_places=2)
     calories = models.PositiveIntegerField()
 

@@ -52,7 +52,7 @@ class AppSatisfaction(models.Model):
         max_digits=8,  # Total number of digits
         decimal_places=2,  # Maximum of 2 decimal places
         default=0.0
-    )
+        )
 
         review_datetime = models.DateTimeField(auto_now_add=True)
 

@@ -24,6 +24,12 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
     if (allergy_tags is not None) and (len(allergy_tags) > 0):
         for allergy in allergy_tags:
             MenuItems = MenuItems.filter(menu_allergy_tag = allergy)
+            # excluded_items = MenuItem.objects.exclude(menu_allergy_tag = allergy)
+            # for item in excluded_items:
+            #     record = MenuItem.objects.get_or_create(menu_item=item, tag=allergy)
+            #     record.count += 1
+            #     record.save()
+
     if (disliked_ingredients is not None) and (len(disliked_ingredients) > 0):
         MenuItems = MenuItems.exclude(ingredients_tag__in = disliked_ingredients)
 

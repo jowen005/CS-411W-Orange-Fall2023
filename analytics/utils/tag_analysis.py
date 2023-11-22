@@ -1,7 +1,10 @@
+from datetime import datetime
+from django.utils import timezone
 
 import patron.models as pm
 import restaurants.models as rm
-
+from ..models import (RestrictionTagAnalytics, AllergiesTagAnalytics, 
+                      TasteTagAnalytics, IngredientTagAnalytics, CookStyleAnalytics)
 
 # For total since, grab the datetime of the last analysis
     # latest_timestamp = AnalysisModel.objects.latest(timestamp) #TODO
@@ -17,156 +20,104 @@ def driver():
     cook_style_tag_analysis()
 
 
-def tag_analysis(TagModel, patron_attr, menu_item_attr, search_attr, history_attr):
-    tag_ids = list(TagModel.objects.all().order_by('id').values_list('id', flat=True))
+def get_latest_datetime(AnalyticsModel):
+    try:
+        latest_datestamp = AnalyticsModel.objects.latest('date_stamp').date_stamp
+    except AnalyticsModel.DoesNotExist:
+        latest_datestamp = datetime.utcfromtimestamp(0).replace(tzinfo=timezone.utc)
+    return latest_datestamp
 
-    num_profiles_with_tag = [0 for _ in range(len(tag_ids))]
-    num_menu_items_with_tag = [0 for _ in range(len(tag_ids))]
-    num_searches_with_tag = [0 for _ in range(len(tag_ids))]
-    num_adds_with_tag = [0 for _ in range(len(tag_ids))]
 
-    for idx in range(len(tag_ids)):
-        num_profiles_with_tag[idx] = pm.Patron.objects.filter(
-           **{patron_attr + '__id': tag_ids[idx]}
-        ).count()
-        num_menu_items_with_tag[idx] = rm.MenuItem.objects.filter(
-            **{menu_item_attr + '__id': tag_ids[idx]}
-        ).count()
-        num_searches_with_tag[idx] = pm.PatronSearchHistory.objects.filter(
-            **{search_attr + '__id': tag_ids[idx]} #TODO
-        ).count()
-        num_adds_with_tag[idx] = pm.MenuItemHistory.objects.filter(
-            **{history_attr + '__id': tag_ids[idx]} #TODO
-        ).count()
+def store_data(AnalyticsModel, tag_data):
+    for entry in tag_data:
+        print(entry) #NOTE
+        # obj = AnalyticsModel.objects.create(**entry)
+        # print(f'{obj}')
+    print('\n') #NOTE
 
 
 def restriction_tag_analysis():
-    tag_analysis(rm.RestrictionTag, 'patron_restriction_tag',
-                 'menu_restriction_tag', 'dietary_restriction_tags',
-                 'menu_item__menu_restriction_tag')
+    tag_analysis(rm.RestrictionTag, RestrictionTagAnalytics, 
+                 patron_attr='patron_restriction_tag',
+                 menu_item_attr='menu_restriction_tag', 
+                 search_attr='dietary_restriction_tags',
+                 history_attr='menu_item__menu_restriction_tag')
 
 
 def allergy_tag_analysis():
-    tag_analysis(rm.AllergyTag, 'patron_allergy_tag', 'menu_allergy_tag', 
-                 'allergy_tags', 'menu_item__menu_allergy_tag')
+    tag_analysis(rm.AllergyTag, AllergiesTagAnalytics, 
+                 patron_attr='patron_allergy_tag', 
+                 menu_item_attr='menu_allergy_tag', 
+                 search_attr='allergy_tags', 
+                 history_attr='menu_item__menu_allergy_tag')
 
 
 def taste_tag_analysis():
-    tag_analysis(rm.TasteTag, 'patron_taste_tag', 'taste_tags', 
-                 'patron_taste_tags', 'menu_item__taste_tags')
+    tag_analysis(rm.TasteTag, TasteTagAnalytics, 
+                 patron_attr='patron_taste_tag', 
+                 menu_item_attr='taste_tags', 
+                 search_attr='patron_taste_tags', 
+                 history_attr='menu_item__taste_tags')
     
 
 def ingredient_tag_analysis():
-    tag_analysis(rm.TasteTag, 'disliked_ingredients', 'ingredients_tag', 
-                 'disliked_ingredients', 'menu_item__ingredients_tag')
-    
+    tag_analysis(rm.IngredientTag, IngredientTagAnalytics, 
+                 patron_attr='disliked_ingredients', 
+                 menu_item_attr='ingredients_tag', 
+                 search_attr='disliked_ingredients', 
+                 history_attr='menu_item__ingredients_tag')
+
 
 def cook_style_tag_analysis():
-    tag_titles = list(rm.CookStyleTag.objects.all().order_by('id').values_list('id', flat=True))
-
-    num_menu_items_with_tag = [0 for _ in range(len(tag_titles))]
-    num_searches_with_tag = [0 for _ in range(len(tag_titles))]
-    num_adds_with_tag = [0 for _ in range(len(tag_titles))]
-
-    for idx in range(len(tag_titles)):
-        num_menu_items_with_tag[idx] = rm.MenuItem.objects.filter(
-            cook_style_tags__title=tag_titles[idx]
-        ).count()
-        num_searches_with_tag[idx] = pm.PatronSearchHistory.objects.filter(
-            query__icontains=tag_titles[idx] #TODO
-        ).count()
-        num_adds_with_tag[idx] = pm.MenuItemHistory.objects.filter( 
-            menu_item__cook_style_tags__title=tag_titles[idx] #TODO
-        ).count()
+    tag_analysis(rm.CookStyleTag, CookStyleAnalytics) #attributes defined explicitly
+    
 
 
-# def restriction_tag_analysis():
-#     tag_ids = list(rm.RestrictionTag.objects.all().values_list('id', flat=True))
+def tag_analysis(TagModel, AnalyticsModel, patron_attr='', menu_item_attr='', search_attr='', history_attr=''):
+    tags = list(TagModel.objects.all().order_by('id'))
+    tag_data = []
 
-#     num_profiles_with_tag = [0 for _ in range(len(tag_ids))]
-#     num_menu_items_with_tag = [0 for _ in range(len(tag_ids))]
-#     num_searches_with_tag = [0 for _ in range(len(tag_ids))]
-#     num_adds_with_tag = [0 for _ in range(len(tag_ids))]
+    latest_datestamp = get_latest_datetime(AnalyticsModel)
+    
+    if TagModel == rm.CookStyleTag:
+        for tag in tags:
+            data = {}
 
-#     for idx in range(len(tag_ids)):
-#         num_profiles_with_tag[idx] = pm.Patron.objects.filter(
-#             patron_restriction_tag__id=tag_ids[idx]
-#         ).count()
-#         num_menu_items_with_tag[idx] = rm.MenuItem.objects.filter(
-#             menu_restriction_tag__id=tag_ids[idx]
-#         ).count()
-#         num_searches_with_tag[idx] = pm.PatronSearchHistory.objects.filter(
-#             dietary_restriction_tags__id=tag_ids[idx]
-#         ).count()
-#         num_adds_with_tag[idx] = pm.MenuItemHistory.objects.filter(
-#             menu_item__menu_restriction_tag__id=tag_ids[idx]
-#         ).count()
+            data['tag_id'] = tag
+            data['number_of_menuItem'] = rm.MenuItem.objects.filter(
+                cook_style_tags__id=tag.id
+            ).count()
+            data['number_of_search'] = pm.PatronSearchHistory.objects.filter(
+                query__icontains=tag.title,
+                search_datetime__gt=latest_datestamp
+            ).count()
+            data['number_of_HIS'] = pm.MenuItemHistory.objects.filter( 
+                menu_item__cook_style_tags__id=tag.id,
+                MenuItemHS_datetime__gt=latest_datestamp
+            ).count()
 
+            tag_data.append(data)
+    else:
+        for tag in tags:
+            data = {}
 
-# def allergy_tag_analysis():
-#     tag_ids = list(rm.AllergyTag.objects.all().values_list('id', flat=True))
+            data['tag_id'] = tag
+            data['number_of_patronProfile'] = pm.Patron.objects.filter(
+            **{patron_attr + '__id': tag.id}
+            ).count()
+            data['number_of_menuItem'] = rm.MenuItem.objects.filter(
+                **{menu_item_attr + '__id': tag.id}
+            ).count()
+            data['number_of_search'] = pm.PatronSearchHistory.objects.filter(
+                **{search_attr + '__id': tag.id},
+                search_datetime__gt=latest_datestamp
+            ).count()
+            data['number_of_HIS'] = pm.MenuItemHistory.objects.filter(
+                **{history_attr + '__id': tag.id},
+                MenuItemHS_datetime__gt=latest_datestamp
+            ).count()
 
-#     num_profiles_with_tag = [0 for _ in range(len(tag_ids))]
-#     num_menu_items_with_tag = [0 for _ in range(len(tag_ids))]
-#     num_searches_with_tag = [0 for _ in range(len(tag_ids))]
-#     num_adds_with_tag = [0 for _ in range(len(tag_ids))]
-
-#     for idx in range(len(tag_ids)):
-#         num_profiles_with_tag[idx] = pm.Patron.objects.filter(
-#             patron_allergy_tag__id=tag_ids[idx]
-#         ).count()
-#         num_menu_items_with_tag[idx] = rm.MenuItem.objects.filter(
-#             menu_allergy_tag__id=tag_ids[idx]
-#         ).count()
-#         num_searches_with_tag[idx] = pm.PatronSearchHistory.objects.filter(
-#             allergy_tags__id=tag_ids[idx]
-#         ).count()
-#         num_adds_with_tag[idx] = pm.MenuItemHistory.objects.filter(
-#             menu_item__menu_allergy_tag__id=tag_ids[idx]
-#         ).count()
-
-
-# def taste_tag_analysis():
-#     tag_ids = list(rm.TasteTag.objects.all().values_list('id', flat=True))
-
-#     num_profiles_with_tag = [0 for _ in range(len(tag_ids))]
-#     num_menu_items_with_tag = [0 for _ in range(len(tag_ids))]
-#     num_searches_with_tag = [0 for _ in range(len(tag_ids))]
-#     num_adds_with_tag = [0 for _ in range(len(tag_ids))]
-
-#     for idx in range(len(tag_ids)):
-#         num_profiles_with_tag[idx] = pm.Patron.objects.filter(
-#             patron_taste_tag__id=tag_ids[idx]
-#         ).count()
-#         num_menu_items_with_tag[idx] = rm.MenuItem.objects.filter(
-#             taste_tags__id=tag_ids[idx]
-#         ).count()
-#         num_searches_with_tag[idx] = pm.PatronSearchHistory.objects.filter(
-#             patron_taste_tags__id=tag_ids[idx]
-#         ).count()
-#         num_adds_with_tag[idx] = pm.MenuItemHistory.objects.filter(
-#             menu_item__taste_tags__id=tag_ids[idx]
-#         ).count()
-
-
-# def ingredient_tag_analysis():
-#     tag_ids = list(rm.IngredientTag.objects.all().values_list('id', flat=True))
-
-#     num_profiles_with_tag = [0 for _ in range(len(tag_ids))]
-#     num_menu_items_with_tag = [0 for _ in range(len(tag_ids))]
-#     num_searches_with_tag = [0 for _ in range(len(tag_ids))]
-#     num_adds_with_tag = [0 for _ in range(len(tag_ids))]
-
-#     for idx in range(len(tag_ids)):
-#         num_profiles_with_tag[idx] = pm.Patron.objects.filter(
-#             disliked_ingredients__id=tag_ids[idx]
-#         ).count()
-#         num_menu_items_with_tag[idx] = rm.MenuItem.objects.filter(
-#             ingredients_tag__id=tag_ids[idx]
-#         ).count()
-#         num_searches_with_tag[idx] = pm.PatronSearchHistory.objects.filter(
-#             disliked_ingredients__id=tag_ids[idx]
-#         ).count()
-#         num_adds_with_tag[idx] = pm.MenuItemHistory.objects.filter(
-#             menu_item__ingredients_tag__id=tag_ids[idx]
-#         ).count()
+            tag_data.append(data)
+        
+    store_data(AnalyticsModel, tag_data)
+    
