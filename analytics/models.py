@@ -135,7 +135,6 @@ class AppSatisfactionAnalytics(models.Model):
         decimal_places=2,  # Maximum of 2 decimal places
     )
     number_of_rating_total = models.PositiveIntegerField()
-    number_of_rating_since = models.PositiveIntegerField() #TODO Remove
 
     def __str__(self):
         return f"AppSatisfactionAnalytics - {self.id}"

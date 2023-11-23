@@ -139,7 +139,8 @@ class MenuItem(models.Model):
     restaurant = models.ForeignKey('Restaurant', on_delete=models.CASCADE, related_name='menu_items')
 
     average_rating = models.DecimalField(max_digits=3, decimal_places=2, null=True)
-    #number_of_rating = models.PositiveIntegerField(default=0) #TODO
+    number_of_rating = models.PositiveIntegerField(default=0)
+    
     price = models.DecimalField(max_digits=6, decimal_places=2)
     calories = models.PositiveIntegerField()
 
@@ -158,8 +159,8 @@ class MenuItem(models.Model):
     ])
 
     is_modifiable = models.BooleanField(default=False)
+   
     calorie_level = models.PositiveIntegerField(null=True)
-
     CALORIE_LEVEL_RANGES = [
         (0, 199, 1),
         (200, 399, 2),
