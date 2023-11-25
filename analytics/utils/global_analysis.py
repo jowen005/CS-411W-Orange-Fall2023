@@ -15,15 +15,12 @@ def driver ():
     overall_data = overall_analysis()
     gender_data = gender_analysis()
     age_data = age_analysis()
-    app_data = app_satisfaction_analysis()
 
     global_data = {**overall_data, **gender_data, **age_data}
     
     print(f'\nGlobal Analytics Object: {global_data}') #NOTE
-    print(f'App Satisfaction Analytics: {app_data}') #NOTE
 
     # GlobalAnalytics.objects.create(**global_data)
-    # AppSatisfactionAnalytics.objects.create(**app_data)
 
 def overall_analysis():
     overall_data = {}
@@ -79,22 +76,3 @@ def age_analysis():
         print(f'\tAges {lower}-{upper}: {age_data[idx]}') #NOTE
 
     return age_data
-
-
-def app_satisfaction_analysis():
-    app_data = {}
-
-    # try:
-    #     latest_datestamp = AppSatisfactionAnalytics.objects.latest('date_stamp').date_stamp
-    # except AppSatisfactionAnalytics.DoesNotExist:
-    #     latest_datestamp = datetime.utcfromtimestamp(0).replace(tzinfo=timezone.utc)
-
-    ratings = AppSatisfaction.objects.all()
-
-    app_data['number_of_rating_total'] = ratings.count()
-    # app_data['number_of_rating_since'] = ratings.filter(review_datetime__gt=latest_datestamp).count() #TODO Remove
-    app_data['number_of_rating_since'] = 0 #TODO Remove
-    app_data['average_rating'] = ratings.aggregate(avg_rating=Avg('rating'))['avg_rating'] or 0
-
-    return app_data
-    

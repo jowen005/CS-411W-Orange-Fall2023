@@ -5,6 +5,7 @@ import analytics.utils.global_analysis as ga
 import analytics.utils.calorie_analysis as ca
 import analytics.utils.tag_analysis as ta
 import analytics.utils.menu_item_analysis as ma
+import analytics.utils.satisfaction_analysis as sa
 
 class Command(BaseCommand):
 
@@ -20,5 +21,6 @@ class Command(BaseCommand):
         # ca.driver()
         # ta.driver()
         # ma.driver()
+        # sa.driver()
 
         self.stdout.write(self.style.SUCCESS(f'All Analytics were run'))

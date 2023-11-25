@@ -22,7 +22,7 @@ def driver():
         
         if item_instance:
             print(f'{item_instance}\n') #NOTE
-            # item_instance.number_of_rating = entry['number_of_ratings'] #TODO
+            item_instance.number_of_rating = entry['number_of_ratings']
             item_instance.average_rating = entry['average_rating']
             item_instance.save()
         

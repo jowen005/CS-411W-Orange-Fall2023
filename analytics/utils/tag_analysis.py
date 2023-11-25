@@ -6,18 +6,28 @@ import restaurants.models as rm
 from ..models import (RestrictionTagAnalytics, AllergiesTagAnalytics, 
                       TasteTagAnalytics, IngredientTagAnalytics, CookStyleAnalytics)
 
-# For total since, grab the datetime of the last analysis
-    # latest_timestamp = AnalysisModel.objects.latest(timestamp) #TODO
 
-# Then add the following filter parameter
-    # datetime__gt=latest_timestamp #TODO
-
-def driver():
-    restriction_tag_analysis()
-    allergy_tag_analysis()
-    taste_tag_analysis()
-    ingredient_tag_analysis()
-    cook_style_tag_analysis()
+def driver(restriction=False, allergy=False, taste=False, ingredient=False, cook_style=False):
+    
+    no_analysis_specified = not (restriction or allergy or taste or ingredient or cook_style)
+    if no_analysis_specified:   #Run All
+        restriction_tag_analysis()
+        allergy_tag_analysis()
+        taste_tag_analysis()
+        ingredient_tag_analysis()
+        cook_style_tag_analysis()
+        return
+    
+    if restriction:
+        restriction_tag_analysis()
+    if allergy:
+        allergy_tag_analysis()
+    if taste:
+        taste_tag_analysis()
+    if ingredient:
+        ingredient_tag_analysis()
+    if cook_style:
+        cook_style_tag_analysis()
 
 
 def get_latest_datetime(AnalyticsModel):

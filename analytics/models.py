@@ -38,8 +38,8 @@ class CalorieAnalytics(models.Model):
     calorie_level = models.IntegerField(choices=LEVEL_CALORIE,default=0,null=True)
     number_of_profiles = models.PositiveIntegerField()
     number_of_menuItems = models.PositiveIntegerField()
-    number_of_searches = models.PositiveIntegerField()
-    number_of_items_added_HIS = models.PositiveIntegerField()
+    number_of_searches = models.PositiveIntegerField()          #For Trend Use Only
+    number_of_items_added_HIS = models.PositiveIntegerField()   #For Trend Use Only
     date_stamp = models.DateTimeField(auto_now_add = True)
 
     def __str__(self):
@@ -51,8 +51,8 @@ class RestrictionTagAnalytics(models.Model):
     tag_id = models.ForeignKey(RestrictionTag, on_delete=models.CASCADE)
     number_of_patronProfile = models.PositiveIntegerField()
     number_of_menuItem = models.PositiveIntegerField()
-    number_of_search = models.PositiveIntegerField()
-    number_of_HIS = models.PositiveIntegerField()
+    number_of_search = models.PositiveIntegerField()    #For Trend Use Only
+    number_of_HIS = models.PositiveIntegerField()       #For Trend Use Only
     date_stamp = models.DateTimeField(auto_now_add = True)
 
     def __str__(self):
@@ -64,8 +64,8 @@ class AllergiesTagAnalytics(models.Model):
     tag_id = models.ForeignKey(AllergyTag, on_delete=models.CASCADE)
     number_of_patronProfile = models.PositiveIntegerField()
     number_of_menuItem = models.PositiveIntegerField()
-    number_of_search = models.PositiveIntegerField()
-    number_of_HIS = models.PositiveIntegerField()
+    number_of_search = models.PositiveIntegerField()    #For Trend Use Only
+    number_of_HIS = models.PositiveIntegerField()       #For Trend Use Only
     date_stamp = models.DateTimeField(auto_now_add = True)
 
     def __str__(self):
@@ -77,8 +77,8 @@ class IngredientTagAnalytics(models.Model):
     tag_id = models.ForeignKey(IngredientTag, on_delete=models.CASCADE)
     number_of_patronProfile = models.PositiveIntegerField()
     number_of_menuItem = models.PositiveIntegerField()
-    number_of_search = models.PositiveIntegerField()
-    number_of_HIS = models.PositiveIntegerField()
+    number_of_search = models.PositiveIntegerField()    #For Trend Use Only
+    number_of_HIS = models.PositiveIntegerField()       #For Trend Use Only
     date_stamp = models.DateTimeField(auto_now_add = True)
 
     def __str__(self):
@@ -90,8 +90,8 @@ class TasteTagAnalytics(models.Model):
     tag_id = models.ForeignKey(TasteTag, on_delete=models.CASCADE)
     number_of_patronProfile = models.PositiveIntegerField()
     number_of_menuItem = models.PositiveIntegerField()
-    number_of_search = models.PositiveIntegerField()
-    number_of_HIS = models.PositiveIntegerField()
+    number_of_search = models.PositiveIntegerField()    #For Trend Use Only
+    number_of_HIS = models.PositiveIntegerField()       #For Trend Use Only
     date_stamp = models.DateTimeField(auto_now_add = True)
 
     def __str__(self):
@@ -102,8 +102,8 @@ class TasteTagAnalytics(models.Model):
 class CookStyleAnalytics(models.Model):
     tag_id = models.ForeignKey(CookStyleTag, on_delete=models.CASCADE)
     number_of_menuItem = models.PositiveIntegerField()
-    number_of_search = models.PositiveIntegerField()
-    number_of_HIS = models.PositiveIntegerField()
+    number_of_search = models.PositiveIntegerField()    #For Trend Use Only
+    number_of_HIS = models.PositiveIntegerField()       #For Trend Use Only
     date_stamp = models.DateTimeField(auto_now_add = True)
 
     def __str__(self):
@@ -113,9 +113,10 @@ class CookStyleAnalytics(models.Model):
 
 class MenuItemPerformanceAnalytics(models.Model):
     menuItem_id = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
-    #number_of_search_exclued = models.PositiveIntegerField()
-    number_of_added_to_bookmark = models.PositiveIntegerField()
-    number_of_added_to_History = models.PositiveIntegerField()
+    #number_of_search_excluded = models.PositiveIntegerField()
+    number_of_added_to_bookmark = models.PositiveIntegerField() #For Trend Use Only
+    number_of_added_to_History = models.PositiveIntegerField()  #For Trend Use Only
+
     number_of_ratings = models.PositiveIntegerField()
     average_rating = models.DecimalField(
         max_digits=8,  # Total number of digits
@@ -135,6 +136,7 @@ class AppSatisfactionAnalytics(models.Model):
         decimal_places=2,  # Maximum of 2 decimal places
     )
     number_of_rating_total = models.PositiveIntegerField()
+    date_stamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"AppSatisfactionAnalytics - {self.id}"

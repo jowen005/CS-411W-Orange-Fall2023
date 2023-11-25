@@ -35,3 +35,15 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(patron=self.request.user)
+
+
+class AppSatisfactionViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.AdminReadNonAdminWrite]
+    serializer_class = serializers.AppSatisfactionSerializer
+
+    # def get_querset(self):
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+

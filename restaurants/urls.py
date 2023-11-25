@@ -12,8 +12,6 @@ router.register('tastetags', views.TasteTagViewSet, basename='tastetags')
 router.register('restrictiontags', views.RestrictionTagViewSet, basename='restrictiontags')
 router.register('allergytags', views.AllergyTagViewSet, basename='allergytags')
 router.register('ingredienttags', views.IngredientTagViewSet, basename='ingredienttags')
-
-#Must go last
 router.register('', views.RestaurantViewSet, basename='restaurants')
 
 menu_router = DefaultRouter()
