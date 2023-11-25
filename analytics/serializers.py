@@ -123,8 +123,8 @@ class CookStyleAnalyticsSerializer(serializers.ModelSerializer):
 
 # Menu Item Performance Analytics Serializers
 class MenuItemPerformanceAnalyticsGetSerializer(serializers.ModelSerializer):
-    menuItem_id = rs.MenuItemGetSerializer()
-    #menuItem_id = rs.MenuItemSerializer()
+    #menuItem_id = rs.MenuItemGetSerializer()
+    menuItem_id = rs.MenuItemSerializer()
     average_rating = serializers.DecimalField(
         max_digits=8,  # Total number of digits
         decimal_places=2,  # Maximum of 2 decimal places
@@ -157,7 +157,7 @@ class MenuItemPerformanceAnalyticsSerializer(serializers.ModelSerializer):
 #         fields = '__all__'
 
 class AppSatisfactionSerializer(serializers.ModelSerializer):
-    average_rating = models.DecimalField(
+    average_rating = serializers.DecimalField(
         max_digits=8,  # Total number of digits
         decimal_places=2,  # Maximum of 2 decimal places
     )
