@@ -61,7 +61,7 @@ class AppSatisfactionSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = models.Reviews
+        model = models.AppSatisfaction
         fields = '__all__'
         read_only_fields = ['user']
 

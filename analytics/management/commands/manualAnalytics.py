@@ -17,10 +17,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         
-        ga.driver()
+        # ga.driver()
         # ca.driver()
         # ta.driver()
         # ma.driver()
-        # sa.driver()
+        sa.driver()
 
         self.stdout.write(self.style.SUCCESS(f'All Analytics were run'))

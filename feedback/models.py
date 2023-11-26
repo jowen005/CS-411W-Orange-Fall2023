@@ -58,9 +58,6 @@ class AppSatisfaction(models.Model):
 
         def formatted_datetime(self):
             return self.review_datetime.strftime('%d/%m/%y %H:%M:%S')
-    
-        def save(self, *args, **kwargs):
-            super().save(*args, **kwargs)  # Call the parent class's save method
         
 # class Reviews(models.Model):
 #     #When patron delete his account, the reviews still remains.

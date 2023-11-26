@@ -11,11 +11,12 @@ router.register('restrictiontag', views.RestrictionTagAnalyticsViewset, basename
 router.register('allergytag', views.AllergiesTagAnalyticsViewset, basename='allergytag')
 router.register('ingredienttag', views.IngredientTagAnalyticsViewset, basename='ingredienttag')
 router.register('tastetag', views.TasteTagAnalyticsViewset, basename='tastetag')
+router.register('cookstyletag', views.CookStyleAnalyticsViewset, basename='cookstyletag')
 router.register('menuitems', views.GlobalMenuItemPerformanceViewset, basename='globalmenuitems')
 router.register('satisfaction', views.AppSatisfactionAnalyticsViewset, basename='satisfaction')
 
 menu_router = DefaultRouter()
-router.register('menuitems', views.LocalMenuItemPerformanceViewset, basename='localmenuitems')
+menu_router.register('menuitems', views.LocalMenuItemPerformanceViewset, basename='localmenuitems')
 
 urlpatterns = [
     # path('tag_overview/', views.tag_overview, name='analytics'),

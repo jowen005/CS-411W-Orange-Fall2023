@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status, viewsets, generics, views
 from django.http import HttpRequest
+from django.db.models import Max
 
 from . import models, serializers, permissions
 from .utils import calorie_analysis, global_analysis, menu_item_analysis, tag_analysis, satisfaction_analysis
@@ -15,94 +16,105 @@ class GlobalAnalyticsViewset(viewsets.ModelViewSet):
 
     def get_queryset(self):
         try:
-            return models.GlobalAnalytics.objects.latest('date_stamp')
+            return [models.GlobalAnalytics.objects.latest('date_stamp')]
         except models.GlobalAnalytics.DoesNotExist:
             global_analysis.driver()
-            return models.GlobalAnalytics.objects.latest('date_stamp')
-        
+            return [models.GlobalAnalytics.objects.latest('date_stamp')]
+
 
 class CalorieAnalyticsViewset(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthAndNotPatronAndList]
     serializer_class = serializers.CalorieAnalyticsSerializer
 
     def get_queryset(self):
-        try:
-            latest_datestamp = models.CalorieAnalytics.objects.latest('date_stamp')
-            return models.CalorieAnalytics.objects.filter(date_stamp=latest_datestamp).order_by('calorie_level')
-        except models.CalorieAnalytics.DoesNotExist:
-            calorie_analysis.driver()
-            latest_datestamp = models.CalorieAnalytics.objects.latest('date_stamp')
-            return models.CalorieAnalytics.objects.filter(date_stamp=latest_datestamp).order_by('calorie_level')
-        
 
-class RestrictionTagAnalyticsViewset(viewsets.ModelViewSet):
+        while True:
+            latest_datestamps = models.CalorieAnalytics.objects.values('calorie_level').annotate(
+                latest_date=Max('date_stamp')
+            ).distinct()
+        
+            if len(latest_datestamps) != 11:
+                calorie_analysis.driver()
+            else:
+                break
+        
+        earliest_datestamp = min(obj['latest_date'] for obj in latest_datestamps)
+
+        queryset = models.CalorieAnalytics.objects.filter(
+            date_stamp__gte=earliest_datestamp
+        ).order_by('calorie_level')
+        
+        return queryset
+
+
+class TagAnalyticsViewset(viewsets.ModelViewSet):
+    permission_classes = []
+    serializer_class = None
+    TagModel = None
+    AnalyticsModel = None
+    tag_type = None
+    
+    def get_queryset(self):
+
+        num_of_tags = self.TagModel.objects.all().count()
+
+        while True:
+            latest_datestamps = self.AnalyticsModel.objects.values('tag_id').annotate(
+                latest_date=Max('date_stamp')
+            ).distinct()
+        
+            if len(latest_datestamps) != num_of_tags:
+                tag_analysis.driver(**{f'{self.tag_type}':True})
+            else:
+                break
+        
+        earliest_datestamp = min(obj['latest_date'] for obj in latest_datestamps)
+
+        queryset = self.AnalyticsModel.objects.filter(
+            date_stamp__gte=earliest_datestamp
+        ).order_by('tag_id')
+        
+        return queryset
+
+
+class RestrictionTagAnalyticsViewset(TagAnalyticsViewset):
     permission_classes = [permissions.IsAuthAndNotPatronAndList]
     serializer_class = serializers.RestrictionTagAnalyticsSerializer
+    TagModel = rm.RestrictionTag
+    AnalyticsModel = models.RestrictionTagAnalytics
+    tag_type = 'restriction'
 
-    def get_queryset(self):
-        try:
-            latest_datestamp = models.RestrictionTagAnalytics.objects.latest('date_stamp')
-            return models.RestrictionTagAnalytics.objects.filter(date_stamp=latest_datestamp).order_by('tag_id')
-        except models.RestrictionTagAnalytics.DoesNotExist:
-            tag_analysis.driver(restriction=True)
-            latest_datestamp = models.RestrictionTagAnalytics.objects.latest('date_stamp')
-            return models.RestrictionTagAnalytics.objects.filter(date_stamp=latest_datestamp).order_by('tag_id')
-        
 
-class AllergiesTagAnalyticsViewset(viewsets.ModelViewSet):
+class AllergiesTagAnalyticsViewset(TagAnalyticsViewset):
     permission_classes = [permissions.IsAuthAndNotPatronAndList]
     serializer_class = serializers.AllergiesTagAnalyticsSerializer
-
-    def get_queryset(self):
-        try:
-            latest_datestamp = models.AllergiesTagAnalytics.objects.latest('date_stamp')
-            return models.AllergiesTagAnalytics.objects.filter(date_stamp=latest_datestamp).order_by('tag_id')
-        except models.AllergiesTagAnalytics.DoesNotExist:
-            tag_analysis.driver(allergy=True)
-            latest_datestamp = models.AllergiesTagAnalytics.objects.latest('date_stamp')
-            return models.AllergiesTagAnalytics.objects.filter(date_stamp=latest_datestamp).order_by('tag_id')
+    TagModel = rm.AllergyTag
+    AnalyticsModel = models.AllergiesTagAnalytics
+    tag_type = 'allergy'
         
 
-class IngredientTagAnalyticsViewset(viewsets.ModelViewSet):
+class IngredientTagAnalyticsViewset(TagAnalyticsViewset):
     permission_classes = [permissions.IsAuthAndNotPatronAndList]
     serializer_class = serializers.IngredientTagAnalyticsSerializer
-
-    def get_queryset(self):
-        try:
-            latest_datestamp = models.IngredientTagAnalytics.objects.latest('date_stamp')
-            return models.IngredientTagAnalytics.objects.filter(date_stamp=latest_datestamp).order_by('tag_id')
-        except models.IngredientTagAnalytics.DoesNotExist:
-            tag_analysis.driver(ingredient=True)
-            latest_datestamp = models.IngredientTagAnalytics.objects.latest('date_stamp')
-            return models.IngredientTagAnalytics.objects.filter(date_stamp=latest_datestamp).order_by('tag_id')
+    TagModel = rm.IngredientTag
+    AnalyticsModel = models.IngredientTagAnalytics
+    tag_type = 'ingredient'
         
 
-class TasteTagAnalyticsViewset(viewsets.ModelViewSet):
+class TasteTagAnalyticsViewset(TagAnalyticsViewset):
     permission_classes = [permissions.IsAuthAndNotPatronAndList]
     serializer_class = serializers.TasteTagAnalyticsSerializer
+    TagModel = rm.TasteTag
+    AnalyticsModel = models.TasteTagAnalytics
+    tag_type = 'taste'
+    
 
-    def get_queryset(self):
-        try:
-            latest_datestamp = models.TasteTagAnalytics.objects.latest('date_stamp')
-            return models.TasteTagAnalytics.objects.filter(date_stamp=latest_datestamp).order_by('tag_id')
-        except models.TasteTagAnalytics.DoesNotExist:
-            tag_analysis.driver(taste=True)
-            latest_datestamp = models.TasteTagAnalytics.objects.latest('date_stamp')
-            return models.TasteTagAnalytics.objects.filter(date_stamp=latest_datestamp).order_by('tag_id')
-        
-
-class CookStyleAnalyticsViewset(viewsets.ModelViewSet):
+class CookStyleAnalyticsViewset(TagAnalyticsViewset):
     permission_classes = [permissions.IsAuthAndNotPatronAndList]
     serializer_class = serializers.CookStyleAnalyticsSerializer
-
-    def get_queryset(self):
-        try:
-            latest_datestamp = models.CookStyleAnalytics.objects.latest('date_stamp')
-            return models.CookStyleAnalytics.objects.filter(date_stamp=latest_datestamp).order_by('tag_id')
-        except models.CookStyleAnalytics.DoesNotExist:
-            tag_analysis.driver(cook_style=True)
-            latest_datestamp = models.CookStyleAnalytics.objects.latest('date_stamp')
-            return models.CookStyleAnalytics.objects.filter(date_stamp=latest_datestamp).order_by('tag_id')
+    TagModel = rm.CookStyleTag
+    AnalyticsModel = models.CookStyleAnalytics
+    tag_type = 'cook_style'
         
 
 # Where You specify the menu items for a specific restaurant location using 'restaurant id'
@@ -111,56 +123,84 @@ class LocalMenuItemPerformanceViewset(viewsets.ModelViewSet):
     serializer_class = serializers.MenuItemPerformanceAnalyticsSerializer
 
     def get_queryset(self):
-        user = self.request.user
-        
+
         requested_id = self.kwargs.get('restaurant_id')
         restaurant = rm.Restaurant.objects.get(pk=requested_id)
-        try:
-            latest_datestamp = models.MenuItemPerformanceAnalytics.objects.latest('date_stamp')
-            queryset = models.MenuItemPerformanceAnalytics.objects.filter(
-                menuItem_id__restaurant=restaurant,
-                date_stamp=latest_datestamp
-            ).order_by('menuItem_id')
 
-            if queryset.empty():
-                raise models.MenuItemPerformanceAnalytics.DoesNotExist
+        num_of_items = rm.MenuItem.objects.filter(restaurant=restaurant).count()
 
-        except models.MenuItemPerformanceAnalytics.DoesNotExist:
-            #Call Menu_item_analysis for specific group of tags????
-            menu_item_analysis.driver()
-            latest_datestamp = models.MenuItemPerformanceAnalytics.objects.latest('date_stamp')
-            queryset = models.MenuItemPerformanceAnalytics.objects.filter(
+        while True:
+            latest_datestamps = models.MenuItemPerformanceAnalytics.objects.filter(
                 menuItem_id__restaurant=restaurant,
-                date_stamp=latest_datestamp
-            ).order_by('menuItem_id')
+            ).values('menuItem_id').annotate(
+                latest_date=Max('date_stamp')
+            ).distinct()
+        
+            if len(latest_datestamps) != num_of_items:
+                #Call Menu_item_analysis for specific group of tags????
+                menu_item_analysis.driver()
+            else:
+                break
+        
+        earliest_datestamp = min(obj['latest_date'] for obj in latest_datestamps)
+
+        queryset = models.MenuItemPerformanceAnalytics.objects.filter(
+                menuItem_id__restaurant=restaurant,
+                date_stamp__gte=earliest_datestamp
+        ).order_by('menuItem_id')
 
         return queryset
 
         
 class GlobalMenuItemPerformanceViewset(viewsets.ModelViewSet):
-    permission_classes = [permissions.LocalMenuItemPermission]
+    permission_classes = [permissions.IsAuthAndNotPatronAndList]
     serializer_class = serializers.MenuItemPerformanceAnalyticsSerializer
 
     def get_queryset(self):
+        
         user = self.request.user
         
-        try:
-            latest_datestamp = models.MenuItemPerformanceAnalytics.objects.latest('date_stamp')
+        if user.user_type == 'restaurant':
+            num_of_items = rm.MenuItem.objects.filter(restaurant__owner=user).count()
+
+            while True:
+                latest_datestamps = models.MenuItemPerformanceAnalytics.objects.filter(
+                    menuItem_id__restaurant__owner=user,
+                ).values('menuItem_id').annotate(
+                    latest_date=Max('date_stamp')
+                ).distinct()
+            
+                if len(latest_datestamps) != num_of_items:
+                    #Call Menu_item_analysis for specific group of tags????
+                    menu_item_analysis.driver()
+                else:
+                    break
+            
+            earliest_datestamp = min(obj['latest_date'] for obj in latest_datestamps)
+
             queryset = models.MenuItemPerformanceAnalytics.objects.filter(
-                menuItem_id__restaurant__owner=user,
-                date_stamp=latest_datestamp
+                    menuItem_id__restaurant__owner=user,
+                    date_stamp__gte=earliest_datestamp
             ).order_by('menuItem_id')
 
-            if queryset.empty():
-                raise models.MenuItemPerformanceAnalytics.DoesNotExist
+        elif user.user_type == 'admin':
+            num_of_items = rm.MenuItem.objects.all().count()
 
-        except models.MenuItemPerformanceAnalytics.DoesNotExist:
-            #Call Menu_item_analysis for specific group of tags????
-            menu_item_analysis.driver()
-            latest_datestamp = models.MenuItemPerformanceAnalytics.objects.latest('date_stamp')
+            while True:
+                latest_datestamps = models.MenuItemPerformanceAnalytics.objects.values('menuItem_id').annotate(
+                    latest_date=Max('date_stamp')
+                ).distinct()
+            
+                if len(latest_datestamps) != num_of_items:
+                    #Call Menu_item_analysis for specific group of tags????
+                    menu_item_analysis.driver()
+                else:
+                    break
+            
+            earliest_datestamp = min(obj['latest_date'] for obj in latest_datestamps)
+
             queryset = models.MenuItemPerformanceAnalytics.objects.filter(
-                menuItem_id__restaurant__owner=user,
-                date_stamp=latest_datestamp
+                    date_stamp__gte=earliest_datestamp
             ).order_by('menuItem_id')
 
         return queryset
@@ -172,7 +212,7 @@ class AppSatisfactionAnalyticsViewset(viewsets.ModelViewSet):
 
     def get_queryset(self):
         try:
-            return models.AppSatisfactionAnalytics.objects.latest('date_stamp')
+            return [models.AppSatisfactionAnalytics.objects.latest('date_stamp')]
         except models.AppSatisfactionAnalytics.DoesNotExist:
             satisfaction_analysis.driver()
-            return models.AppSatisfactionAnalytics.objects.latest('date_stamp')
+            return [models.AppSatisfactionAnalytics.objects.latest('date_stamp')]

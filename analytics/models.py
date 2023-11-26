@@ -1,5 +1,5 @@
 from django.db import models
-from restaurants.models import MenuItem, CookStyleTag, TasteTag,RestrictionTag, AllergyTag,IngredientTag
+from restaurants.models import MenuItem, CookStyleTag, TasteTag, RestrictionTag, AllergyTag, IngredientTag
 from django.contrib.auth import get_user_model
 
 User = get_user_model()

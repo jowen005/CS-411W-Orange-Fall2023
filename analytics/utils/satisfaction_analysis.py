@@ -8,7 +8,7 @@ def driver ():
 
     print(f'App Satisfaction Analytics: {app_data}') #NOTE
 
-    # AppSatisfactionAnalytics.objects.create(**app_data)
+    AppSatisfactionAnalytics.objects.create(**app_data)
 
 
 def app_satisfaction_analysis():
