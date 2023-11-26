@@ -14,9 +14,9 @@
 ## Populating the Database (All within Django Container)
 * **python3 manage.py init** --> runs a series of default load commands that initializes the database
 
-* **python3 manage.py addRestaurants _int_** --> randomly generates and loads restaurants
-* **python3 manage.py addMenuItems _int_** --> randomly generates and loads menu items
-* **python3 manage.py addPatrons _int_** --> (WIP)
+* **python3 manage.py addRestaurants _int_** --> randomly generates and loads a specified number of restaurants
+* **python3 manage.py addMenuItems _int_** --> randomly generates and loads a specified number of menu items
+* **python3 manage.py addPatrons _int_** --> randomly generates and loads a specified number of patrons
 
 * **python3 manage.py generatePatronTraffic _patronid_** --> randomly simulates patron traffic with 1 search (default) or a specified number of times (-n _int_). Simulated actions include searching, bookmarking, submitting feedback, and adding to menu item history.
 
@@ -50,15 +50,15 @@ Note: See NOTES_DOCKER.md for more information
   * **python3 manage.py loadDefaultRestaurants** --> loads the default restaurants
   * **python3 manage.py loadDefaultMenuItems** --> loads default menu items
 
-* **python3 manage.py addRestaurants _int_** --> randomly generates and loads restaurants
+* **python3 manage.py addRestaurants _int_** --> randomly generates and loads a specified number of restaurants 
   * **python3 manage.py generateRestaurants _int_** --> generates randomized restaurant information into restaurantBuffer.json
   * **python3 manage.py loadRestaurants** --> loads restaurant json objects from restaurantBuffer.json (default) or a specified file (-f=_filepath_)
 
-* **python3 manage.py addMenuItems _int_** --> randomly generates and loads menu items
+* **python3 manage.py addMenuItems _int_** --> randomly generates and loads a specified number of menu items
   * **python3 manage.py generateMenuItems _int_** --> generates randomized menu item information into menuItemBuffer.json
   * **python3 manage.py loadMenuItem** --> loads menu item json objects from menuItemBuffer.json (default) or a specified file (-f=_filepath_)
 
-* **python3 manage.py addPatrons _int_** --> (WIP)
+* **python3 manage.py addPatrons _int_** --> randomly generates and loads a specified number of patrons
   * **python3 manage.py generatePatrons _int_** --> generates randomized patron information into patronBuffer.json
   * **python3 manage.py loadPatrons** --> loads patron json objects from patronBuffer.json (default) or a specified file (-f=_filepath_)
 
