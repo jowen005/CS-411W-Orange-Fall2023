@@ -1,11 +1,7 @@
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
 from rest_framework import status, viewsets, generics, views
-from django.http import HttpRequest
-from django.db.models import Max
-from django.utils import timezone
-from datetime import datetime
+from django.core.management import call_command
 
 from . import models, serializers, permissions
 from .utils import calorie_analysis, global_analysis, menu_item_analysis, tag_analysis, satisfaction_analysis
@@ -124,7 +120,6 @@ class LocalMenuItemPerformanceViewset(viewsets.ModelViewSet):
                 menuItem_id__restaurant=restaurant,
             ).latest('date_stamp').date_stamp
         except models.MenuItemPerformanceAnalytics.DoesNotExist: # No Analytics for a Restaurant
-            # TODO: Optimize for specific restaurant analytics
             menu_item_analysis.driver()
             latest_datestamp = models.MenuItemPerformanceAnalytics.objects.filter(
                 menuItem_id__restaurant=restaurant,
@@ -193,3 +188,10 @@ class AppSatisfactionAnalyticsViewset(viewsets.ModelViewSet):
             satisfaction_analysis.driver()
             return [models.AppSatisfactionAnalytics.objects.latest('date_stamp')]
             # return models.AppSatisfactionAnalytics.objects.none()
+
+
+class ManualAnalyticsCommandView(views.APIView):
+    def post(self, request, *args, **kwargs):
+        call_command('manualAnalytics')
+
+        return Response({'detail':'manualAnalytics was triggered successfully.'}, status=status.HTTP_200_OK)

@@ -26,7 +26,7 @@ def driver():
     print('\n')
 
 def item_analysis():
-    items = rm.MenuItem.objects.all().order_by('id')
+    items = rm.MenuItem.objects.all().order_by('id') #filter(discontinued=False)
     item_data = []
 
     try:
