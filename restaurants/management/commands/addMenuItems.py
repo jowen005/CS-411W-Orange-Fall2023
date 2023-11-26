@@ -3,7 +3,7 @@ from django.core.management import call_command
 
 class Command(BaseCommand):
 
-    help = 'Calls the generate and load function for restaurants'
+    help = 'Calls the generate and load function for menu items'
 
 
     def add_arguments(self, parser: CommandParser):

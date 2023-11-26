@@ -19,4 +19,4 @@ class Command(BaseCommand):
         call_command('generatePatrons', str(count[0]))
         call_command('loadPatrons')
 
-        self.stdout.write(self.style.SUCCESS(f'{count[0]} restaurant object(s) were added to the database'))
+        self.stdout.write(self.style.SUCCESS(f'{count[0]} patron object(s) were added to the database'))
