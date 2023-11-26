@@ -1,10 +1,12 @@
 from datetime import datetime
 from django.utils import timezone
+from django.db.models import Max
 
 import patron.models as pm
 import restaurants.models as rm
 from ..models import (RestrictionTagAnalytics, AllergiesTagAnalytics, 
                       TasteTagAnalytics, IngredientTagAnalytics, CookStyleAnalytics)
+
 
 
 def driver(restriction=False, allergy=False, taste=False, ingredient=False, cook_style=False):
@@ -38,12 +40,63 @@ def get_latest_datetime(AnalyticsModel):
     return latest_datestamp
 
 
-def store_data(AnalyticsModel, tag_data):
+def store_data(AnalyticsModel, tag_data, current_datestamp):
     for entry in tag_data:
-        print(entry) #NOTE
-        # obj = AnalyticsModel.objects.create(**entry)
-        # print(f'{obj}')
-    print('\n') #NOTE
+        # print(entry) #NOTE
+        obj = AnalyticsModel.objects.create(**entry, date_stamp=current_datestamp)
+        print(obj)
+    print('\n')
+
+
+def tag_analysis(TagModel, AnalyticsModel, patron_attr='', menu_item_attr='', search_attr='', history_attr=''):
+    tags = list(TagModel.objects.all().order_by('id'))
+    tag_data = []
+
+    latest_datestamp = get_latest_datetime(AnalyticsModel)
+
+    patron_set = pm.Patron.objects.all()
+    item_set = rm.MenuItem.objects.all()
+    search_set = pm.PatronSearchHistory.objects.filter(search_datetime__gt=latest_datestamp)
+    history_set = pm.MenuItemHistory.objects.filter(MenuItemHS_datetime__gt=latest_datestamp)
+    current_datestamp = timezone.now()
+
+    if TagModel == rm.CookStyleTag:
+        for tag in tags:
+            data = {}
+
+            data['tag_id'] = tag
+            data['number_of_menuItem'] = item_set.filter(
+                cook_style_tags__id=tag.id
+            ).count()
+            data['number_of_search'] = search_set.filter(
+                query__icontains=tag.title
+            ).count()
+            data['number_of_HIS'] = history_set.filter( 
+                menu_item__cook_style_tags__id=tag.id
+            ).count()
+
+            tag_data.append(data)
+    else:
+        for tag in tags:
+            data = {}
+
+            data['tag_id'] = tag
+            data['number_of_patronProfile'] = patron_set.filter(
+                **{patron_attr + '__id': tag.id}
+            ).count()
+            data['number_of_menuItem'] = item_set.filter(
+                **{menu_item_attr + '__id': tag.id}
+            ).count()
+            data['number_of_search'] = search_set.filter(
+                **{search_attr + '__id': tag.id},
+            ).count()
+            data['number_of_HIS'] = history_set.filter(
+                **{history_attr + '__id': tag.id},
+            ).count()
+
+            tag_data.append(data)
+        
+    store_data(AnalyticsModel, tag_data, current_datestamp)
 
 
 def restriction_tag_analysis():
@@ -83,51 +136,59 @@ def cook_style_tag_analysis():
     
 
 
-def tag_analysis(TagModel, AnalyticsModel, patron_attr='', menu_item_attr='', search_attr='', history_attr=''):
-    tags = list(TagModel.objects.all().order_by('id'))
-    tag_data = []
 
-    latest_datestamp = get_latest_datetime(AnalyticsModel)
     
-    if TagModel == rm.CookStyleTag:
-        for tag in tags:
-            data = {}
 
-            data['tag_id'] = tag
-            data['number_of_menuItem'] = rm.MenuItem.objects.filter(
-                cook_style_tags__id=tag.id
-            ).count()
-            data['number_of_search'] = pm.PatronSearchHistory.objects.filter(
-                query__icontains=tag.title,
-                search_datetime__gt=latest_datestamp
-            ).count()
-            data['number_of_HIS'] = pm.MenuItemHistory.objects.filter( 
-                menu_item__cook_style_tags__id=tag.id,
-                MenuItemHS_datetime__gt=latest_datestamp
-            ).count()
+# def tag_analysis(TagModel, AnalyticsModel, patron_attr='', menu_item_attr='', search_attr='', history_attr=''):
+#     tags = list(TagModel.objects.all().order_by('id'))
+#     tag_data = []
 
-            tag_data.append(data)
-    else:
-        for tag in tags:
-            data = {}
+#     latest_datestamp = get_latest_datetime(AnalyticsModel)
 
-            data['tag_id'] = tag
-            data['number_of_patronProfile'] = pm.Patron.objects.filter(
-            **{patron_attr + '__id': tag.id}
-            ).count()
-            data['number_of_menuItem'] = rm.MenuItem.objects.filter(
-                **{menu_item_attr + '__id': tag.id}
-            ).count()
-            data['number_of_search'] = pm.PatronSearchHistory.objects.filter(
-                **{search_attr + '__id': tag.id},
-                search_datetime__gt=latest_datestamp
-            ).count()
-            data['number_of_HIS'] = pm.MenuItemHistory.objects.filter(
-                **{history_attr + '__id': tag.id},
-                MenuItemHS_datetime__gt=latest_datestamp
-            ).count()
+#     patron_set = pm.Patron.objects.all()
+#     item_set = rm.MenuItem.objects.all()
+#     search_set = pm.PatronSearchHistory.filter(search_datetime__gt=latest_datestamp)
+#     history_set = pm.MenuItemHistory.objects.all(MenuItemHS_datetime__gt=latest_datestamp)
 
-            tag_data.append(data)
+#     if TagModel == rm.CookStyleTag:
+#         for tag in tags:
+#             data = {}
+
+#             data['tag_id'] = tag
+#             data['number_of_menuItem'] = rm.MenuItem.objects.filter(
+#                 cook_style_tags__id=tag.id
+#             ).count()
+#             data['number_of_search'] = pm.PatronSearchHistory.objects.filter(
+#                 query__icontains=tag.title,
+#                 search_datetime__gt=latest_datestamp
+#             ).count()
+#             data['number_of_HIS'] = pm.MenuItemHistory.objects.filter( 
+#                 menu_item__cook_style_tags__id=tag.id,
+#                 MenuItemHS_datetime__gt=latest_datestamp
+#             ).count()
+
+#             tag_data.append(data)
+#     else:
+#         for tag in tags:
+#             data = {}
+
+#             data['tag_id'] = tag
+#             data['number_of_patronProfile'] = pm.Patron.objects.filter(
+#                 **{patron_attr + '__id': tag.id}
+#             ).count()
+#             data['number_of_menuItem'] = rm.MenuItem.objects.filter(
+#                 **{menu_item_attr + '__id': tag.id}
+#             ).count()
+#             data['number_of_search'] = pm.PatronSearchHistory.objects.filter(
+#                 **{search_attr + '__id': tag.id},
+#                 search_datetime__gt=latest_datestamp
+#             ).count()
+#             data['number_of_HIS'] = pm.MenuItemHistory.objects.filter(
+#                 **{history_attr + '__id': tag.id},
+#                 MenuItemHS_datetime__gt=latest_datestamp
+#             ).count()
+
+#             tag_data.append(data)
         
-    store_data(AnalyticsModel, tag_data)
-    
+#     store_data(AnalyticsModel, tag_data)
+

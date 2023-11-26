@@ -6,9 +6,10 @@ from ..models import AppSatisfactionAnalytics
 def driver ():
     app_data = app_satisfaction_analysis()
 
-    print(f'App Satisfaction Analytics: {app_data}') #NOTE
+    # print(f'App Satisfaction Analytics: {app_data}') #NOTE
 
-    AppSatisfactionAnalytics.objects.create(**app_data)
+    obj = AppSatisfactionAnalytics.objects.create(**app_data)
+    print(f'{obj}\n')
 
 
 def app_satisfaction_analysis():

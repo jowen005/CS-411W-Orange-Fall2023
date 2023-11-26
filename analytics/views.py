@@ -4,6 +4,8 @@ from rest_framework.decorators import api_view
 from rest_framework import status, viewsets, generics, views
 from django.http import HttpRequest
 from django.db.models import Max
+from django.utils import timezone
+from datetime import datetime
 
 from . import models, serializers, permissions
 from .utils import calorie_analysis, global_analysis, menu_item_analysis, tag_analysis, satisfaction_analysis
@@ -20,6 +22,7 @@ class GlobalAnalyticsViewset(viewsets.ModelViewSet):
         except models.GlobalAnalytics.DoesNotExist:
             global_analysis.driver()
             return [models.GlobalAnalytics.objects.latest('date_stamp')]
+            # return models.GlobalAnalytics.objects.none()
 
 
 class CalorieAnalyticsViewset(viewsets.ModelViewSet):
@@ -28,20 +31,15 @@ class CalorieAnalyticsViewset(viewsets.ModelViewSet):
 
     def get_queryset(self):
 
-        while True:
-            latest_datestamps = models.CalorieAnalytics.objects.values('calorie_level').annotate(
-                latest_date=Max('date_stamp')
-            ).distinct()
-        
-            if len(latest_datestamps) != 11:
-                calorie_analysis.driver()
-            else:
-                break
-        
-        earliest_datestamp = min(obj['latest_date'] for obj in latest_datestamps)
+        try:
+            latest_datestamp = models.CalorieAnalytics.objects.latest('date_stamp').date_stamp
+        except models.CalorieAnalytics.DoesNotExist:
+            calorie_analysis.driver()
+            latest_datestamp = models.CalorieAnalytics.objects.latest('date_stamp').date_stamp
+            # return models.CalorieAnalytics.objects.none()
 
         queryset = models.CalorieAnalytics.objects.filter(
-            date_stamp__gte=earliest_datestamp
+            date_stamp__gte=latest_datestamp
         ).order_by('calorie_level')
         
         return queryset
@@ -56,22 +54,15 @@ class TagAnalyticsViewset(viewsets.ModelViewSet):
     
     def get_queryset(self):
 
-        num_of_tags = self.TagModel.objects.all().count()
-
-        while True:
-            latest_datestamps = self.AnalyticsModel.objects.values('tag_id').annotate(
-                latest_date=Max('date_stamp')
-            ).distinct()
-        
-            if len(latest_datestamps) != num_of_tags:
-                tag_analysis.driver(**{f'{self.tag_type}':True})
-            else:
-                break
-        
-        earliest_datestamp = min(obj['latest_date'] for obj in latest_datestamps)
+        try:
+            latest_datestamp = self.AnalyticsModel.objects.latest('date_stamp').date_stamp
+        except self.AnalyticsModel.DoesNotExist:
+            tag_analysis.driver(**{f'{self.tag_type}':True})
+            latest_datestamp = self.AnalyticsModel.objects.latest('date_stamp').date_stamp
+            # return self.TagModel.objects.none()
 
         queryset = self.AnalyticsModel.objects.filter(
-            date_stamp__gte=earliest_datestamp
+            date_stamp=latest_datestamp
         ).order_by('tag_id')
         
         return queryset
@@ -122,31 +113,27 @@ class LocalMenuItemPerformanceViewset(viewsets.ModelViewSet):
     permission_classes = [permissions.LocalMenuItemPermission]
     serializer_class = serializers.MenuItemPerformanceAnalyticsSerializer
 
+    # Restaurant Specific Menu Items
     def get_queryset(self):
 
         requested_id = self.kwargs.get('restaurant_id')
         restaurant = rm.Restaurant.objects.get(pk=requested_id)
 
-        num_of_items = rm.MenuItem.objects.filter(restaurant=restaurant).count()
-
-        while True:
-            latest_datestamps = models.MenuItemPerformanceAnalytics.objects.filter(
+        try:
+            latest_datestamp = models.MenuItemPerformanceAnalytics.objects.filter(
                 menuItem_id__restaurant=restaurant,
-            ).values('menuItem_id').annotate(
-                latest_date=Max('date_stamp')
-            ).distinct()
-        
-            if len(latest_datestamps) != num_of_items:
-                #Call Menu_item_analysis for specific group of tags????
-                menu_item_analysis.driver()
-            else:
-                break
-        
-        earliest_datestamp = min(obj['latest_date'] for obj in latest_datestamps)
+            ).latest('date_stamp').date_stamp
+        except models.MenuItemPerformanceAnalytics.DoesNotExist: # No Analytics for a Restaurant
+            # TODO: Optimize for specific restaurant analytics
+            menu_item_analysis.driver()
+            latest_datestamp = models.MenuItemPerformanceAnalytics.objects.filter(
+                menuItem_id__restaurant=restaurant,
+            ).latest('date_stamp').date_stamp
+            # return models.MenuItemPerformanceAnalytics.objects.none()
 
         queryset = models.MenuItemPerformanceAnalytics.objects.filter(
                 menuItem_id__restaurant=restaurant,
-                date_stamp__gte=earliest_datestamp
+                date_stamp__gte=latest_datestamp
         ).order_by('menuItem_id')
 
         return queryset
@@ -160,47 +147,36 @@ class GlobalMenuItemPerformanceViewset(viewsets.ModelViewSet):
         
         user = self.request.user
         
+        # RestProfile Specific Menu Items
         if user.user_type == 'restaurant':
-            num_of_items = rm.MenuItem.objects.filter(restaurant__owner=user).count()
-
-            while True:
-                latest_datestamps = models.MenuItemPerformanceAnalytics.objects.filter(
+            try:
+                latest_datestamp = models.MenuItemPerformanceAnalytics.objects.filter(
                     menuItem_id__restaurant__owner=user,
-                ).values('menuItem_id').annotate(
-                    latest_date=Max('date_stamp')
-                ).distinct()
-            
-                if len(latest_datestamps) != num_of_items:
-                    #Call Menu_item_analysis for specific group of tags????
-                    menu_item_analysis.driver()
-                else:
-                    break
-            
-            earliest_datestamp = min(obj['latest_date'] for obj in latest_datestamps)
+                ).latest('date_stamp').date_stamp
+            except models.MenuItemPerformanceAnalytics.DoesNotExist: # No Analytics for a RestProfile
+                # TODO: Optimize for specific restaurant profile analytics
+                menu_item_analysis.driver()
+                latest_datestamp = models.MenuItemPerformanceAnalytics.objects.filter(
+                    menuItem_id__restaurant__owner=user,
+                ).latest('date_stamp').date_stamp
+                # return models.MenuItemPerformanceAnalytics.objects.none()
 
             queryset = models.MenuItemPerformanceAnalytics.objects.filter(
                     menuItem_id__restaurant__owner=user,
-                    date_stamp__gte=earliest_datestamp
+                    date_stamp__gte=latest_datestamp
             ).order_by('menuItem_id')
 
+        # All Menu Items
         elif user.user_type == 'admin':
-            num_of_items = rm.MenuItem.objects.all().count()
-
-            while True:
-                latest_datestamps = models.MenuItemPerformanceAnalytics.objects.values('menuItem_id').annotate(
-                    latest_date=Max('date_stamp')
-                ).distinct()
-            
-                if len(latest_datestamps) != num_of_items:
-                    #Call Menu_item_analysis for specific group of tags????
-                    menu_item_analysis.driver()
-                else:
-                    break
-            
-            earliest_datestamp = min(obj['latest_date'] for obj in latest_datestamps)
+            try:
+                latest_datestamp = models.MenuItemPerformanceAnalytics.objects.latest('date_stamp').date_stamp
+            except models.MenuItemPerformanceAnalytics.DoesNotExist: # No Analytics At All
+                menu_item_analysis.driver()
+                latest_datestamp = models.MenuItemPerformanceAnalytics.objects.latest('date_stamp').date_stamp
+                # return models.MenuItemPerformanceAnalytics.objects.none()
 
             queryset = models.MenuItemPerformanceAnalytics.objects.filter(
-                    date_stamp__gte=earliest_datestamp
+                    date_stamp__gte=latest_datestamp
             ).order_by('menuItem_id')
 
         return queryset
@@ -216,3 +192,4 @@ class AppSatisfactionAnalyticsViewset(viewsets.ModelViewSet):
         except models.AppSatisfactionAnalytics.DoesNotExist:
             satisfaction_analysis.driver()
             return [models.AppSatisfactionAnalytics.objects.latest('date_stamp')]
+            # return models.AppSatisfactionAnalytics.objects.none()

@@ -23,7 +23,7 @@ class GlobalAnalytics(models.Model):
     date_stamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Global Analytics - {self.id}"
+        return f"{self.date_stamp} | Global Analytics - {self.id}"
 
     class Meta:
         db_table = 'Global_Analytics'
@@ -40,10 +40,11 @@ class CalorieAnalytics(models.Model):
     number_of_menuItems = models.PositiveIntegerField()
     number_of_searches = models.PositiveIntegerField()          #For Trend Use Only
     number_of_items_added_HIS = models.PositiveIntegerField()   #For Trend Use Only
-    date_stamp = models.DateTimeField(auto_now_add = True)
+    # date_stamp = models.DateTimeField(auto_now_add = True)
+    date_stamp = models.DateTimeField()
 
     def __str__(self):
-        return f"Calorie_Analytics - {self.id}"
+        return f"{self.date_stamp} | Calorie Analytics - {self.id} | Level {self.calorie_level}"
     class Meta:
         db_table = 'Calorie_Analytics'
 
@@ -53,10 +54,11 @@ class RestrictionTagAnalytics(models.Model):
     number_of_menuItem = models.PositiveIntegerField()
     number_of_search = models.PositiveIntegerField()    #For Trend Use Only
     number_of_HIS = models.PositiveIntegerField()       #For Trend Use Only
-    date_stamp = models.DateTimeField(auto_now_add = True)
+    # date_stamp = models.DateTimeField(auto_now_add = True)
+    date_stamp = models.DateTimeField()
 
     def __str__(self):
-        return f"RestrictionTagAnalytics - {self.id}"
+        return f"{self.date_stamp} | RestrictionTagAnalytics - {self.id} | Tag: {self.tag_id}"
     class Meta:
         db_table = 'RestrictionTagAnalytics'
 
@@ -66,10 +68,11 @@ class AllergiesTagAnalytics(models.Model):
     number_of_menuItem = models.PositiveIntegerField()
     number_of_search = models.PositiveIntegerField()    #For Trend Use Only
     number_of_HIS = models.PositiveIntegerField()       #For Trend Use Only
-    date_stamp = models.DateTimeField(auto_now_add = True)
+    # date_stamp = models.DateTimeField(auto_now_add = True)
+    date_stamp = models.DateTimeField()
 
     def __str__(self):
-        return f"AllergiesTagAnalytics - {self.id}"
+        return f"{self.date_stamp} | AllergiesTagAnalytics - {self.id} | Tag: {self.tag_id}"
     class Meta:
         db_table = 'AllergiesTagAnalytics'
 
@@ -79,10 +82,11 @@ class IngredientTagAnalytics(models.Model):
     number_of_menuItem = models.PositiveIntegerField()
     number_of_search = models.PositiveIntegerField()    #For Trend Use Only
     number_of_HIS = models.PositiveIntegerField()       #For Trend Use Only
-    date_stamp = models.DateTimeField(auto_now_add = True)
+    # date_stamp = models.DateTimeField(auto_now_add = True)
+    date_stamp = models.DateTimeField()
 
     def __str__(self):
-        return f"IngredientTagAnalytics - {self.id}"
+        return f"{self.date_stamp} | IngredientTagAnalytics - {self.id} | Tag: {self.tag_id}"
     class Meta:
         db_table = 'IngredientTagAnalytics'
 
@@ -92,10 +96,11 @@ class TasteTagAnalytics(models.Model):
     number_of_menuItem = models.PositiveIntegerField()
     number_of_search = models.PositiveIntegerField()    #For Trend Use Only
     number_of_HIS = models.PositiveIntegerField()       #For Trend Use Only
-    date_stamp = models.DateTimeField(auto_now_add = True)
+    # date_stamp = models.DateTimeField(auto_now_add = True)
+    date_stamp = models.DateTimeField()
 
     def __str__(self):
-        return f"TasteTagAnalytics - {self.id}"
+        return f"{self.date_stamp} | TasteTagAnalytics - {self.id} | Tag: {self.tag_id}"
     class Meta:
         db_table = 'TasteTagAnalytics'
 
@@ -104,10 +109,11 @@ class CookStyleAnalytics(models.Model):
     number_of_menuItem = models.PositiveIntegerField()
     number_of_search = models.PositiveIntegerField()    #For Trend Use Only
     number_of_HIS = models.PositiveIntegerField()       #For Trend Use Only
-    date_stamp = models.DateTimeField(auto_now_add = True)
+    # date_stamp = models.DateTimeField(auto_now_add = True)
+    date_stamp = models.DateTimeField()
 
     def __str__(self):
-        return f"CookStyleAnalytics - {self.id}"
+        return f"{self.date_stamp} | CookStyleAnalytics - {self.id} | Tag: {self.tag_id}"
     class Meta:
         db_table = 'CookStyleAnalytics'
 
@@ -122,10 +128,11 @@ class MenuItemPerformanceAnalytics(models.Model):
         max_digits=8,  # Total number of digits
         decimal_places=2,  # Maximum of 2 decimal places
     )
-    date_stamp = models.DateTimeField(auto_now_add=True)
+    # date_stamp = models.DateTimeField(auto_now_add = True)
+    date_stamp = models.DateTimeField()
 
     def __str__(self):
-        return f"MenuItemPerformanceAnalytics - {self.id}"
+        return f"{self.date_stamp} | MenuItemPerformanceAnalytics - {self.id} | Menu Item: {self.menuItem_id}"
     
     class Meta:
         db_table = 'MenuItemPerformanceAnalytics'
@@ -139,7 +146,17 @@ class AppSatisfactionAnalytics(models.Model):
     date_stamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"AppSatisfactionAnalytics - {self.id}"
+        return f"{self.date_stamp} | AppSatisfactionAnalytics - {self.id}"
     
     class Meta:
         db_table = 'AppSatisfactionAnalytics'
+
+
+# class AllergyTagExclusionReport(models.Model):
+#     menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
+#     tag = models.ForeignKey(AllergyTag, on_delete=models.CASCADE)
+#     exclusion_count = models.PositiveIntegerField()
+#     date_stamp = models.DateTimeField(auto_now_add=True)
+
+#     def __str__(self):
+#         return f"{self.menu_item.item_name}: {self.tag.title} --> {self.exclusion_count}"

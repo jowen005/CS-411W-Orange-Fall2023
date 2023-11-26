@@ -25,7 +25,8 @@ class CalorieAnalyticsSerializer(serializers.ModelSerializer):
         (10, '1800 - 1999'), (11, '2000 and up')
     ]
 
-    calorie_level = serializers.ChoiceField(choices=LEVEL_CALORIE)
+    # calorie_level = serializers.ChoiceField(choices=LEVEL_CALORIE)
+    calorie_level = serializers.CharField(source='get_calorie_level_display')
 
     class Meta:
         model = models.CalorieAnalytics
