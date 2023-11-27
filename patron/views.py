@@ -1,16 +1,13 @@
-from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, APIView
 from rest_framework import status, viewsets
 from .utils.search import advancedSearch
 from rest_framework.serializers import ValidationError
 
 from . import models, serializers, permissions
-from restaurants.models import RestrictionTag, AllergyTag, TasteTag, IngredientTag, MenuItem
+from restaurants.models import MenuItem
 from restaurants.serializers import MenuItemListSerializer
 from feedback.models import Reviews
 
-# Create your views here.
 
 class PatronViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthPatronAndIsUser]
@@ -62,9 +59,7 @@ class SearchHistoryViewSet(viewsets.ModelViewSet):
             }
             return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
         
-        
-        # NOTE: Call Search function with self.request.data which returns menu item IDs
-        # search_results = [1, 2, 3]
+        # Format Search for entry to the search function
         instance = history_serializer.instance
         search_obj = history_serializer.data
         search_obj['search_datetime'] = instance.search_datetime
@@ -83,8 +78,6 @@ class SearchHistoryViewSet(viewsets.ModelViewSet):
         # Handle if results were returned
         if len(search_results) > 0:
             
-            
-
             objects = MenuItem.objects.filter(id__in=search_results)
             menu_item_serializer = MenuItemListSerializer(objects, many=True)
             
@@ -96,9 +89,10 @@ class SearchHistoryViewSet(viewsets.ModelViewSet):
         
         # Handle if no results were returned or search failed
         response_data = {
-            'message': 'No Results or Search Failed'
+            'message': 'No Results'
         }
         return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
+        # return Response(response_data, status=status.HTTP_204_NO_CONTENT)
 
 
 class BookmarkViewSet(viewsets.ModelViewSet):
@@ -207,38 +201,3 @@ class MenuItemHistoryViewSet(viewsets.ModelViewSet):
                     'error': str(ex),
                 }
                 return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        
-
-
-
-
-
-
-# @api_view(http_method_names=['GET'])
-# def tag_overview(request:Request):
-    
-#     patrons =  models.Patron.objects.all()
-#     allergies = AllergyTag.objects.all()
-#     restrictions = RestrictionTag.objects.all()
-#     tastes = TasteTag.objects.all()
-    
-#     response = {"AllergyTag": {},"RestrictionTag":{},"TasteTag":{}}
-#     for allergy in allergies:
-#         response["AllergyTag"][str(allergy.id)] = {"title":allergy.title,"count":0}
-
-#     for restriction in restrictions:
-#         response["RestrictionTag"][str(restriction.id)] = {"title":restriction.id, "count":0}
-
-#     for taste in tastes:
-#         response["TasteTag"][str(taste.id)] = {"title":taste.id, "count":0}
-
-#     for patron in patrons:
-#         for tag_id in list(patron.patron_allergy_tag.values_list("id",flat=True)):
-#             response["AllergyTag"][str(tag_id)]["count"] += 1
-#         for tag_id in list(patron.patron_restriction_tag.values_list("id",flat=True)):
-#             response["RestrictionTag"][str(tag_id)]["count"] += 1
-#         for tag_id in list(patron.patron_taste_tag.values_list("id",flat=True)):
-#             response["TasteTag"][str(tag_id)]["count"] += 1
-        
-#     return Response(data=response, status=status.HTTP_200_OK)

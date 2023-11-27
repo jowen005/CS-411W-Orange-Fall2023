@@ -21,6 +21,6 @@ menu_router.register('menuitems', views.LocalMenuItemPerformanceViewset, basenam
 urlpatterns = [
     # path('tag_overview/', views.tag_overview, name='analytics'),
     path('', include(router.urls)),
-    path('<int:restaurant_id>/', include(menu_router.urls))
-    
+    path('<int:restaurant_id>/', include(menu_router.urls)),
+    path('manual/', views.ManualAnalyticsCommandView.as_view(), name='manual'),
 ]
