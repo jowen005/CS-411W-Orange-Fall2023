@@ -175,7 +175,7 @@ class LocalMenuItemPerformanceViewset(viewsets.ModelViewSet):
             }
             return Response(data=response, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = self.get_serializer(analytic_obj.first())
+        serializer = self.get_serializer(analytic_obj)
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
@@ -202,7 +202,7 @@ class GlobalMenuItemPerformanceViewset(viewsets.ModelViewSet):
 
         valid_ids = rm.MenuItem.objects.all().values_list('id', flat=True)
 
-        if item_id in valid_ids:
+        if item_id not in valid_ids:
             response = {
                 'message': f'This Menu Item ID ({item_id}) is not valid!'
             }
@@ -216,7 +216,7 @@ class GlobalMenuItemPerformanceViewset(viewsets.ModelViewSet):
             }
             return Response(data=response, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = self.get_serializer(analytic_obj.first())
+        serializer = self.get_serializer(analytic_obj)
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
         
@@ -233,7 +233,7 @@ class AppSatisfactionAnalyticsViewset(viewsets.ModelViewSet):
 
 
 class ManualAnalyticsCommandView(views.APIView):
-    permission_classes = [permissions.IsAuthAdmin]
+    permission_classes = [permissions.IsAuthAdminAndCreate]
 
     def post(self, request, *args, **kwargs):
         call_command('manualAnalytics')

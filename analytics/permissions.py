@@ -13,8 +13,10 @@ class IsAuthAdminAndList(BasePermission):
         if is_authenticated and is_admin:
             if view.action == 'list':
                 return True
+            raise PermissionDenied(f"This action is not allowed ({view.action})!")
         
-        return False
+        raise PermissionDenied(f"This user ({request.user.user_type}) is not an " +
+                               f"authenticated admin user!")
     
 
 class IsAuthAdminAndReadOnly(BasePermission):
@@ -25,8 +27,10 @@ class IsAuthAdminAndReadOnly(BasePermission):
         if is_authenticated and is_admin:
             if view.action == 'list' or view.action == 'retrieve':
                 return True
+            raise PermissionDenied(f"This action is not allowed ({view.action})!")
         
-        return False
+        raise PermissionDenied(f"This user ({request.user.user_type}) is not an " +
+                               f"authenticated admin user!")
     
 
 class IsAuthNotPatronAndReadOnly(BasePermission):
@@ -36,10 +40,12 @@ class IsAuthNotPatronAndReadOnly(BasePermission):
         is_restaurant = request.user.user_type == 'restaurant'
         
         if is_authenticated and (is_admin or is_restaurant):
-            if view.action == 'list' and view.action == 'retrieve':
+            if view.action == 'list' or view.action == 'retrieve':
                 return True
+            raise PermissionDenied(f"This action is not allowed ({view.action})!")
         
-        return False
+        raise PermissionDenied(f"This user ({request.user.user_type}) is not an " +
+                               f"authenticated restaurant or admin user!")
     
 
 class LocalMenuItemPermission(BasePermission):
@@ -50,8 +56,22 @@ class LocalMenuItemPermission(BasePermission):
         
         if is_authenticated:
             if is_admin:
-                if view.action == 'list' or view.action == 'retrieve':
+                if view.action == 'list':
                     return True
+                elif view.action == 'retrieve':
+                    rest_id = view.kwargs.get('restaurant_id')
+                    item_id = int(view.kwargs.get('pk'))
+
+                    try:
+                        item = MenuItem.objects.get(pk=item_id)
+                    except MenuItem.DoesNotExist:
+                        raise PermissionDenied(f"This Menu Item ID ({item_id}) is not valid!")
+                    
+                    if item.restaurant.id == rest_id:
+                        return True
+                    raise PermissionDenied(f"The specified menu item ({item_id}) does not belong " +
+                                           f"to the specified restaurant ({rest_id})!")
+
                 else:
                     raise PermissionDenied(f"This action is not allowed ({view.action})!")
             
@@ -89,8 +109,11 @@ class IsAuthAdminAndCreate(BasePermission):
         is_authenticated = request.user.is_authenticated
         is_admin = request.user.user_type == 'admin'
 
-        if is_authenticated and is_admin and view.action == 'create':
-            return True
+        if is_authenticated and is_admin:
+            if request.method == 'POST':
+                return True
+            raise PermissionDenied(f"This request method is not allowed ({request.method})!")
             
-        return False
+        raise PermissionDenied(f"This user ({request.user.user_type}) is not an " +
+                               f"authenticated admin user!")
     
