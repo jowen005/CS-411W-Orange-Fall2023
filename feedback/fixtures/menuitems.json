@@ -1,0 +1,78 @@
+[
+    {
+        "model":"restaurants.MenuItem",
+        "pk": 1,
+        "fields": {
+            "item_name": "Rest0.Woodys.MI0",
+            "restaurant": 1,
+            "average_rating": 7.34,
+            "price": 9.99,
+            "calories": 600,
+            "food_type_tag": 3,
+            "cook_style_tags": 3,
+            "taste_tags": [1, 3],
+            "menu_restriction_tag": [2],
+            "menu_allergy_tag": [],
+            "ingredients_tag": [2],
+            "time_of_day_available": "Anytime",
+            "is_modifiable": false
+        }
+    },
+    {
+        "model":"restaurants.MenuItem",
+        "pk": 2,
+        "fields": {
+            "item_name": "Rest0.Woodys.MI1",
+            "restaurant": 1,
+            "average_rating": 8.94,
+            "price": 15.99,
+            "calories": 400,
+            "food_type_tag": 1,
+            "cook_style_tags": 1,
+            "taste_tags": [2, 3],
+            "menu_restriction_tag": [1, 2],
+            "menu_allergy_tag": [2],
+            "ingredients_tag": [2, 1],
+            "time_of_day_available": "Dinner",
+            "is_modifiable": true
+        }
+    },
+    {
+        "model":"restaurants.MenuItem",
+        "pk": 3,
+        "fields": {
+            "item_name": "Rest0.Moes.MI0",
+            "restaurant": 2,
+            "average_rating": 3.4,
+            "price": 7.99,
+            "calories": 468,
+            "food_type_tag": 2,
+            "cook_style_tags": 2,
+            "taste_tags": [1],
+            "menu_restriction_tag": [3, 1],
+            "menu_allergy_tag": [1],
+            "ingredients_tag": [2, 3],
+            "time_of_day_available": "Lunch",
+            "is_modifiable": false
+        }
+    },
+    {
+        "model":"restaurants.MenuItem",
+        "pk": 4,
+        "fields": {
+            "item_name": "Rest1.McDonalds.MI0",
+            "restaurant": 3,
+            "average_rating": 6.3,
+            "price": 17.38,
+            "calories": 521,
+            "food_type_tag": 2,
+            "cook_style_tags": 2,
+            "taste_tags": [3],
+            "menu_restriction_tag": [],
+            "menu_allergy_tag": [],
+            "ingredients_tag": [1, 2],
+            "time_of_day_available": "Anytime",
+            "is_modifiable": true
+        }
+    }
+]
