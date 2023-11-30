@@ -123,6 +123,12 @@ class MenuItemPerformanceAnalytics(models.Model):
     number_of_added_to_bookmark = models.PositiveIntegerField() #For Trend Use Only
     number_of_added_to_History = models.PositiveIntegerField()  #For Trend Use Only
 
+    # exclusion_count = models.IntegerField
+    # top_3_allergy = models.JSONField()
+    # top_3_ingredients = models.JSONField()
+    # top_3_restrictions = models.JSONField()
+    # top_3_taste = models.JSONField()
+
     number_of_ratings = models.PositiveIntegerField()
     average_rating = models.DecimalField(
         max_digits=8,  # Total number of digits
@@ -152,11 +158,11 @@ class AppSatisfactionAnalytics(models.Model):
         db_table = 'AppSatisfactionAnalytics'
 
 
-# class AllergyTagExclusionReport(models.Model):
+# class AllergyTagExclusionRecord(models.Model):
 #     menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
 #     tag = models.ForeignKey(AllergyTag, on_delete=models.CASCADE)
-#     exclusion_count = models.PositiveIntegerField()
-#     date_stamp = models.DateTimeField(auto_now_add=True)
+#     exclusion_count = models.PositiveIntegerField(default=0)
+#     date_stamp = models.DateTimeField()
 
 #     def __str__(self):
-#         return f"{self.menu_item.item_name}: {self.tag.title} --> {self.exclusion_count}"
+#         return f"{self.menu_item.id}: {self.tag.title} --> {self.exclusion_count}"
