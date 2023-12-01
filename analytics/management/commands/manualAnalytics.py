@@ -19,12 +19,12 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         
-        ea.driver
+        # ea.driver()
 
         # ga.driver()
         # ca.driver()
-        # ta.driver()
-        # ofa.driver()
+        ta.driver()
+        ofa.driver()
         # ma.driver()
         # sa.driver()
 

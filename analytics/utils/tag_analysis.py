@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.utils import timezone
 from django.db.models import Max, Sum
 
@@ -6,6 +6,9 @@ import patron.models as pm
 import restaurants.models as rm
 from ..models import (RestrictionTagAnalytics, AllergiesTagAnalytics, 
                       TasteTagAnalytics, IngredientTagAnalytics, CookStyleAnalytics)
+
+from ..models import (AllergyTagExclusionRecord, IngredientTagExclusionRecord,
+                      RestrictionTagExclusionRecord, TasteTagExclusionRecord)
 
 
 
@@ -37,6 +40,7 @@ def get_latest_datetime(AnalyticsModel):
         latest_datestamp = AnalyticsModel.objects.latest('date_stamp').date_stamp
     except AnalyticsModel.DoesNotExist:
         latest_datestamp = datetime.utcfromtimestamp(0).replace(tzinfo=timezone.utc)
+    latest_datestamp = timezone.now() - timedelta(days=5)
     return latest_datestamp
 
 
@@ -48,7 +52,9 @@ def store_data(AnalyticsModel, tag_data, current_datestamp):
     print('\n')
 
 
-def tag_analysis(TagModel, AnalyticsModel, ExclusionModel, patron_attr='', menu_item_attr='', search_attr='', history_attr=''):
+def tag_analysis(TagModel, AnalyticsModel, ExclusionModel=None, 
+                 patron_attr='', menu_item_attr='', search_attr='', history_attr=''):
+    
     tags = list(TagModel.objects.all().order_by('id'))
     tag_data = []
 
@@ -105,7 +111,7 @@ def tag_analysis(TagModel, AnalyticsModel, ExclusionModel, patron_attr='', menu_
 
 
 def restriction_tag_analysis():
-    tag_analysis(rm.RestrictionTag, RestrictionTagAnalytics, 
+    tag_analysis(rm.RestrictionTag, RestrictionTagAnalytics, RestrictionTagExclusionRecord,
                  patron_attr='patron_restriction_tag',
                  menu_item_attr='menu_restriction_tag', 
                  search_attr='dietary_restriction_tags',
@@ -113,7 +119,7 @@ def restriction_tag_analysis():
 
 
 def allergy_tag_analysis():
-    tag_analysis(rm.AllergyTag, AllergiesTagAnalytics, 
+    tag_analysis(rm.AllergyTag, AllergiesTagAnalytics, AllergyTagExclusionRecord,
                  patron_attr='patron_allergy_tag', 
                  menu_item_attr='menu_allergy_tag', 
                  search_attr='allergy_tags', 
@@ -121,7 +127,7 @@ def allergy_tag_analysis():
 
 
 def taste_tag_analysis():
-    tag_analysis(rm.TasteTag, TasteTagAnalytics, 
+    tag_analysis(rm.TasteTag, TasteTagAnalytics, TasteTagExclusionRecord,
                  patron_attr='patron_taste_tag', 
                  menu_item_attr='taste_tags', 
                  search_attr='patron_taste_tags', 
@@ -129,7 +135,7 @@ def taste_tag_analysis():
     
 
 def ingredient_tag_analysis():
-    tag_analysis(rm.IngredientTag, IngredientTagAnalytics, 
+    tag_analysis(rm.IngredientTag, IngredientTagAnalytics, IngredientTagExclusionRecord,
                  patron_attr='disliked_ingredients', 
                  menu_item_attr='ingredients_tag', 
                  search_attr='disliked_ingredients', 

@@ -19,6 +19,20 @@ class IsAuthAdminAndList(BasePermission):
                                f"authenticated admin user!")
     
 
+class IsNotPatronAndList(BasePermission):
+    def has_permission(self, request, view):
+        is_authenticated = request.user.is_authenticated 
+        is_not_patron = request.user.user_type != 'patron'
+        
+        if is_authenticated and is_not_patron:
+            if view.action == 'list':
+                return True
+            raise PermissionDenied(f"This action is not allowed ({view.action})!")
+        
+        raise PermissionDenied(f"This user ({request.user.user_type}) is not an " +
+                               f"authenticated admin or restaurant user!")
+    
+
 class IsAuthAdminAndReadOnly(BasePermission):
     def has_permission(self,request,view):
         is_authenticated = request.user.is_authenticated 
@@ -116,4 +130,8 @@ class IsAuthAdminAndCreate(BasePermission):
             
         raise PermissionDenied(f"This user ({request.user.user_type}) is not an " +
                                f"authenticated admin user!")
+    
+
+
+        
     

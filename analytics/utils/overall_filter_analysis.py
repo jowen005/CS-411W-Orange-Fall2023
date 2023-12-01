@@ -17,9 +17,13 @@ def driver():
                     ('tastetag', TasteTagAnalytics)]
     
     overall_analytics = analysis(FILTER_TYPES)
+    current_datestamp = timezone.now()
 
     for entry in overall_analytics:
-        print()
+        # print(entry)
+        obj = OverallFilterAnalytics.objects.create(**entry, date_stamp=current_datestamp)
+        print(obj)
+    print('\n')
 
     
 def analysis(FILTER_TYPES):
@@ -43,15 +47,15 @@ def analysis(FILTER_TYPES):
             result_data['top_3_inclusions'] = {
                 INDEXES[idx]: {
                     'title':record.get_calorie_level_display(),
-                    'count':record.number_of_search
+                    'count':record.number_of_searches
                 } for idx, record in enumerate(inclusions)
             }
 
-            added = list(analytic_set.order_by('-number_of_HIS')[:3])
+            added = list(analytic_set.order_by('-number_of_items_added_HIS')[:3])
             result_data['top_3_added'] = {
                 INDEXES[idx]: {
                     'title':record.get_calorie_level_display(),
-                    'count':record.number_of_HIS
+                    'count':record.number_of_items_added_HIS
                 } for idx, record in enumerate(added)
             }
 

@@ -26,7 +26,7 @@ def driver():
         update_menu_item(entry)
     print('\n')
 
-def item_analysis(items, bookmark_set, history_set, review_set):
+def item_analysis():
     
     try:
         latest_datestamp = MenuItemPerformanceAnalytics.objects.latest('date_stamp').date_stamp
@@ -36,7 +36,6 @@ def item_analysis(items, bookmark_set, history_set, review_set):
     item_data = []
 
     items = rm.MenuItem.objects.all().order_by('id')
-    bookmark_set = pm.Bookmark.objects.filter(bookmarked_datetime__gt=latest_datestamp)
     history_set = pm.MenuItemHistory.objects.filter(MenuItemHS_datetime__gt=latest_datestamp)
     review_set = Reviews.objects.all()
     current_datestamp = timezone.now()
@@ -45,9 +44,6 @@ def item_analysis(items, bookmark_set, history_set, review_set):
         data = {}
 
         data['menuItem_id'] = item
-        data['number_of_added_to_bookmark'] = bookmark_set.filter(
-            menu_item__id=item.id,
-        ).count() #TODO: Remove
         data['number_of_added_to_History'] = history_set.filter(
             menu_item__id=item.id,
         ).count()
@@ -96,7 +92,8 @@ def item_exclusion_analysis(item_data):
                 INDEXES[idx]: {
                     'title':record.tag.title,
                     'count':record.exclusion_count
-                } for idx, record in enumerate(top_3)
+                } if record.exclusion_count > 0 else 'N/A'
+                for idx, record in enumerate(top_3) 
             }
 
     return item_data

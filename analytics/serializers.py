@@ -78,6 +78,15 @@ class CookStyleAnalyticsSerializer(serializers.ModelSerializer):
         fields = ['id', 'tag_id', 'number_of_menuItem', 'date_stamp']
 
 
+# Overall Filter Analytics Serializer
+class OverallFilterAnalyticsSerializer(serializers.ModelSerializer):
+    filter_type = serializers.CharField(source='get_filter_type_display')
+
+    class Meta:
+        model = models.OverallFilterAnalytics
+        fields = '__all__'
+
+
 # Menu Item Performance Analytics Serializers
 class MenuItemPerformanceAnalyticsSerializer(serializers.ModelSerializer):
     menuItem_id = rs.MenuItemListSerializer()
@@ -90,7 +99,9 @@ class MenuItemPerformanceAnalyticsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.MenuItemPerformanceAnalytics
-        fields = ['id', 'menuItem_id', 'number_of_ratings', 'average_rating', 'date_stamp']
+        # fields = '__all__'
+        exclude = ['number_of_added_to_History']
+        # fields = ['id', 'menuItem_id', 'number_of_ratings', 'average_rating', 'date_stamp']
         
 
 # App satisfaction serializers

@@ -135,6 +135,21 @@ class CookStyleAnalyticsViewset(TagAnalyticsViewset):
     serializer_class = serializers.CookStyleAnalyticsSerializer
     AnalyticsModel = models.CookStyleAnalytics
     TagModel = rm.CookStyleTag
+
+
+class OverallFilterAnalyticsViewset(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsNotPatronAndList]
+    serializer_class = serializers.OverallFilterAnalyticsSerializer
+
+    def get_queryset(self):
+        requested_type = self.kwargs.get('filter_type')
+
+        try:
+            return [models.OverallFilterAnalytics.objects.filter(
+                filter_type=requested_type
+            ).latest('date_stamp')]
+        except models.GlobalAnalytics.DoesNotExist:
+            return models.GlobalAnalytics.objects.none()
         
 
 # Where You specify the menu items for a specific restaurant location using 'restaurant id'

@@ -23,4 +23,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('<int:restaurant_id>/', include(menu_router.urls)),
     path('manual/', views.ManualAnalyticsCommandView.as_view(), name='manual'),
+    path('overall/<str:filter_type>/', views.OverallFilterAnalyticsViewset.as_view({'get':'list'}), name='overallfilters')
 ]
