@@ -59,6 +59,9 @@ class AppSatisfaction(models.Model):
         def formatted_datetime(self):
             return self.review_datetime.strftime('%d/%m/%y %H:%M:%S')
         
+        class Meta:
+             db_table = 'AppSatisfaction'
+        
 # class Reviews(models.Model):
 #     #When patron delete his account, the reviews still remains.
 #     #when menu_item deleted, the reviews will not available.
