@@ -22,8 +22,9 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
     #print(MenuItems.values_list("ingredients_tag"))
     #the most restrictive tag is likely the allergy tags so we'll filter on that first
     if (allergy_tags is not None) and (len(allergy_tags) > 0):
-        for allergy in allergy_tags:
-            MenuItems = MenuItems.exclude(menu_allergy_tag = allergy) #NOTE: I changed this line (!=, AND)
+        MenuItems = MenuItems.exclude(menu_allergy_tag__in = allergy_tags) #NOTE: I changed this line (!=, AND)
+        # for allergy in allergy_tags:
+        #     MenuItems = MenuItems.exclude(menu_allergy_tag = allergy) #NOTE: I changed this line (!=, AND)
             # MenuItems = MenuItems.filter(menu_allergy_tag = allergy)
 
     if (disliked_ingredients is not None) and (len(disliked_ingredients) > 0):

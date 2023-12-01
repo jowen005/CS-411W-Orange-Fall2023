@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.utils import timezone
-from django.db.models import Max
+from django.db.models import Max, Sum
 
 import patron.models as pm
 import restaurants.models as rm
@@ -48,7 +48,7 @@ def store_data(AnalyticsModel, tag_data, current_datestamp):
     print('\n')
 
 
-def tag_analysis(TagModel, AnalyticsModel, patron_attr='', menu_item_attr='', search_attr='', history_attr=''):
+def tag_analysis(TagModel, AnalyticsModel, ExclusionModel, patron_attr='', menu_item_attr='', search_attr='', history_attr=''):
     tags = list(TagModel.objects.all().order_by('id'))
     tag_data = []
 
@@ -77,6 +77,8 @@ def tag_analysis(TagModel, AnalyticsModel, patron_attr='', menu_item_attr='', se
 
             tag_data.append(data)
     else:
+        exclusion_set = ExclusionModel.objects.all()
+
         for tag in tags:
             data = {}
 
@@ -93,6 +95,9 @@ def tag_analysis(TagModel, AnalyticsModel, patron_attr='', menu_item_attr='', se
             data['number_of_HIS'] = history_set.filter(
                 **{history_attr + '__id': tag.id},
             ).count()
+
+            result_dict = exclusion_set.filter(tag=tag).aggregate(Sum('exclusion_count'))
+            data['exclusion_count'] = result_dict['exclusion_count__sum']
 
             tag_data.append(data)
         

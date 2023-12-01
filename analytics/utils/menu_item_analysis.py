@@ -16,7 +16,7 @@ def driver():
 
     item_data, current_datestamp = item_analysis()
 
-    item_data = exclusion_analysis(item_data)
+    item_data = item_exclusion_analysis(item_data)
 
     for entry in item_data:
         # print(f'{current_datestamp} | {entry}') #NOTE
@@ -69,12 +69,14 @@ def update_menu_item(entry):
     item_instance.save()
 
 
-def exclusion_analysis(item_data):
+def item_exclusion_analysis(item_data):
 
     TAG_TYPES = [('allergy', rm.AllergyTag, AllergyTagExclusionRecord), 
                  ('ingredients', rm.IngredientTag, IngredientTagExclusionRecord), 
                  ('restrictions', rm.RestrictionTag, RestrictionTagExclusionRecord),
                  ('taste', rm.TasteTag, TasteTagExclusionRecord)]
+    
+    INDEXES = ['first', 'second', 'third']
     
     analytic_sets = {tag_type: AnalyticsModel.objects.all() for tag_type, _, AnalyticsModel in TAG_TYPES}
     overall_set = OverallExclusionRecord.objects.all()
@@ -91,7 +93,7 @@ def exclusion_analysis(item_data):
             ).order_by('-exclusion_count')[:3])
 
             entry[f'top_3_{tag_type}'] = {
-                f'{idx+1}': {
+                INDEXES[idx]: {
                     'title':record.tag.title,
                     'count':record.exclusion_count
                 } for idx, record in enumerate(top_3)

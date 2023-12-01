@@ -6,6 +6,7 @@ User = get_user_model()
 
 from django.db import models
 
+
 class GlobalAnalytics(models.Model):
     total_males = models.IntegerField()
     total_females = models.IntegerField()
@@ -28,6 +29,7 @@ class GlobalAnalytics(models.Model):
     class Meta:
         db_table = 'Global_Analytics'
 
+
 class CalorieAnalytics(models.Model):
     LEVEL_CALORIE = [
         (0, 'Invalid'),(1, "0 - 199"), (2, '200 - 399'), (3 , '400 - 599'), 
@@ -48,10 +50,12 @@ class CalorieAnalytics(models.Model):
     class Meta:
         db_table = 'Calorie_Analytics'
 
+
 class RestrictionTagAnalytics(models.Model):
     tag_id = models.ForeignKey(RestrictionTag, on_delete=models.CASCADE)
     number_of_patronProfile = models.PositiveIntegerField()
     number_of_menuItem = models.PositiveIntegerField()
+    exclusion_count = models.PositiveIntegerField()
     number_of_search = models.PositiveIntegerField()    #For Trend Use Only
     number_of_HIS = models.PositiveIntegerField()       #For Trend Use Only
     # date_stamp = models.DateTimeField(auto_now_add = True)
@@ -62,10 +66,12 @@ class RestrictionTagAnalytics(models.Model):
     class Meta:
         db_table = 'RestrictionTagAnalytics'
 
+
 class AllergiesTagAnalytics(models.Model):
     tag_id = models.ForeignKey(AllergyTag, on_delete=models.CASCADE)
     number_of_patronProfile = models.PositiveIntegerField()
     number_of_menuItem = models.PositiveIntegerField()
+    exclusion_count = models.PositiveIntegerField()
     number_of_search = models.PositiveIntegerField()    #For Trend Use Only
     number_of_HIS = models.PositiveIntegerField()       #For Trend Use Only
     # date_stamp = models.DateTimeField(auto_now_add = True)
@@ -76,10 +82,12 @@ class AllergiesTagAnalytics(models.Model):
     class Meta:
         db_table = 'AllergiesTagAnalytics'
 
+
 class IngredientTagAnalytics(models.Model):
     tag_id = models.ForeignKey(IngredientTag, on_delete=models.CASCADE)
     number_of_patronProfile = models.PositiveIntegerField()
     number_of_menuItem = models.PositiveIntegerField()
+    exclusion_count = models.PositiveIntegerField()
     number_of_search = models.PositiveIntegerField()    #For Trend Use Only
     number_of_HIS = models.PositiveIntegerField()       #For Trend Use Only
     # date_stamp = models.DateTimeField(auto_now_add = True)
@@ -90,10 +98,12 @@ class IngredientTagAnalytics(models.Model):
     class Meta:
         db_table = 'IngredientTagAnalytics'
 
+
 class TasteTagAnalytics(models.Model):
     tag_id = models.ForeignKey(TasteTag, on_delete=models.CASCADE)
     number_of_patronProfile = models.PositiveIntegerField()
     number_of_menuItem = models.PositiveIntegerField()
+    exclusion_count = models.PositiveIntegerField()
     number_of_search = models.PositiveIntegerField()    #For Trend Use Only
     number_of_HIS = models.PositiveIntegerField()       #For Trend Use Only
     # date_stamp = models.DateTimeField(auto_now_add = True)
@@ -103,6 +113,7 @@ class TasteTagAnalytics(models.Model):
         return f"{self.date_stamp} | TasteTagAnalytics - {self.id} | Tag: {self.tag_id}"
     class Meta:
         db_table = 'TasteTagAnalytics'
+
 
 class CookStyleAnalytics(models.Model):
     tag_id = models.ForeignKey(CookStyleTag, on_delete=models.CASCADE)
@@ -117,17 +128,31 @@ class CookStyleAnalytics(models.Model):
     class Meta:
         db_table = 'CookStyleAnalytics'
 
+
+# class OverallFilterAnalytics(models.Model):
+#     FILTER_TYPES = [('calories', 'calories'),
+#                     ('cookstyletag', 'cookstyletag'),
+#                     ('allergytag', 'allergytag'), 
+#                     ('ingredienttag', 'ingredienttag'), 
+#                     ('restrictiontag', 'restrictiontag'),
+#                     ('tastetag', 'tastetag')]
+    
+#     filter_type = models.IntegerField(choices=FILTER_TYPES)
+#     top_3_inclusions = models.JSONField()
+#     top_3_added = models.JSONField()
+#     top_3_exclusions = models.JSONField(null=True)
+    
+
+
 class MenuItemPerformanceAnalytics(models.Model):
     menuItem_id = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
-    #number_of_search_excluded = models.PositiveIntegerField()
-    number_of_added_to_bookmark = models.PositiveIntegerField() #For Trend Use Only
     number_of_added_to_History = models.PositiveIntegerField()  #For Trend Use Only
 
-    # exclusion_count = models.IntegerField
-    # top_3_allergy = models.JSONField()
-    # top_3_ingredients = models.JSONField()
-    # top_3_restrictions = models.JSONField()
-    # top_3_taste = models.JSONField()
+    exclusion_count = models.IntegerField
+    top_3_allergy = models.JSONField()
+    top_3_ingredients = models.JSONField()
+    top_3_restrictions = models.JSONField()
+    top_3_taste = models.JSONField()
 
     number_of_ratings = models.PositiveIntegerField()
     average_rating = models.DecimalField(
@@ -142,6 +167,7 @@ class MenuItemPerformanceAnalytics(models.Model):
     
     class Meta:
         db_table = 'MenuItemPerformanceAnalytics'
+
 
 class AppSatisfactionAnalytics(models.Model):
     average_rating = models.DecimalField(
@@ -158,11 +184,68 @@ class AppSatisfactionAnalytics(models.Model):
         db_table = 'AppSatisfactionAnalytics'
 
 
-# class AllergyTagExclusionRecord(models.Model):
-#     menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
-#     tag = models.ForeignKey(AllergyTag, on_delete=models.CASCADE)
-#     exclusion_count = models.PositiveIntegerField(default=0)
-#     date_stamp = models.DateTimeField()
+# INTERMEDIATE TABLES
 
-#     def __str__(self):
-#         return f"{self.menu_item.id}: {self.tag.title} --> {self.exclusion_count}"
+
+class OverallExclusionRecord(models.Model):
+    menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
+    exclusion_count = models.PositiveIntegerField(default=0)
+    date_stamp = models.DateTimeField()
+
+    def __str__(self):
+        return f"{self.menu_item.id} --> {self.exclusion_count}"
+    
+    class Meta:
+        db_table = 'OverallExclusionRecord'
+    
+
+class AllergyTagExclusionRecord(models.Model):
+    menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
+    tag = models.ForeignKey(AllergyTag, on_delete=models.CASCADE)
+    exclusion_count = models.PositiveIntegerField(default=0)
+    date_stamp = models.DateTimeField()
+
+    def __str__(self):
+        return f"{self.menu_item.id}: {self.tag.title} --> {self.exclusion_count}"
+    
+    class Meta:
+        db_table = 'AllergyTagExclusionRecord'
+    
+
+class IngredientTagExclusionRecord(models.Model):
+    menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
+    tag = models.ForeignKey(AllergyTag, on_delete=models.CASCADE)
+    exclusion_count = models.PositiveIntegerField(default=0)
+    date_stamp = models.DateTimeField()
+
+    def __str__(self):
+        return f"{self.menu_item.id}: {self.tag.title} --> {self.exclusion_count}"
+    
+    class Meta:
+        db_table = 'IngredientTagExclusionRecord'
+
+
+class RestrictionTagExclusionRecord(models.Model):
+    menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
+    tag = models.ForeignKey(AllergyTag, on_delete=models.CASCADE)
+    exclusion_count = models.PositiveIntegerField(default=0)
+    date_stamp = models.DateTimeField()
+
+    def __str__(self):
+        return f"{self.menu_item.id}: {self.tag.title} --> {self.exclusion_count}"
+    
+    class Meta:
+        db_table = 'RestrictionTagExclusionRecord'
+    
+
+class TasteTagExclusionRecord(models.Model):
+    menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
+    tag = models.ForeignKey(AllergyTag, on_delete=models.CASCADE)
+    exclusion_count = models.PositiveIntegerField(default=0)
+    date_stamp = models.DateTimeField()
+
+    def __str__(self):
+        return f"{self.menu_item.id}: {self.tag.title} --> {self.exclusion_count}"
+    
+    class Meta:
+        db_table = 'TasteTagExclusionRecord'
