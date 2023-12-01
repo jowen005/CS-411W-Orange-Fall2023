@@ -21,11 +21,11 @@ class Command(BaseCommand):
         
         # ea.driver()
 
-        # ga.driver()
-        # ca.driver()
+        ga.driver()
+        ca.driver()
         ta.driver()
         ofa.driver()
-        # ma.driver()
-        # sa.driver()
+        ma.driver()
+        sa.driver()
 
         self.stdout.write(self.style.SUCCESS(f'All Analytics were run'))
