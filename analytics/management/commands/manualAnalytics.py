@@ -11,7 +11,7 @@ import analytics.utils.satisfaction_analysis as sa
 
 class Command(BaseCommand):
 
-    help = 'Calls the appropriate load functions to initialize the database'
+    help = 'Executes all Analytic Algorithms manually.'
 
     # def add_arguments(self, parser: CommandParser):
     #     parser.add_argument('-f', dest='json_path', default=self.DEFAULT_JSON_PATH, 
@@ -28,4 +28,4 @@ class Command(BaseCommand):
         ma.driver()
         sa.driver()
 
-        self.stdout.write(self.style.SUCCESS(f'All Analytics were run'))
+        self.stdout.write(self.style.SUCCESS(f'All Analytic Algorithms were run'))

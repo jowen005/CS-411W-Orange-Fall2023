@@ -68,6 +68,8 @@ Note: See NOTES_DOCKER.md for more information
 
 * **python3 manage.py manualAnalytics** --> manually triggers the execution of all analytic algorithms
 
+* **python3 manage.py manualTrends** --> manuall triggers the execution of all trend algorithms
+
 
 
 ## Server pushes with Docker (Foster)
