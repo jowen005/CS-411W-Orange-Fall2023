@@ -255,35 +255,36 @@ class LocalRestaurantAnalyticsViewset(viewsets.ModelViewSet):
             restaurant = rm.Restaurant.objects.get(pk=requested_id)
 
             try:
-                latest_datestamp = models.LocalRestaurantAnalytics.objects.filter(
+                #latest_datestamp = models.LocalRestaurantAnalytics.objects.filter(
+                models.LocalRestaurantAnalytics.objects.filter(
                     restaurant_id_restaurant=restaurant,
                 ).latest('date_stamp').date_stamp
             except models.LocalRestaurantAnalytics.DoesNotExist: # No Analytics for a Restaurant
                 return models.LocalRestaurantAnalytics.objects.none()
 
-            queryset = models.LocalRestaurantAnalytics.objects.filter(
-                restaurant_id_restaurant=restaurant,
-                date_stamp=latest_datestamp
-            ).order_by('restaurant_id')
+            # queryset = models.LocalRestaurantAnalytics.objects.filter(
+            #     restaurant_id_restaurant=restaurant,
+            #     date_stamp=latest_datestamp
+            # ).order_by('restaurant_id')
 
-            return queryset
+            # return queryset
         
-        def retrieve(self, request, *args, **kwargs):
-            requested_id = int(kwargs.get('pk'))
+        # def retrieve(self, request, *args, **kwargs):
+        #     requested_id = int(kwargs.get('pk'))
 
-            # The permission class verifies the existence of the 'restaurantd_id'
+        #     # The permission class verifies the existence of the 'restaurantd_id'
         
-            queryset = self.get_queryset()
-            analytic_obj = queryset.filter(restaurant_id__id=requested_id).first()
-            if analytic_obj is None:
-                response = {
-                    'message': f'This Restaurant({requested_id}) is valid but does not yet have analytics!'
-            }
-                return Response(data=response, status=status.HTTP_404_NOT_FOUND)
+        #     queryset = self.get_queryset()
+        #     analytic_obj = queryset.filter(restaurant_id__id=requested_id).first()
+        #     if analytic_obj is None:
+        #         response = {
+        #             'message': f'This Restaurant({requested_id}) is valid but does not yet have analytics!'
+        #     }
+        #         return Response(data=response, status=status.HTTP_404_NOT_FOUND)
 
-            serializer = self.get_serializer(analytic_obj)
+        #     serializer = self.get_serializer(analytic_obj)
 
-            return Response(data=serializer.data, status=status.HTTP_200_OK)
+        #     return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
 class ManualAnalyticsCommandView(views.APIView):
