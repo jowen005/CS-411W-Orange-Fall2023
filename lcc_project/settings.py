@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'patron',
     'feedback',
     'analytics',
+    'trends',
 
     #Default Apps
     'django.contrib.admin',
