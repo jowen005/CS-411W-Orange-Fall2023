@@ -49,21 +49,7 @@ class ReviewsSerializer(serializers.ModelSerializer):
         model = models.Reviews
         fields = '__all__'
         read_only_fields = ['patron']
-
-# Does App Satisfaction even need a get serializer, nothing is taken from another model's serializers
-class AppSatisfactionGetSerializer(serializers.ModelSerializer):
-    review = serializers.CharField(max_length=255)
-
-    rating = serializers.DecimalField(
-        max_digits=8,  # Total number of digits
-        decimal_places=2,  # Maximum of 2 decimal places
-        default=0.0
-    )
-
-    class Meta:
-        model = models.Reviews
-        fields = '__all__'
-        read_only_fields = ['user']
+        
 
 class AppSatisfactionSerializer(serializers.ModelSerializer):
     review = serializers.CharField(max_length=255)
@@ -75,7 +61,7 @@ class AppSatisfactionSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = models.Reviews
+        model = models.AppSatisfaction
         fields = '__all__'
         read_only_fields = ['user']
 

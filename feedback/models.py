@@ -52,15 +52,15 @@ class AppSatisfaction(models.Model):
         max_digits=8,  # Total number of digits
         decimal_places=2,  # Maximum of 2 decimal places
         default=0.0
-    )
+        )
 
         review_datetime = models.DateTimeField(auto_now_add=True)
 
         def formatted_datetime(self):
             return self.review_datetime.strftime('%d/%m/%y %H:%M:%S')
-    
-        def save(self, *args, **kwargs):
-            super().save(*args, **kwargs)  # Call the parent class's save method
+        
+        class Meta:
+             db_table = 'AppSatisfaction'
         
 # class Reviews(models.Model):
 #     #When patron delete his account, the reviews still remains.

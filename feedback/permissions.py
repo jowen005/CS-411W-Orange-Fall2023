@@ -20,6 +20,22 @@ class FeedbackPermission(BasePermission):
                     return obj.patron == request.user
                 
         return False
+    
+
+class AdminReadNonAdminWrite(BasePermission):
+    def has_permission(self, request, view):
+        is_authenticated = request.user.is_authenticated
+        user_type = request.user.user_type
+
+        if is_authenticated:
+            if user_type == 'admin' and view.action == 'list':
+                return True
+            elif user_type != 'admin' and view.action == 'create':
+                return True
+            
+        return False
+
+
 
 
 # class FeedbackPermission(BasePermission):

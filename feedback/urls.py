@@ -5,7 +5,9 @@ from . import views
 
 # Does the url routing for PatronViewSet
 router = DefaultRouter()
+router.register('app', views.AppSatisfactionViewSet, basename='app')
 router.register('', views.ReviewViewSet, basename='feedback')
+
 
 
 urlpatterns = [

@@ -1,0 +1,70 @@
+[
+    {
+        "model":"restaurants.Restaurant",
+        "pk": 1, 
+        "fields": {
+            "owner": 1,
+            "name": "Woodys",
+            "rating": 4.56,
+            "tags": [2, 4],
+            "price_level": "$$",
+            "phone_number": "757-274-9281",
+            "website": "https://www.woodys.com/",
+            "street_name": "120 University Avenue",
+            "city": "Norfolk",
+            "state": "VA",
+            "zip_code": "23529"
+        }
+    },
+    {
+        "model":"restaurants.Restaurant",
+        "pk": 2, 
+        "fields": {
+            "owner": 1, 
+            "name": "Moes", 
+            "rating": 8.34,
+            "tags": [1, 3],
+            "price_level": "$$",
+            "phone_number": "757-238-6505",
+            "website": "https://www.moes.com",
+            "street_name": "121 University Avenue",
+            "city": "Norfolk",
+            "state": "VA",
+            "zip_code": "23529"
+        }
+    },
+    {
+        "model":"restaurants.Restaurant",
+        "pk": 3, 
+        "fields": {
+            "owner": 2, 
+            "name": "McDonalds", 
+            "rating": 1.10,
+            "tags": [1, 4],
+            "price_level": "$",
+            "phone_number": "757-272-4028",
+            "website": "https://www.mcds.com",
+            "street_name": "122 University Avenue",
+            "city": "Norfolk",
+            "state": "VA",
+            "zip_code": "23529"
+        }
+    },
+    {
+        "model":"restaurants.Restaurant",
+        "pk": 4, 
+        "fields": {
+            "owner": 2, 
+            "name": "Arbys", 
+            "rating": 2.43,
+            "tags": [1, 4],
+            "price_level": "$",
+            "phone_number": "757-573-8271",
+            "website": "https://www.arbys.com",
+            "street_name": "123 University Avenue",
+            "city": "Norfolk",
+            "state": "VA",
+            "zip_code": "23529"
+        }
+    }
+]

@@ -3,7 +3,7 @@ from django.core.management import call_command
 
 class Command(BaseCommand):
 
-    help = 'Calls the generate and load function for menu items'
+    help = 'Calls the generate and load function for patrons'
 
 
     def add_arguments(self, parser: CommandParser):
@@ -16,7 +16,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.ERROR(f'Supply a positive count!'))
             exit()
 
-        call_command('generateMenuItems', str(count[0]))
-        call_command('loadMenuItem')
+        call_command('generatePatrons', str(count[0]))
+        call_command('loadPatrons')
 
-        self.stdout.write(self.style.SUCCESS(f'{count[0]} menu item object(s) were added to the database'))
+        self.stdout.write(self.style.SUCCESS(f'{count[0]} patron object(s) were added to the database'))

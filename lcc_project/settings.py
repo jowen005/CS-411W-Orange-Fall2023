@@ -14,6 +14,8 @@ from pathlib import Path
 from datetime import timedelta
 import json
 
+# NOTE: Max Packet Size = 67108864 bytes
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -52,6 +54,7 @@ INSTALLED_APPS = [
     'patron',
     'feedback',
     'analytics',
+    'trends',
 
     #Default Apps
     'django.contrib.admin',

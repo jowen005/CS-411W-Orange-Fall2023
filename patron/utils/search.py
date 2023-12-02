@@ -22,8 +22,11 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
     #print(MenuItems.values_list("ingredients_tag"))
     #the most restrictive tag is likely the allergy tags so we'll filter on that first
     if (allergy_tags is not None) and (len(allergy_tags) > 0):
-        for allergy in allergy_tags:
-            MenuItems = MenuItems.filter(menu_allergy_tag = allergy)
+        MenuItems = MenuItems.exclude(menu_allergy_tag__in = allergy_tags) #NOTE: I changed this line (!=, AND)
+        # for allergy in allergy_tags:
+        #     MenuItems = MenuItems.exclude(menu_allergy_tag = allergy) #NOTE: I changed this line (!=, AND)
+            # MenuItems = MenuItems.filter(menu_allergy_tag = allergy)
+
     if (disliked_ingredients is not None) and (len(disliked_ingredients) > 0):
         MenuItems = MenuItems.exclude(ingredients_tag__in = disliked_ingredients)
 
@@ -32,9 +35,11 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
     if (dietary_restriction_tags is not None) and (len(dietary_restriction_tags) > 0):
         for restriction in dietary_restriction_tags:
             MenuItems = MenuItems.filter(menu_restriction_tag = restriction)
+
     if (patron_taste_tags is not None) and (len(patron_taste_tags) > 0):
-        for taste in patron_taste_tags:
-            MenuItems = MenuItems.filter(taste_tags = taste)
+        MenuItems = MenuItems.filter(taste_tags__in=patron_taste_tags) #NOTE: I changed this line (==, OR)
+        # for taste in patron_taste_tags:
+        #     MenuItems = MenuItems.filter(taste_tags = taste)
         
     if price_min is not None and price_max is not None:        
         MenuItems = MenuItems.filter(price__range = (price_min,price_max))

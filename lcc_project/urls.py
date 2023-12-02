@@ -22,5 +22,7 @@ urlpatterns = [
     path('restaurants/', include('restaurants.urls')),
     path('auth/', include('accounts.urls')),
     path('patrons/', include('patron.urls')),
-    path('feedback/', include('feedback.urls'))
+    path('feedback/', include('feedback.urls')),
+    path('analytics/', include('analytics.urls')),
+    path('trends/', include('trends.urls'))
 ]
