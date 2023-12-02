@@ -245,6 +245,45 @@ class AppSatisfactionAnalyticsViewset(viewsets.ModelViewSet):
             return [models.AppSatisfactionAnalytics.objects.latest('date_stamp')]
         except models.AppSatisfactionAnalytics.DoesNotExist:
             return models.AppSatisfactionAnalytics.objects.none()
+        
+class LocalRestaurantAnalyticsViewset(viewsets.ModelViewSet):
+        permission_classes = [permissions.LocalRestaurantAnalyticsPermission]
+        serializer_class = serializers.LocalRestaurantAnalyticsSerializer
+
+        def get_queryset(self):
+            requested_id = self.kwargs.get('restaurant_id')
+            restaurant = rm.Restaurant.objects.get(pk=requested_id)
+
+            try:
+                latest_datestamp = models.LocalRestaurantAnalytics.objects.filter(
+                    restaurant_id_restaurant=restaurant,
+                ).latest('date_stamp').date_stamp
+            except models.LocalRestaurantAnalytics.DoesNotExist: # No Analytics for a Restaurant
+                return models.LocalRestaurantAnalytics.objects.none()
+
+            queryset = models.LocalRestaurantAnalytics.objects.filter(
+                restaurant_id_restaurant=restaurant,
+                date_stamp=latest_datestamp
+            ).order_by('restaurant_id')
+
+            return queryset
+        
+        def retrieve(self, request, *args, **kwargs):
+            requested_id = int(kwargs.get('pk'))
+
+            # The permission class verifies the existence of the 'restaurantd_id'
+        
+            queryset = self.get_queryset()
+            analytic_obj = queryset.filter(restaurant_id__id=requested_id).first()
+            if analytic_obj is None:
+                response = {
+                    'message': f'This Restaurant({requested_id}) is valid but does not yet have analytics!'
+            }
+                return Response(data=response, status=status.HTTP_404_NOT_FOUND)
+
+            serializer = self.get_serializer(analytic_obj)
+
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
 class ManualAnalyticsCommandView(views.APIView):
