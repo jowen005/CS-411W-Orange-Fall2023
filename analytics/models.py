@@ -130,19 +130,13 @@ class CookStyleAnalytics(models.Model):
 
 
 class OverallFilterAnalytics(models.Model):
-    # FILTER_TYPES = [('calories', 'calories'),
-    #                 ('cookstyletag', 'cookstyletag'),
-    #                 ('allergytag', 'allergytag'), 
-    #                 ('ingredienttag', 'ingredienttag'), 
-    #                 ('restrictiontag', 'restrictiontag'),
-    #                 ('tastetag', 'tastetag')]
+    FILTER_TYPES = [('calories', 'calories'),
+                    ('cookstyletag', 'cookstyletag'),
+                    ('allergytag', 'allergytag'), 
+                    ('ingredienttag', 'ingredienttag'), 
+                    ('restrictiontag', 'restrictiontag'),
+                    ('tastetag', 'tastetag')]
     
-    FILTER_TYPES = [(1, 'calories'),
-                    (2, 'cookstyletag'),
-                    (3, 'allergytag'), 
-                    (4, 'ingredienttag'), 
-                    (5, 'restrictiontag'),
-                    (6, 'tastetag')]
     
     filter_type = models.CharField(choices=FILTER_TYPES, max_length=20)
     top_3_inclusions = models.JSONField()
