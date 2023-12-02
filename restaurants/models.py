@@ -149,6 +149,10 @@ class MenuItem(models.Model):
     menu_restriction_tag = models.ManyToManyField(RestrictionTag)
     menu_allergy_tag = models.ManyToManyField(AllergyTag)
     ingredients_tag = models.ManyToManyField(IngredientTag)
+
+	#Supporting information for suggestion feeds
+    suggestion_vector = models.CharField(max_length=128)
+    inverse_sqrt = models.DecimalField(max_digits=7, decimal_places=5, null=True)
     
     time_of_day_available = models.CharField(max_length=20, choices=[
         ('Breakfast', 'Breakfast'),
@@ -181,7 +185,10 @@ class MenuItem(models.Model):
 
     def save(self, *args, **kwargs):
         self.calorie_level = self.calculate_calorie_level()
+        restaruants.utils.vectorizeOne(self.id)
         super(MenuItem, self).save(*args, **kwargs)
+        
+		
 
     def __str__(self):
         return self.item_name

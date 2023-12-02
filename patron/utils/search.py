@@ -112,7 +112,7 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
     MenuItems = MenuItems.filter(restaurant__in = Restaurants.values_list("id",flat=True))
     #now we should finally be ready to evaluate the query and ping the database
     #print(MenuItems.query)
-    #not sure where duplicates are being made or how so hears a quick and dirty solution
+    #not sure where duplicates are being made or how so heres a quick and dirty solution
     IDs = set()
     for id in MenuItems.values_list("id",flat=True):
         IDs.add(id)
