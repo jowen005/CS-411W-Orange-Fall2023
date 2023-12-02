@@ -40,7 +40,7 @@ def get_latest_datetime(AnalyticsModel):
         latest_datestamp = AnalyticsModel.objects.latest('date_stamp').date_stamp
     except AnalyticsModel.DoesNotExist:
         latest_datestamp = datetime.utcfromtimestamp(0).replace(tzinfo=timezone.utc)
-    latest_datestamp = timezone.now() - timedelta(days=5)
+    # latest_datestamp = timezone.now() - timedelta(days=5)
     return latest_datestamp
 
 
