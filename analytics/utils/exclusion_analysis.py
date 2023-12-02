@@ -18,14 +18,14 @@ class Exclusion:
 
 def driver():
 
-    #Grab all searches since last analytic.
+    # Since Last Analytic (Data in exclusive ranges)
     # try:
     #     latest_datestamp = OverallExclusionRecord.objects.latest('date_stamp').date_stamp
     # except OverallExclusionRecord.DoesNotExist:
     #     latest_datestamp = datetime.utcfromtimestamp(0).replace(tzinfo=timezone.utc)
 
-    #Grab all searches in the last 5 days
-    latest_datestamp = timezone.now() - timedelta(days=5)
+    # Past 3 Days (Data Overlap)
+    latest_datestamp = timezone.now() - timedelta(days=3)
     
     searches = pm.PatronSearchHistory.objects.filter(search_datetime__gte=latest_datestamp)
     menu_items = rm.MenuItem.objects.all().order_by('id')
@@ -43,7 +43,7 @@ def driver():
 
     # Store data
     store_overall_exclusions(overall_exclusions, menu_items, current_datestamp)
-    store_tag_exclusions(tag_exclusions, menu_items, current_datestamp, tag_sets, TAG_TYPES)
+    store_tag_exclusions(tag_exclusions, menu_items, tag_sets, TAG_TYPES)
 
 
 def analysis(searches, menu_items, tag_sets, TAG_TYPES):
@@ -131,7 +131,7 @@ def store_overall_exclusions(overall_exclusions, menu_items, current_datestamp):
     print('\n')
 
 
-def store_tag_exclusions(tag_exclusions, menu_items, current_datestamp, tag_sets, TAG_TYPES):
+def store_tag_exclusions(tag_exclusions, menu_items, tag_sets, TAG_TYPES):
     analytic_sets = {tag_type: ExclusionModel.objects.all() for tag_type, _, ExclusionModel in TAG_TYPES}
 
     for tag_type, _, ExclusionModel in TAG_TYPES:
@@ -145,7 +145,7 @@ def store_tag_exclusions(tag_exclusions, menu_items, current_datestamp, tag_sets
                 try:
                     record = analytic_sets[tag_type].get(menu_item=item, tag=tag)
                     record.exclusion_count = tag_exclusions[tag_type][f'{item.id}'][f'{tag.id}']
-                    record.date_stamp = current_datestamp
+                    # record.date_stamp = current_datestamp
                 
                     tag_records_to_update.append(record)
                     # print(f'Updated: {record} | Size in Bytes: {sys.getsizeof(serialize("json", [record]))}')#NOTE
@@ -155,12 +155,12 @@ def store_tag_exclusions(tag_exclusions, menu_items, current_datestamp, tag_sets
                         menu_item=item, 
                         tag=tag, 
                         exclusion_count=tag_exclusions[tag_type][f'{item.id}'][f'{tag.id}'], 
-                        date_stamp=current_datestamp
+                        # date_stamp=current_datestamp
                     )
                     tag_records_to_create.append(record)
                     # print(f'Created: {record} | Size in Bytes: {sys.getsizeof(serialize("json", [record]))}') #NOTE
                     
-        ExclusionModel.objects.bulk_update(tag_records_to_update, fields=['exclusion_count', 'date_stamp'])
+        ExclusionModel.objects.bulk_update(tag_records_to_update, fields=['exclusion_count'])
         print(f"\tNumber Updated: {len(tag_records_to_update)}") #NOTE
         ExclusionModel.objects.bulk_create(tag_records_to_create)
         print(f"\tNumber Created: {len(tag_records_to_create)}") #NOTE

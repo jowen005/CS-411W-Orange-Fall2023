@@ -8,7 +8,6 @@ import analytics.utils.tag_analysis as ta
 import analytics.utils.overall_filter_analysis as ofa
 import analytics.utils.menu_item_analysis as ma
 import analytics.utils.satisfaction_analysis as sa
-import analytics.models as am
 
 class Command(BaseCommand):
 
@@ -19,17 +18,8 @@ class Command(BaseCommand):
     #                         help='Specifies a file to load',)
 
     def handle(self, *args, **options):
-        
-        # am.OverallFilterAnalytics.objects.all().delete()
-        # am.OverallExclusionRecord.objects.all().delete()
-        # am.AllergyTagExclusionRecord.objects.all().delete()
-        # am.IngredientTagExclusionRecord.objects.all().delete()
-        # am.RestrictionTagExclusionRecord.objects.all().delete()
-        # am.TasteTagExclusionRecord.objects.all().delete()
 
-
-
-        # ea.driver()
+        ea.driver()
 
         # ga.driver()
         # ca.driver()
