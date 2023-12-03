@@ -1,9 +1,10 @@
 from django.utils import timezone
-from analytics.models import MenuItemPerformanceAnalytics
-from ..models import MenuItemPerformanceTrends
-import restaurants.models as rm
 from django.core.serializers import serialize
 import sys
+
+from restaurants.models import MenuItem
+from analytics.models import MenuItemPerformanceAnalytics
+from ..models import MenuItemPerformanceTrends
 from . import trends
 
 
@@ -15,7 +16,7 @@ TREND_TYPES = [('excluded', 'exclusion_count'),
 
 def driver():
         
-    items = list(rm.MenuItem.objects.all().order_by('id'))
+    items = list(MenuItem.objects.all().order_by('id'))
 
     analytics_set = MenuItemPerformanceAnalytics.objects.all()
     current_datestamp=timezone.now()

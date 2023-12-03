@@ -1,4 +1,5 @@
 from django.utils import timezone
+
 from analytics.models import AppSatisfactionAnalytics
 from ..models import AppSatisfactionTrends
 from . import trends

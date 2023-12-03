@@ -1,26 +1,27 @@
 from django.utils import timezone
+from django.core.serializers import serialize
+import sys
+
+from restaurants.models import (RestrictionTag, AllergyTag, IngredientTag, TasteTag, CookStyleTag)
 from analytics.models import (RestrictionTagAnalytics, AllergiesTagAnalytics,
                               IngredientTagAnalytics, TasteTagAnalytics, 
                               CookStyleAnalytics, CalorieAnalytics)
 from ..models import (RestrictionTagTrends, AllergyTagTrends,
                       IngredientTagTrends, TasteTagTrends, 
                       CookStyleTagTrends, CalorieTrends)
-import restaurants.models as rm
-from django.core.serializers import serialize
-import sys
 from . import trends
 
 
 # (AnalyticsModel, TrendsModel, analytic_search_attr, analytic_history_attr)
-FILTER_MODELS = [(rm.RestrictionTag, RestrictionTagAnalytics, RestrictionTagTrends,
+FILTER_MODELS = [(RestrictionTag, RestrictionTagAnalytics, RestrictionTagTrends,
                         'number_of_search', 'number_of_HIS'),
-                 (rm.AllergyTag, AllergiesTagAnalytics, AllergyTagTrends,
+                 (AllergyTag, AllergiesTagAnalytics, AllergyTagTrends,
                         'number_of_search', 'number_of_HIS'),
-                 (rm.IngredientTag, IngredientTagAnalytics, IngredientTagTrends, 
+                 (IngredientTag, IngredientTagAnalytics, IngredientTagTrends, 
                         'number_of_search', 'number_of_HIS'),
-                 (rm.TasteTag, TasteTagAnalytics, TasteTagTrends, 
+                 (TasteTag, TasteTagAnalytics, TasteTagTrends, 
                         'number_of_search', 'number_of_HIS'),
-                 (rm.CookStyleTag, CookStyleAnalytics, CookStyleTagTrends, 
+                 (CookStyleTag, CookStyleAnalytics, CookStyleTagTrends, 
                         'number_of_search', 'number_of_HIS'),
                  (None, CalorieAnalytics, CalorieTrends, 
                         'number_of_searches', 'number_of_items_added_HIS')]
