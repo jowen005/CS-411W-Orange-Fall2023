@@ -192,8 +192,9 @@ class AppSatisfactionAnalytics(models.Model):
 # Model for tracking analytics for restaurants within their geographic area
 class LocalRestaurantAnalytics(models.Model):
     restaurant_id = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
-    # Limit the top 3 menu items to menu items from the same restaurant
-    top_three_items = models.ManyToManyField(MenuItem, limit_choices_to={'restaurant': restaurant_id})
+    # Limit the top 3 menu items to menu items from the same restaurant (done in permissions)
+    # top_three_items = models.ManyToManyField(MenuItem, limit_choices_to={'restaurant': restaurant_id})
+    top_three_items = models.JSONField(null=True)
     # Total number of menu items from restaurant added to patron menu item histories
     total_items_added_to_histories = models.PositiveIntegerField()
     # Tag that led to the most menu item elimination between items
