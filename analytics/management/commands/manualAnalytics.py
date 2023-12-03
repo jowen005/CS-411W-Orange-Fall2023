@@ -8,34 +8,24 @@ import analytics.utils.tag_analysis as ta
 import analytics.utils.overall_filter_analysis as ofa
 import analytics.utils.menu_item_analysis as ma
 import analytics.utils.satisfaction_analysis as sa
-import analytics.models as am
 
 class Command(BaseCommand):
 
-    help = 'Calls the appropriate load functions to initialize the database'
+    help = 'Executes all Analytic Algorithms manually.'
 
     # def add_arguments(self, parser: CommandParser):
     #     parser.add_argument('-f', dest='json_path', default=self.DEFAULT_JSON_PATH, 
     #                         help='Specifies a file to load',)
 
     def handle(self, *args, **options):
-        
-        # am.OverallFilterAnalytics.objects.all().delete()
-        # am.OverallExclusionRecord.objects.all().delete()
-        # am.AllergyTagExclusionRecord.objects.all().delete()
-        # am.IngredientTagExclusionRecord.objects.all().delete()
-        # am.RestrictionTagExclusionRecord.objects.all().delete()
-        # am.TasteTagExclusionRecord.objects.all().delete()
 
+        ea.driver()
 
+        ga.driver()
+        ca.driver()
+        ta.driver()
+        ofa.driver()
+        ma.driver()
+        sa.driver()
 
-        # ea.driver()
-
-        # ga.driver()
-        # ca.driver()
-        # ta.driver()
-        # ofa.driver()
-        # ma.driver()
-        # sa.driver()
-
-        self.stdout.write(self.style.SUCCESS(f'All Analytics were run'))
+        self.stdout.write(self.style.SUCCESS(f'All Analytic Algorithms were run'))

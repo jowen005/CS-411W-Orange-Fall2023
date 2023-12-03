@@ -36,11 +36,15 @@ def driver(restriction=False, allergy=False, taste=False, ingredient=False, cook
 
 
 def get_latest_datetime(AnalyticsModel):
-    try:
-        latest_datestamp = AnalyticsModel.objects.latest('date_stamp').date_stamp
-    except AnalyticsModel.DoesNotExist:
-        latest_datestamp = datetime.utcfromtimestamp(0).replace(tzinfo=timezone.utc)
-    # latest_datestamp = timezone.now() - timedelta(days=5)
+    # Since Last Analytic (Data in exclusive ranges)
+    # try:
+    #     latest_datestamp = AnalyticsModel.objects.latest('date_stamp').date_stamp
+    # except AnalyticsModel.DoesNotExist:
+    #     latest_datestamp = datetime.utcfromtimestamp(0).replace(tzinfo=timezone.utc)
+
+    # Past 3 Days (Data Overlap)
+    latest_datestamp = timezone.now() - timedelta(days=3)
+
     return latest_datestamp
 
 

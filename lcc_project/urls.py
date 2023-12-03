@@ -24,4 +24,5 @@ urlpatterns = [
     path('patrons/', include('patron.urls')),
     path('feedback/', include('feedback.urls')),
     path('analytics/', include('analytics.urls')),
+    path('trends/', include('trends.urls'))
 ]

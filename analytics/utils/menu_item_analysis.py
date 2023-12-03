@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.utils import timezone
 from django.db.models import Avg
 
@@ -27,11 +27,15 @@ def driver():
     print('\n')
 
 def item_analysis():
-    
-    try:
-        latest_datestamp = MenuItemPerformanceAnalytics.objects.latest('date_stamp').date_stamp
-    except MenuItemPerformanceAnalytics.DoesNotExist:
-        latest_datestamp = datetime.utcfromtimestamp(0).replace(tzinfo=timezone.utc)
+
+    # Since Last Analytic (Data in exclusive ranges)
+    # try:
+    #     latest_datestamp = MenuItemPerformanceAnalytics.objects.latest('date_stamp').date_stamp
+    # except MenuItemPerformanceAnalytics.DoesNotExist:
+    #     latest_datestamp = datetime.utcfromtimestamp(0).replace(tzinfo=timezone.utc)
+
+    # Past 3 Days (Data Overlap)
+    latest_datestamp = timezone.now() - timedelta(days=3)
     
     item_data = []
 

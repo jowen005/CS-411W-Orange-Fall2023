@@ -137,7 +137,6 @@ class OverallFilterAnalytics(models.Model):
                     ('restrictiontag', 'restrictiontag'),
                     ('tastetag', 'tastetag')]
     
-    
     filter_type = models.CharField(choices=FILTER_TYPES, max_length=20)
     top_3_inclusions = models.JSONField()
     top_3_added = models.JSONField()
@@ -148,6 +147,7 @@ class OverallFilterAnalytics(models.Model):
         return f"{self.date_stamp} | OverallFilterAnalytics ({self.filter_type}) - {self.id}"
     class Meta:
         db_table = 'OverallFilterAnalytics'
+
 
 class MenuItemPerformanceAnalytics(models.Model):
     menuItem_id = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
@@ -188,6 +188,7 @@ class AppSatisfactionAnalytics(models.Model):
     class Meta:
         db_table = 'AppSatisfactionAnalytics'
 
+
 # Model for tracking analytics for restaurants within their geographic area
 class LocalRestaurantAnalytics(models.Model):
     restaurant_id = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
@@ -212,6 +213,7 @@ class LocalRestaurantAnalytics(models.Model):
     class Meta:
         db_table = 'LocalRestaurantAnalytics'
 
+
 # INTERMEDIATE TABLES
 
 
@@ -231,7 +233,7 @@ class AllergyTagExclusionRecord(models.Model):
     menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
     tag = models.ForeignKey(AllergyTag, on_delete=models.CASCADE)
     exclusion_count = models.PositiveIntegerField(default=0)
-    date_stamp = models.DateTimeField()
+    # date_stamp = models.DateTimeField()
 
     def __str__(self):
         return f"{self.menu_item.id}: {self.tag.title} --> {self.exclusion_count}"
@@ -244,7 +246,7 @@ class IngredientTagExclusionRecord(models.Model):
     menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
     tag = models.ForeignKey(IngredientTag, on_delete=models.CASCADE)
     exclusion_count = models.PositiveIntegerField(default=0)
-    date_stamp = models.DateTimeField()
+    # date_stamp = models.DateTimeField()
 
     def __str__(self):
         return f"{self.menu_item.id}: {self.tag.title} --> {self.exclusion_count}"
@@ -257,7 +259,7 @@ class RestrictionTagExclusionRecord(models.Model):
     menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
     tag = models.ForeignKey(RestrictionTag, on_delete=models.CASCADE)
     exclusion_count = models.PositiveIntegerField(default=0)
-    date_stamp = models.DateTimeField()
+    # date_stamp = models.DateTimeField()
 
     def __str__(self):
         return f"{self.menu_item.id}: {self.tag.title} --> {self.exclusion_count}"
@@ -270,7 +272,7 @@ class TasteTagExclusionRecord(models.Model):
     menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
     tag = models.ForeignKey(TasteTag, on_delete=models.CASCADE)
     exclusion_count = models.PositiveIntegerField(default=0)
-    date_stamp = models.DateTimeField()
+    # date_stamp = models.DateTimeField()
 
     def __str__(self):
         return f"{self.menu_item.id}: {self.tag.title} --> {self.exclusion_count}"

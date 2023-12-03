@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.utils import timezone
 
 import patron.models as pm
@@ -20,12 +20,17 @@ def driver():
 
 
 def calorie_analysis():
-    calorie_data = [{} for _ in range(NUM_OF_CAL_LEVELS)]
+
+    # Since Last Analytic (Data in exclusive ranges)
+    # try:
+    #     latest_datestamp = CalorieAnalytics.objects.latest('date_stamp').date_stamp
+    # except CalorieAnalytics.DoesNotExist:
+    #     latest_datestamp = datetime.utcfromtimestamp(0).replace(tzinfo=timezone.utc)
     
-    try:
-        latest_datestamp = CalorieAnalytics.objects.latest('date_stamp').date_stamp
-    except CalorieAnalytics.DoesNotExist:
-        latest_datestamp = datetime.utcfromtimestamp(0).replace(tzinfo=timezone.utc)
+    # Past 3 Days (Data Overlap)
+    latest_datestamp = timezone.now() - timedelta(days=3)
+
+    calorie_data = [{} for _ in range(NUM_OF_CAL_LEVELS)]
 
     patron_set = pm.Patron.objects.all()
     item_set = rm.MenuItem.objects.all()
