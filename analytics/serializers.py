@@ -118,7 +118,7 @@ class AppSatisfactionAnalyticsSerializer(serializers.ModelSerializer):
 # Loca Restaurant Analytics Serializer
 class LocalRestaurantAnalyticsSerializer(serializers.ModelSerializer):
     restaurant_id = rs.RestaurantListSerializer
-    top_three_items = serializers.PrimaryKeyRelatedField(queryset=rm.MenuItem.objects.all(), many=True)
+    #top_three_items = serializers.PrimaryKeyRelatedField(queryset=rm.MenuItem.objects.all(), many=True)
     taste_tags_most_eliminations = serializers.PrimaryKeyRelatedField(queryset=rm.TasteTag.objects.all())
     restriction_tags_most_eliminations = serializers.PrimaryKeyRelatedField(queryset=rm.RestrictionTag.objects.all())
     cookStyle_tags_most_eliminations = serializers.PrimaryKeyRelatedField(queryset=rm.CookStyleTag.objects.all())
