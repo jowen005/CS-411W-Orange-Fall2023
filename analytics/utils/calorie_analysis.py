@@ -5,7 +5,7 @@ import patron.models as pm
 import restaurants.models as rm
 from ..models import CalorieAnalytics
 
-
+# Shouldn't this be 12 since we're skipping 0
 NUM_OF_CAL_LEVELS = 11
 
 

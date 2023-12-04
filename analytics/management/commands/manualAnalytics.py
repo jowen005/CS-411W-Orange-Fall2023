@@ -8,6 +8,7 @@ import analytics.utils.tag_analysis as ta
 import analytics.utils.overall_filter_analysis as ofa
 import analytics.utils.menu_item_analysis as ma
 import analytics.utils.satisfaction_analysis as sa
+import analytics.utils.local_restaurant_analysis as lra
 
 class Command(BaseCommand):
 
@@ -21,11 +22,12 @@ class Command(BaseCommand):
 
         ea.driver()
 
-        ga.driver()
-        ca.driver()
-        ta.driver()
-        ofa.driver()
+        #ga.driver()
+        #ca.driver()
+        #ta.driver()
+        #ofa.driver()
         ma.driver()
-        sa.driver()
+        lra.driver()
+        #sa.driver()
 
         self.stdout.write(self.style.SUCCESS(f'All Analytic Algorithms were run'))
