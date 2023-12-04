@@ -1,0 +1,126 @@
+{
+    "allergies":{
+        "celiac": [
+            "gluten", 
+            "wheat"
+        ],
+        "eggs": ["eggs"],
+        "fish": [
+            "anchovy_paste",
+            "fish"
+        ],
+        "gluten_free": [
+            "gluten", 
+            "wheat"
+        ],
+        "milk": [
+            "cheese",
+            "chocolate",
+            "cream",
+            "milk",
+            "parmesan"
+        ],
+        "peanuts": ["peanuts"],
+        "sesame": ["sesame"],
+        "shellfish": ["shellfish"],
+        "soybeans": ["soy"],
+        "tree_nuts": ["nuts"],
+        "wheat": ["wheat"]
+    },
+    "restrictions":{
+        "dairy-free": [
+            "butter",
+            "cheese",
+            "cream",
+            "chocolate",
+            "milk",
+            "parmesan"
+        ],
+        "halal": [
+            "pork",
+            "shellfish"
+        ],
+        "keto": [
+            "banana",
+            "beans",
+            "cane_sugar",
+            "carrot",
+            "chickpeas",
+            "corn",
+            "corn_starch",
+            "lentils",
+            "potato",
+            "rice",
+            "wheat",
+            "corn_starch",
+            "honey",
+            "sherry",
+            "strawberry"
+        ],
+        "kosher": [
+            "pork",
+            "shellfish"
+        ],
+        "paleo": [
+            "banana",
+            "cane_sugar",
+            "corn",
+            "corn_starch",
+            "corn_oil",
+            "high_fructose_corn_syrup",
+            "lentils",
+            "rice",
+            "wheat",
+            "chickpeas",
+            "cheese",
+            "cream",
+            "honey",
+            "potato",
+            "potato_starch",
+            "soy"
+        ],
+        "pescetarian": [
+            "beef",
+            "chicken",
+            "duck",
+            "pork",
+            "turkey",
+            "veal",
+            "venison",
+            "cricket",
+            "sherry"
+        ],
+        "vegan": [
+            "beef",
+            "chicken",
+            "duck",
+            "pork",
+            "turkey",
+            "veal",
+            "venison",
+            "cricket",
+            "fish",
+            "shellfish",
+            "butter",
+            "cheese",
+            "cream",
+            "chocolate",
+            "milk",
+            "parmesan",
+            "eggs"
+
+        ],
+        "vegetarian": [
+            "beef",
+            "chicken",
+            "duck",
+            "pork",
+            "turkey",
+            "veal",
+            "venison",
+            "cricket",
+            "fish",
+            "shellfish"
+        ]
+    }
+}
