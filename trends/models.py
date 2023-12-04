@@ -106,7 +106,6 @@ class CookStyleTagTrends(TrendsMixin):
 # (num_menu_items * num_trend_types) per datestamp
 class MenuItemPerformanceTrends(models.Model):
     TREND_TYPES = [('excluded', 'excluded'), ('history', 'history'), ('avg_rating', 'avg_rating')]
-
     item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
 
     def __str__(self):

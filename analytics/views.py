@@ -2,10 +2,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import status, viewsets, generics, views
 from django.core.management import call_command
-from django.shortcuts import get_object_or_404
 
 from . import models, serializers, permissions
-from .utils import calorie_analysis, global_analysis, menu_item_analysis, tag_analysis, satisfaction_analysis
 import restaurants.models as rm
 
 
@@ -61,7 +59,7 @@ class CalorieAnalyticsViewset(viewsets.ModelViewSet):
 
 
 class TagAnalyticsViewset(viewsets.ModelViewSet):
-    permission_classes = []
+    permission_classes = [permissions.IsAuthNotPatronAndReadOnly]
     serializer_class = None
     AnalyticsModel = None
     TagModel = None

@@ -89,9 +89,7 @@ class OverallFilterAnalyticsSerializer(serializers.ModelSerializer):
 
 # Menu Item Performance Analytics Serializers
 class MenuItemPerformanceAnalyticsSerializer(serializers.ModelSerializer):
-    menuItem_id = rs.MenuItemListSerializer()
-    # menuItem_id = rs.MenuItemGetSerializer()
-    # menuItem_id = rs.MenuItemSerializer()      # Or this because it would return everything but with tag IDs
+    menuItem_id = rs.MenuItemNameSerializer()
     average_rating = serializers.DecimalField(
         max_digits=8,  # Total number of digits
         decimal_places=2,  # Maximum of 2 decimal places
