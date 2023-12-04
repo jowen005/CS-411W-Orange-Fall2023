@@ -56,14 +56,15 @@ def driver():
 
             tag_data = trends.calculate(tag_analytics, trend_types)
 
-            tag_data[trend_tag_attr] = tag
+            for entry in tag_data:
+                entry[trend_tag_attr] = tag
+                obj = TrendsModel(**entry, date_stamp=current_datestamp)
 
-            obj = TrendsModel(**tag_data, current_datestamp=current_datestamp)
-            print(f'{obj} | Size in Bytes: {sys.getsizeof(serialize("json", [obj]))}') #NOTE
-            objs_to_create.append(obj)
+                print(f'{obj} | Size in Bytes: {sys.getsizeof(serialize("json", [obj]))}') #NOTE
+                objs_to_create.append(obj)
         
-        # TrendsModel.objects.bulk_create(objs_to_create)
-        # print(f"\tNumber Created: {len(objs_to_create)}\n")
+        TrendsModel.objects.bulk_create(objs_to_create)     # @425 bytes per model, ~157.9K bulk per
+        print(f"\tNumber Created: {len(objs_to_create)}\n")
 
         
         

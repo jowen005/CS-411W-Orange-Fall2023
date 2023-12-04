@@ -25,8 +25,8 @@ def store_data(trend_data):
     current_datestamp = timezone.now()
     for entry in trend_data:
         print(f'\t{entry}')
-        # obj = AppSatisfactionTrends.objects.create(**entry, date_stamp=current_datestamp)
-        # print(f'\t{obj}')
+        obj = AppSatisfactionTrends.objects.create(**entry, date_stamp=current_datestamp)
+        print(f'\t{obj}')
     print('\n')
 
 

@@ -28,12 +28,13 @@ def driver():
 
         item_data = trends.calculate(item_analytics, TREND_TYPES)
 
-        item_data['item'] = item
-
-        obj = MenuItemPerformanceTrends(**item_data, current_datestamp=current_datestamp)
-        print(f'{obj} | Size in Bytes: {sys.getsizeof(serialize("json", [obj]))}') #NOTE
-        objs_to_create.append(obj)
+        for entry in item_data:
+            entry['item'] = item
+            obj = MenuItemPerformanceTrends(**entry, date_stamp=current_datestamp)
+            
+            print(f'{obj} | Size in Bytes: {sys.getsizeof(serialize("json", [obj]))}') #NOTE
+            objs_to_create.append(obj)
     
-    # TrendsModel.objects.bulk_create(objs_to_create)
-    # print(f"\tNumber Created: {len(objs_to_create)}\n")
+    MenuItemPerformanceTrends.objects.bulk_create(objs_to_create)   # @500 bytes per model, ~134.2K bulk
+    print(f"\tNumber Created: {len(objs_to_create)}\n")
 

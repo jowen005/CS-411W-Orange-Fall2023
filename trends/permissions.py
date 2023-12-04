@@ -14,14 +14,15 @@ class IsNonPatronRetrieveAndValidFilter(BasePermission):
         is_authenticated = request.user.is_authenticated 
         is_not_patron = request.user.user_type != 'patron'
 
+        if view.action != 'retrieve':
+            raise PermissionDenied(f"This action is not allowed ({view.action})! This API is retrieve only.")        
+
         filter_type = view.kwargs.get('filter_type')
         if filter_type not in VALID_FILTER_TYPES:
             raise PermissionDenied(f"{filter_type.title()} is not a valid filter!")
         
         if is_authenticated and is_not_patron:
-            if view.action == 'list':
-                return True
-            raise PermissionDenied(f"This action is not allowed ({view.action})!")
+            return True
         
         raise PermissionDenied(f"This user ({request.user.user_type}) is not an " +
                                f"authenticated admin or restaurant user!")

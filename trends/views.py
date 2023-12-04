@@ -22,7 +22,7 @@ class FilterTrendsViewset(viewsets.ModelViewSet):
     
     def get_serializer_class(self):
         filter_type = self.kwargs.get('filter_type')
-        return self.FILTER_SERIALIZERS[filter_type][0]
+        return self.FILTER_MODELS[filter_type][0]
 
     def get_queryset(self):
         filter_type = self.kwargs.get('filter_type')
@@ -73,7 +73,7 @@ class FilterTrendsViewset(viewsets.ModelViewSet):
         trend_objs = queryset.filter(**{id_attr: tag_id})
         if trend_objs.count() != 2:
             response = {
-                'message': f'This Tag ID or Calorie Level ({tag_id}) is valid but does not yet have all trends!'
+                'message': f'This Tag ID or Calorie Level ({tag_id}) is valid but does not yet have all analytics!'
             }
             return Response(data=response, status=status.HTTP_404_NOT_FOUND)
         
@@ -112,7 +112,7 @@ class MenuItemPerformanceTrendsViewset(viewsets.ModelViewSet):
         trend_objs = queryset.filter(item__id=item_id)
         if trend_objs.count() != 3:
             response = {
-                'message': f'This Menu Item ({item_id}) is valid but does not yet have all trends!'
+                'message': f'This Menu Item ({item_id}) is valid but does not yet have all analytics!'
             }
             return Response(data=response, status=status.HTTP_404_NOT_FOUND)
         
@@ -127,9 +127,9 @@ class AppSatisfactionTrendsViewset(viewsets.ModelViewSet):
 
     def get_queryset(self):
         try:
-            latest_datestamp = models.AppSatisfactionTrends.objects.latest('date_stamp')
-        except models.AppSatisfactionAnalytics.DoesNotExist:
-            return models.AppSatisfactionAnalytics.objects.none()
+            latest_datestamp = models.AppSatisfactionTrends.objects.latest('date_stamp').date_stamp
+        except models.AppSatisfactionTrends.DoesNotExist:
+            return models.AppSatisfactionTrends.objects.none()
         
         queryset = models.AppSatisfactionTrends.objects.filter(
             date_stamp=latest_datestamp

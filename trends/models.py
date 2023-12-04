@@ -11,15 +11,15 @@ User = get_user_model()
 class TrendsMixin(models.Model):
     TREND_TYPES = []
 
-    trend_type = models.CharField(choices=TREND_TYPES,max_length=20, null=True)
-    coeff0 = models.FloatField()
-    coeff1 = models.FloatField()
-    coeff2 = models.FloatField()
-    coeff3 = models.FloatField()
-    coeff4 = models.FloatField()
-    coeff5 = models.FloatField()
-    behavior = models.FloatField()
-    date_stamp = models.DateTimeField()
+    trend_type = models.CharField(choices=TREND_TYPES, max_length=20, null=True)
+    coeff0 = models.FloatField(null=True)
+    coeff1 = models.FloatField(null=True)
+    coeff2 = models.FloatField(null=True)
+    coeff3 = models.FloatField(null=True)
+    coeff4 = models.FloatField(null=True)
+    coeff5 = models.FloatField(null=True)
+    behavior = models.FloatField(null=True)
+    date_stamp = models.DateTimeField(null=True)
 
     class Meta:
         abstract = True
@@ -104,7 +104,7 @@ class CookStyleTagTrends(TrendsMixin):
 
 
 # (num_menu_items * num_trend_types) per datestamp
-class MenuItemPerformanceTrends(models.Model):
+class MenuItemPerformanceTrends(TrendsMixin):
     TREND_TYPES = [('excluded', 'excluded'), ('history', 'history'), ('avg_rating', 'avg_rating')]
     item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
 
@@ -116,8 +116,11 @@ class MenuItemPerformanceTrends(models.Model):
 
 
 # (num_trend_types) per datestamp
-class AppSatisfactionTrends(models.Model):
+class AppSatisfactionTrends(TrendsMixin):
     TREND_TYPES = [('num_ratings', 'num_ratings'), ('avg_rating', 'avg_rating')]
+
+    def __str__(self):
+        return f"{self.date_stamp} | AppSatisfactionTrends - {self.id}"
 
     class Meta:
         db_table = 'AppSatisfactionTrends'
