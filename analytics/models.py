@@ -199,11 +199,16 @@ class LocalRestaurantAnalytics(models.Model):
     # Total number of menu items from restaurant added to patron menu item histories
     total_items_added_to_histories = models.PositiveIntegerField()
     # Tag that led to the most menu item elimination between items
-    taste_tags_most_eliminations = models.OneToOneField(TasteTag, on_delete=models.DO_NOTHING)
-    restriction_tags_most_eliminations = models.OneToOneField(RestrictionTag, on_delete=models.DO_NOTHING)
-    cookStyle_tags_most_eliminations = models.OneToOneField(CookStyleTag, on_delete=models.DO_NOTHING)
-    ingredient_tags_most_eliminations = models.OneToOneField(IngredientTag, on_delete=models.DO_NOTHING)
-    allergies_tags_most_eliminations = models.OneToOneField(AllergyTag, on_delete=models.DO_NOTHING)
+    # taste_tags_most_eliminations = models.OneToOneField(TasteTag, on_delete=models.DO_NOTHING)
+    # restriction_tags_most_eliminations = models.OneToOneField(RestrictionTag, on_delete=models.DO_NOTHING)
+    # cookStyle_tags_most_eliminations = models.OneToOneField(CookStyleTag, on_delete=models.DO_NOTHING)
+    # ingredient_tags_most_eliminations = models.OneToOneField(IngredientTag, on_delete=models.DO_NOTHING)
+    # allergies_tags_most_eliminations = models.OneToOneField(AllergyTag, on_delete=models.DO_NOTHING)
+    taste_tags_most_eliminations = models.JSONField(null=True)
+    restriction_tags_most_eliminations = models.JSONField(null=True)
+    cookStyle_tags_most_eliminations = models.JSONField(null=True)
+    ingredient_tags_most_eliminations = models.JSONField(null=True)
+    allergies_tags_most_eliminations = models.JSONField(null=True)
     # Food type is probably not needed
 
     # Date and time when analytics were run

@@ -117,11 +117,11 @@ class AppSatisfactionAnalyticsSerializer(serializers.ModelSerializer):
 class LocalRestaurantAnalyticsSerializer(serializers.ModelSerializer):
     restaurant_id = rs.RestaurantListSerializer
     #top_three_items = serializers.PrimaryKeyRelatedField(queryset=rm.MenuItem.objects.all(), many=True)
-    taste_tags_most_eliminations = serializers.PrimaryKeyRelatedField(queryset=rm.TasteTag.objects.all())
-    restriction_tags_most_eliminations = serializers.PrimaryKeyRelatedField(queryset=rm.RestrictionTag.objects.all())
-    cookStyle_tags_most_eliminations = serializers.PrimaryKeyRelatedField(queryset=rm.CookStyleTag.objects.all())
-    ingredient_tags_most_eliminations = serializers.PrimaryKeyRelatedField(queryset=rm.IngredientTag.objects.all())
-    allergies_tags_most_eliminations = serializers.PrimaryKeyRelatedField(queryset=rm.AllergyTag.objects.all())
+    # taste_tags_most_eliminations = serializers.PrimaryKeyRelatedField(queryset=rm.TasteTag.objects.all())
+    # restriction_tags_most_eliminations = serializers.PrimaryKeyRelatedField(queryset=rm.RestrictionTag.objects.all())
+    # cookStyle_tags_most_eliminations = serializers.PrimaryKeyRelatedField(queryset=rm.CookStyleTag.objects.all())
+    # ingredient_tags_most_eliminations = serializers.PrimaryKeyRelatedField(queryset=rm.IngredientTag.objects.all())
+    # allergies_tags_most_eliminations = serializers.PrimaryKeyRelatedField(queryset=rm.AllergyTag.objects.all())
 
     class Meta:
         model = models.LocalRestaurantAnalytics

@@ -14,8 +14,8 @@ from ..models import (AllergyTagExclusionRecord, IngredientTagExclusionRecord,
 
 def driver():
     restaurant_data, current_datestamp = restaurant_analysis()
-    print(restaurant_data)
-    print(current_datestamp)
+    # print(restaurant_data)
+    # print(current_datestamp)
 
 
 def restaurant_analysis():
