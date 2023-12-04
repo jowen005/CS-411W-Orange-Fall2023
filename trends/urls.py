@@ -16,5 +16,6 @@ menu_router.register('menuitems', views.MenuItemPerformanceTrendsViewset, basena
 urlpatterns = [
     path('', include(router.urls)),
     path('<int:restaurant_id>/', include(menu_router.urls)),
+    path('manual/', views.ManualTrendsCommandView.as_view(), name='manual'),
     path('<str:filter_type>/', include(filter_router.urls)),
 ]

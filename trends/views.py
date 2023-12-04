@@ -136,4 +136,13 @@ class AppSatisfactionTrendsViewset(viewsets.ModelViewSet):
         )
 
         return queryset
+    
+
+class ManualTrendsCommandView(views.APIView):
+    permission_classes = [permissions.IsAuthAdminAndCreate]
+
+    def post(self, request, *args, **kwargs):
+        call_command('manualTrends')
+
+        return Response({'detail':'manualTrends was triggered successfully.'}, status=status.HTTP_200_OK)
 
