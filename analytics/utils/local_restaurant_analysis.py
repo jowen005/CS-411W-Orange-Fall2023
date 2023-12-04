@@ -43,10 +43,13 @@ def restaurant_analysis():
     searches = pm.PatronSearchHistory.objects.filter(search_datetime__gte=latest_datestamp)
     current_datestamp = timezone.now()
 
+    
+
     # Get all the fields for each restaurant
     for restaurant in restaurants:
         data = {}
         data['restaurant_id'] = restaurant
+        data['top_three_items'] = top_3_items_analysis(restaurant)
         data['total_items_added_to_histories'] = total_added_to_histories(restaurant, latest_datestamp)
 
         restaurant_data.append(data)
@@ -106,5 +109,45 @@ def total_added_to_histories(rest, latest_datestamp):
         # Number of items from restaurant in that history, add each iteration
     # Will have the number added to histories for the restaurant
     return total_items_added_to_histories
-    #print(total_items_added_to_histories)
+    #print(items_in_histories)
+
+def top_3_items_analysis(rest):
+    INDEXES = ['first', 'second', 'third']
+    items = rm.MenuItem.objects.filter(restaurant = rest)
+    top_3_scores = []
+    top_3_items = []
+    performance_scores = []
     
+    # Calculate the performance scores
+    for item in items:
+        performance = (item.average_rating * item.number_of_rating)
+        performance_scores.append(performance)
+    
+    # Sort the scores in ascending order
+    performance_scores.sort(reverse=True)
+    # Get the top 3 scores
+    top_3_scores = performance_scores[:3]
+
+    # Get the items associated with the top 3 scores (the first 3 reached will be counted, ties do not matter)
+    # This is why the list is being sorted backwards, so items added recently have advantage
+    counter = 0
+    #counter = 'first'
+    for p_score in top_3_scores:
+        for item in reversed(items):
+            if counter < 3:
+                if p_score == item.average_rating * item.number_of_rating:
+                    item = {
+                        INDEXES[counter]: {
+                        'title': item.item_name,
+                        'score': p_score
+                        }
+                    }
+                    counter += 1
+                    top_3_items.append(item)
+                    # if counter == 'first':
+                    #     counter = 'second'
+                    # else:
+                    #     counter = 'third'
+    
+    return top_3_items
+    #print(top_3_items)
