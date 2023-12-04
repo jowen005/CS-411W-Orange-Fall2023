@@ -17,7 +17,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         ft.driver()
-        # mt.driver()
-        # st.driver()
+        mt.driver()
+        st.driver()
 
         self.stdout.write(self.style.SUCCESS(f'All Trend Algorithms were run'))
