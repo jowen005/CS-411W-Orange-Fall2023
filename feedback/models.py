@@ -27,12 +27,13 @@ class Reviews(models.Model):
     def formatted_datetime(self):
         return self.review_datetime.strftime('%d/%m/%y %H:%M:%S')
     
+    
+    
     def save(self, *args, **kwargs):
         #get patron name
         from patron.models import Patron
         patron_profile = Patron.objects.get(user=self.patron)
         self.patron_name = patron_profile.name
-
         super().save(*args, **kwargs)  # Call the parent class's save method
 
         # Calculate the new average rating for the associated menu item

@@ -289,13 +289,19 @@ class TasteTagExclusionRecord(models.Model):
 class LoginAnalytics(models.Model):
     
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    email = models.EmailField(max_length=80, null=True)
     total_logins = models.IntegerField()
     logins_since = models.IntegerField()
     date_stamp = models.DateTimeField()
 
     def __str__(self):
-        return f"{self.menu_item.id}: {self.tag.title} --> {self.exclusion_count}"
+        return f"{self.user.username}: Total Logins = {self.total_logins}, Logins Since = {self.logins_since}"
 
+    def save(self, *args, **kwargs):
+        # user_email = User.objects.get(email=self.user.email)
+        self.email = self.user.email
+        super().save(*args, **kwargs)
+        
     class Meta:
         db_table = 'LoginAnalytics'
 
@@ -305,7 +311,6 @@ class LoginRecord(models.Model):
     date_stamp = models.DateTimeField()
 
     def __str__(self):
-        return f"{self.menu_item.id}: {self.tag.title} --> {self.exclusion_count}"
-
+        return self.user.username
     class Meta:
         db_table = 'LoginRecord'

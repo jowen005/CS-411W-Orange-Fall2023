@@ -3,9 +3,10 @@ from rest_framework.response import Response
 from rest_framework import status, viewsets, generics, views
 from django.core.management import call_command
 
+from django.contrib.auth import get_user_model
 from . import models, serializers, permissions
 import restaurants.models as rm
-
+User = get_user_model()
 
 class GlobalAnalyticsViewset(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthAdminAndList]
@@ -292,3 +293,43 @@ class ManualAnalyticsCommandView(views.APIView):
         call_command('manualAnalytics')
 
         return Response({'detail':'manualAnalytics was triggered successfully.'}, status=status.HTTP_200_OK)
+    
+    
+class CalorieAnalyticsViewset(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAuthAdminAndReadOnly]
+    serializer_class = serializers.LoginAnalyticsSerializer
+
+    def get_queryset(self):
+
+        try:
+            latest_datestamp = models.LoginAnalytics.objects.latest('date_stamp').date_stamp
+        except models.LoginAnalytics.DoesNotExist:
+            return models.LoginAnalytics.objects.none()
+
+        queryset = models.LoginAnalytics.objects.filter(
+            date_stamp=latest_datestamp
+        ).order_by('user__id')
+        
+        return queryset
+    
+    def retrieve(self, request, *args, **kwargs):
+        user_id = int(kwargs.get('pk'))
+
+        try:
+            User.objects.get(id = user_id)
+        except User.DoesNotExist:
+            response = {
+                'message': 'User ID is not valid'
+            }
+            return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+        queryset = self.get_queryset()
+        analytic_obj = queryset.filter(user__id = user_id).first()
+        if analytic_obj is None:
+            response = {
+                'message': f'This user ({user_id}) is valid but does not yet have analytics!'
+            }
+            return Response(data=response, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = self.get_serializer(analytic_obj)
+
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
