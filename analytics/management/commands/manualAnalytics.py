@@ -22,12 +22,12 @@ class Command(BaseCommand):
 
         ea.driver()
 
-        #ga.driver()
-        #ca.driver()
-        #ta.driver()
-        #ofa.driver()
+        ga.driver()
+        ca.driver()
+        ta.driver()
+        ofa.driver()
         ma.driver()
         lra.driver()
-        #sa.driver()
+        sa.driver()
 
         self.stdout.write(self.style.SUCCESS(f'All Analytic Algorithms were run'))
