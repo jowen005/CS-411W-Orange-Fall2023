@@ -153,7 +153,7 @@ class MenuItem(models.Model):
 
 	#Supporting information for suggestion feeds
     suggestion_vector = models.CharField(max_length=128,null=True)
-    inverse_sqrt = models.DecimalField(max_digits=7, decimal_places=5)
+    inverse_sqrt = models.DecimalField(max_digits=10, decimal_places=8)
     
     time_of_day_available = models.CharField(max_length=20, choices=[
         ('Breakfast', 'Breakfast'),

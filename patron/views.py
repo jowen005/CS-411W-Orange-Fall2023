@@ -26,6 +26,9 @@ class PatronViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+	
+    def perform_update(self, serializer):
+        serializer.save(profile_updated=True)
 
 
 class SearchHistoryViewSet(viewsets.ModelViewSet):
@@ -163,6 +166,7 @@ class MenuItemHistoryViewSet(viewsets.ModelViewSet):
                 'message': 'Successfully added to meal history.',
                 'results': history_serializer.data,
             }
+			#SAVE HERE NOTE
             return Response(response_data, status=status.HTTP_201_CREATED)
         
         # Handle if adding from bookmarks
@@ -181,6 +185,7 @@ class MenuItemHistoryViewSet(viewsets.ModelViewSet):
                         'message': 'Successfully added to meal history and removed from bookmarks.',
                         'results': history_serializer.data,
                     }
+					#SAVE HERE NOTE
                     return Response(response_data, status=status.HTTP_201_CREATED)
                 
                 else:
