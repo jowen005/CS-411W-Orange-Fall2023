@@ -295,7 +295,7 @@ class ManualAnalyticsCommandView(views.APIView):
         return Response({'detail':'manualAnalytics was triggered successfully.'}, status=status.HTTP_200_OK)
     
     
-class CalorieAnalyticsViewset(viewsets.ModelViewSet):
+class LoginAnalyticsViewset(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthAdminAndReadOnly]
     serializer_class = serializers.LoginAnalyticsSerializer
 

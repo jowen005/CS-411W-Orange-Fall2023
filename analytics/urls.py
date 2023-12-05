@@ -6,6 +6,7 @@ from . import views
 # Does the url routing for PatronViewSet
 router = DefaultRouter()
 router.register('global', views.GlobalAnalyticsViewset, basename='global')
+router.register('login', views.LoginAnalyticsViewset, basename='login')
 router.register('calories', views.CalorieAnalyticsViewset, basename='calories')
 router.register('restrictiontag', views.RestrictionTagAnalyticsViewset, basename='restrictiontag')
 router.register('allergytag', views.AllergiesTagAnalyticsViewset, basename='allergytag')
