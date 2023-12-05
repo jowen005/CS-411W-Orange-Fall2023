@@ -13,6 +13,7 @@ class Reviews(models.Model):
     #when menu_item deleted, the reviews will not available.
     #when menuItem_history deleted, the reviews still remains.
     patron = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    patron_name = models.CharField(max_length=255,null=True)
     menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE, null=True)
     
     review = models.CharField(max_length=255,null=True)
@@ -27,6 +28,11 @@ class Reviews(models.Model):
         return self.review_datetime.strftime('%d/%m/%y %H:%M:%S')
     
     def save(self, *args, **kwargs):
+        #get patron name
+        from patron.models import Patron
+        patron_profile = Patron.objects.get(user=self.patron)
+        self.patron_name = patron_profile.name
+
         super().save(*args, **kwargs)  # Call the parent class's save method
 
         # Calculate the new average rating for the associated menu item
