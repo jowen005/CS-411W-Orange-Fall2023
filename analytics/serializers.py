@@ -3,6 +3,7 @@ from . import models
 from django.contrib.auth import get_user_model
 import restaurants.serializers as rs
 import restaurants.models as rm
+import accounts.serializers as acs
 
 User = get_user_model()
 
@@ -115,7 +116,7 @@ class AppSatisfactionAnalyticsSerializer(serializers.ModelSerializer):
 
 # Local Restaurant Analytics Serializer
 class LocalRestaurantAnalyticsSerializer(serializers.ModelSerializer):
-    restaurant_id = rs.RestaurantListSerializer
+    restaurant_id = rs.RestaurantListSerializer()
     #top_three_items = serializers.PrimaryKeyRelatedField(queryset=rm.MenuItem.objects.all(), many=True)
     # taste_tags_most_eliminations = serializers.PrimaryKeyRelatedField(queryset=rm.TasteTag.objects.all())
     # restriction_tags_most_eliminations = serializers.PrimaryKeyRelatedField(queryset=rm.RestrictionTag.objects.all())
@@ -125,27 +126,18 @@ class LocalRestaurantAnalyticsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.LocalRestaurantAnalytics
-        fields = ['id', 'restaurant_id', 'top_three_items', 'total_items_added_to_histories', 'taste_tags_most_eliminations',
-                  'restriction_tags_most_eliminations', 'cookStyle_tags_most_eliminations', 'ingredient_tags_most_eliminations', 
-                  'allergies_tags_most_eliminations', 'date_stamp']
+        fields = '__all__'
+        # fields = ['id', 'restaurant_id', 'top_three_items', 'total_items_added_to_histories', 'taste_tags_most_eliminations',
+        #           'restriction_tags_most_eliminations', 'cookStyle_tags_most_eliminations', 'ingredient_tags_most_eliminations', 
+        #           'allergies_tags_most_eliminations', 'date_stamp']
 
 # Login Analytics Serializer
 class LoginAnalyticsSerializer(serializers.ModelSerializer):
-    
+    email = serializers.EmailField(max_length=80)
+
     class Meta:
         model = models.LoginAnalytics
-        #fields = ['user', 'total_logins', 'logins_since', 'date_stamp']
-        fields = '__all__'
-        read_only_fields = ['user']
-
-# Login Record Serializer
-class LoginRecordSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = models.LoginRecord
-        #fields = ['user', 'date_stamp']
-        fields = '__all__'
-        read_only_fields = ['user']
+        exclude = ['user']
 
 # Made the only serializers available to be the GET-styled serializers
 # So commented out the others

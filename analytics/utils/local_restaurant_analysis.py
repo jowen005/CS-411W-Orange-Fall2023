@@ -14,14 +14,13 @@ from ..models import (AllergyTagExclusionRecord, IngredientTagExclusionRecord,
 
 def driver():
     restaurant_data, current_datestamp = restaurant_analysis()
-    # print(restaurant_data)
-    # print(current_datestamp)
 
     # Save the new analytic records in the model
-    # for entry in restaurant_data:
-    #     obj = LocalRestaurantAnalytics.objects.create(**entry, date_stamp=current_datestamp)
-    #     print(obj)
-    #     print('\n')
+    for entry in restaurant_data:
+        print(entry)
+        #obj = LocalRestaurantAnalytics.objects.create(**entry, date_stamp=current_datestamp)
+        #print(obj)
+        print('\n')
 
 
 def restaurant_analysis():
@@ -121,7 +120,7 @@ def top_3_items_analysis(rest):
     
     # Calculate the performance scores
     for item in items:
-        performance = (item.average_rating * item.number_of_rating)
+        performance = float(item.average_rating * item.number_of_rating)
         performance_scores.append(performance)
     
     # Sort the scores in ascending order
@@ -310,22 +309,22 @@ def tag_eliminations_analysis(rest, latest_datestamp):
 
     # Crete the JSONs for each tag
     allergies_tags_most_eliminations = {
-        'allergy tag': max_allergy_tag,
+        'allergy tag': max_allergy_tag.title,
         'eliminations': max_allergy_eliminations
     }
 
     ingredient_tags_most_eliminations = {
-        'ingredient tag': max_ingredient_tag,
+        'ingredient tag': max_ingredient_tag.title,
         'eliminations': max_ingredient_eliminations
     }
 
     restriction_tags_most_eliminations = {
-        'restriction tag': max_restriction_tag,
+        'restriction tag': max_restriction_tag.title,
         'eliminations': max_restriction_eliminations
     }
 
     taste_tags_most_eliminations = {
-        'taste tag': max_taste_tag,
+        'taste tag': max_taste_tag.title,
         'eliminations': max_taste_eliminations
     }
 

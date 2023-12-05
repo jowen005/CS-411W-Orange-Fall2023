@@ -39,6 +39,13 @@ class SignUpSerializer(serializers.ModelSerializer):
         return user
 
 
+# class UserGetSerializer(serializers.ModelSerializer):
+#     email = serializers.EmailField(max_length=80)
+    
+#     class Meta:
+#         model = User
+#         fields = ['email']
+
 
 
 
