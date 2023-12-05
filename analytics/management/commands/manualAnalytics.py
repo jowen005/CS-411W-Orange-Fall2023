@@ -28,7 +28,7 @@ class Command(BaseCommand):
         #ta.driver()
         #ofa.driver()
         ma.driver()
-        lra.driver()
+        #lra.driver()
         sa.driver()
         loga.driver()
 

@@ -17,6 +17,12 @@ def driver():
     # print(restaurant_data)
     # print(current_datestamp)
 
+    # Save the new analytic records in the model
+    # for entry in restaurant_data:
+    #     obj = LocalRestaurantAnalytics.objects.create(**entry, date_stamp=current_datestamp)
+    #     print(obj)
+    #     print('\n')
+
 
 def restaurant_analysis():
 
@@ -44,7 +50,8 @@ def restaurant_analysis():
         data['restaurant_id'] = restaurant
         data['top_three_items'] = top_3_items_analysis(restaurant)
         data['total_items_added_to_histories'] = total_added_to_histories(restaurant, latest_datestamp)
-        tag_eliminations_analysis(restaurant, latest_datestamp)
+        data['allergies_tags_most_eliminations'], data['ingredient_tags_most_eliminations'], data['restriction_tags_most_eliminations'], data['taste_tags_most_eliminations'] = tag_eliminations_analysis(restaurant, latest_datestamp)
+        #tag_eliminations_analysis(restaurant, latest_datestamp)
 
         restaurant_data.append(data)
 
@@ -146,15 +153,15 @@ def top_3_items_analysis(rest):
     return top_3_items
 
 def tag_eliminations_analysis(rest, latest_datestamp):
-    TAG_TYPES = [#('allergy', rm.AllergyTag, LocalRestaurantAnalytics), 
-                 #('ingredients', rm.IngredientTag, LocalRestaurantAnalytics), 
-                 ('restrictions', rm.RestrictionTag, LocalRestaurantAnalytics)]
-                 #('taste', rm.TasteTag, LocalRestaurantAnalytics)]
+    # TAG_TYPES = [('allergy', rm.AllergyTag, LocalRestaurantAnalytics), 
+    #              ('ingredients', rm.IngredientTag, LocalRestaurantAnalytics), 
+    #              ('restrictions', rm.RestrictionTag, LocalRestaurantAnalytics),
+    #              ('taste', rm.TasteTag, LocalRestaurantAnalytics)]
     
     items = rm.MenuItem.objects.filter(restaurant = rest)
     searches = pm.PatronSearchHistory.objects.filter(search_datetime__gte=latest_datestamp)
 
-    tag_sets = {tag_type: TagModel.objects.all().order_by('id') for tag_type, TagModel, *_ in TAG_TYPES}
+    #tag_sets = {tag_type: TagModel.objects.all().order_by('id') for tag_type, TagModel, *_ in TAG_TYPES}
 
     # tag_exclusions = {
     #     tag_type:{
@@ -257,7 +264,7 @@ def tag_eliminations_analysis(rest, latest_datestamp):
 
 
         # Excluded if item does not have any of the taste tags (record tags that led to it getting excluded)
-        excluded_items = items.exclude(taste_tags=search.patron_taste_tags.all())
+        excluded_items = items.exclude(taste_tags__in=search.patron_taste_tags.all())
         for e in excluded_items:
             for taste in search.patron_taste_tags.all():
                 if taste in total_taste:
@@ -274,6 +281,53 @@ def tag_eliminations_analysis(rest, latest_datestamp):
         # for item in excluded_items:
         #     for taste in search.patron_taste_tags.all():
         #         tag_exclusions['taste'][f'{item.id}'][f'{taste.id}'] += 1
-            
-    print(total_taste)
-    print(total_taste_counts)
+        
+        
+    # Get the max of each total count and the correspoding tag
+    # Allergy
+    for i in range(len(total_allergy_counts)):
+       if total_allergy_counts[i] == max(total_allergy_counts):
+           max_allergy_eliminations = total_allergy_counts[i]
+           max_allergy_tag = total_allergy[i]
+    
+    # Ingredient
+    for i in range(len(total_ingredient_counts)):
+        if total_ingredient_counts[i] == max(total_ingredient_counts):
+            max_ingredient_eliminations = total_ingredient_counts[i]
+            max_ingredient_tag = total_ingredient[i]
+
+    # Restriction
+    for i in range(len(total_restriction_counts)):
+        if total_restriction_counts[i] == max(total_restriction_counts):
+            max_restriction_eliminations = total_restriction_counts[i]
+            max_restriction_tag = total_restrictions[i]
+
+    # Taste
+    for i in range(len(total_taste_counts)):
+        if total_taste_counts[i] == max(total_taste_counts):
+            max_taste_eliminations = total_taste_counts[i]
+            max_taste_tag = total_taste[i]
+
+    # Crete the JSONs for each tag
+    allergies_tags_most_eliminations = {
+        'allergy tag': max_allergy_tag,
+        'eliminations': max_allergy_eliminations
+    }
+
+    ingredient_tags_most_eliminations = {
+        'ingredient tag': max_ingredient_tag,
+        'eliminations': max_ingredient_eliminations
+    }
+
+    restriction_tags_most_eliminations = {
+        'restriction tag': max_restriction_tag,
+        'eliminations': max_restriction_eliminations
+    }
+
+    taste_tags_most_eliminations = {
+        'taste tag': max_taste_tag,
+        'eliminations': max_taste_eliminations
+    }
+
+    return allergies_tags_most_eliminations, ingredient_tags_most_eliminations, restriction_tags_most_eliminations, taste_tags_most_eliminations
+    
