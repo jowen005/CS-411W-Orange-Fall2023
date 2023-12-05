@@ -23,10 +23,10 @@ class Command(BaseCommand):
 
         ea.driver()
 
-        #ga.driver()
-        #ca.driver()
-        #ta.driver()
-        #ofa.driver()
+        ga.driver()
+        ca.driver()
+        ta.driver()
+        ofa.driver()
         ma.driver()
         #lra.driver()
         sa.driver()
