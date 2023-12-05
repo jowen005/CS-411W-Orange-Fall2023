@@ -18,7 +18,11 @@ class TrendsMixin(models.Model):
     coeff3 = models.FloatField(null=True)
     coeff4 = models.FloatField(null=True)
     coeff5 = models.FloatField(null=True)
-    behavior = models.FloatField(null=True)
+    # behavior = models.FloatField(null=True)
+    x_min = models.DateTimeField(null=True)
+    x_max = models.DateTimeField(null=True)
+    y_min = models.IntegerField(null=True)
+    y_max = models.IntegerField(null=True)
     date_stamp = models.DateTimeField(null=True)
 
     class Meta:

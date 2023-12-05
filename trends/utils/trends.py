@@ -12,6 +12,10 @@ def calculate(analytics_set, trend_types):
         return
     
     analytics_set = analytics_set.order_by('date_stamp')
+
+    first_datestamp = analytics_set.first().date_stamp
+    last_datestamp = analytics_set.last().date_stamp
+
     first_timestamp = analytics_set[0].date_stamp.timestamp()
     dates = [analytic.date_stamp.timestamp() - first_timestamp for analytic in analytics_set]
     # print(dates) #NOTE
@@ -27,7 +31,10 @@ def calculate(analytics_set, trend_types):
         for idx, coeff in enumerate(coefficients):
             # print(f'{idx} - {coeff}') #NOTE
             data[f'coeff{idx}'] = coeff
-        data['behavior'] = 0.0 #TODO
+        data['x_min'] = first_datestamp
+        data['x_max'] = last_datestamp
+        data['y_min'] = min(values)
+        data['y_max'] = max(values)
         # print(data) #NOTE
 
         trend_data.append(data)
