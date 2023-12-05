@@ -9,6 +9,7 @@ import analytics.utils.overall_filter_analysis as ofa
 import analytics.utils.menu_item_analysis as ma
 import analytics.utils.satisfaction_analysis as sa
 import analytics.utils.local_restaurant_analysis as lra
+import analytics.utils.login_analysis as loga
 
 class Command(BaseCommand):
 
@@ -28,6 +29,7 @@ class Command(BaseCommand):
         #ofa.driver()
         ma.driver()
         lra.driver()
-        #sa.driver()
+        sa.driver()
+        loga.driver()
 
         self.stdout.write(self.style.SUCCESS(f'All Analytic Algorithms were run'))

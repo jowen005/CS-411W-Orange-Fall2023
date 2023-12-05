@@ -1,4 +1,4 @@
-
+from django.utils import timezone
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
 from rest_framework.request import Request
@@ -9,6 +9,8 @@ from .serializers import SignUpSerializer
 from .tokens import create_jwt_pair_for_user
 # from .custom_auth import authenticate
 from django.contrib.auth import authenticate
+
+from analytics.models import LoginRecord
 
 
 # Create your views here.
@@ -34,6 +36,9 @@ class SignUpView(APIView):
             serializer.save()
             user = authenticate(email=email, password=password)
             tokens = create_jwt_pair_for_user(user)
+
+            current_datestamp = timezone.now()
+            LoginRecord.objects.create(user=user, date_stamp=current_datestamp)
 
             response = {
                 'message' : 'User Created Successfully',
@@ -61,6 +66,10 @@ class LoginView(APIView):
             #Uses default authenticate method
             user = authenticate(email=email, password=password)
             if user is not None:
+                if user.user_type != 'admin':
+                    current_datestamp = timezone.now()
+                    LoginRecord.objects.create(user=user, date_stamp=current_datestamp)
+
                 tokens = create_jwt_pair_for_user(user)
                 response = {
                     "message": "Login Successful",
