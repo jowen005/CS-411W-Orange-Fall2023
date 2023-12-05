@@ -48,3 +48,9 @@ admin.site.register(RestrictionTagExclusionRecord)
 
 from .models import TasteTagExclusionRecord
 admin.site.register(TasteTagExclusionRecord)
+
+from .models import LoginAnalytics
+admin.site.register(LoginAnalytics)
+
+from .models import LoginRecord
+admin.site.register(LoginRecord)

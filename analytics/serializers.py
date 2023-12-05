@@ -113,7 +113,7 @@ class AppSatisfactionAnalyticsSerializer(serializers.ModelSerializer):
         model = models.AppSatisfactionAnalytics
         fields = '__all__'
 
-# Loca Restaurant Analytics Serializer
+# Local Restaurant Analytics Serializer
 class LocalRestaurantAnalyticsSerializer(serializers.ModelSerializer):
     restaurant_id = rs.RestaurantListSerializer
     #top_three_items = serializers.PrimaryKeyRelatedField(queryset=rm.MenuItem.objects.all(), many=True)
@@ -128,6 +128,24 @@ class LocalRestaurantAnalyticsSerializer(serializers.ModelSerializer):
         fields = ['id', 'restaurant_id', 'top_three_items', 'total_items_added_to_histories', 'taste_tags_most_eliminations',
                   'restriction_tags_most_eliminations', 'cookStyle_tags_most_eliminations', 'ingredient_tags_most_eliminations', 
                   'allergies_tags_most_eliminations', 'date_stamp']
+
+# Login Analytics Serializer
+class LoginAnalyticsSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = models.LoginAnalytics
+        #fields = ['user', 'total_logins', 'logins_since', 'date_stamp']
+        fields = '__all__'
+        read_only_fields = ['user']
+
+# Login Record Serializer
+class LoginRecordSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = models.LoginRecord
+        #fields = ['user', 'date_stamp']
+        fields = '__all__'
+        read_only_fields = ['user']
 
 # Made the only serializers available to be the GET-styled serializers
 # So commented out the others
