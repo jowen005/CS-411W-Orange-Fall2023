@@ -22,7 +22,11 @@
 
 * **python3 manage.py updateCalorieLevels** --> manually updates the calorie levels of all menu items, patrons, and searches.
 
+* **python3 manage.py updateFeedback** --> manually updates the patron names associated with all reviews.
+
 * **python3 manage.py manualAnalytics** --> manually triggers the execution of all analytic algorithms
+
+* **python3 manage.py manualTrends** --> manually triggers the execution of all trend algorithms
 
 
 
