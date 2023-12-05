@@ -171,18 +171,57 @@ def tag_eliminations_analysis(rest, latest_datestamp):
     #         for item in items} 
     #     for tag_type, *_ in TAG_TYPES
     # }
+    total_allergy_counts = []
+    total_allergy = []
+
+    total_ingredient_counts = []
+    total_ingredient = []
+
     total_restriction_counts = []
     total_restrictions = []
+
+    total_taste_counts = []
+    total_taste = []
     
     for search in searches:
-        # # Excluded if item has allergy tag
+        # Excluded if item has allergy tag
+        for allergy in search.allergy_tags.all():
+            excluded_items = items.filter(menu_allergy_tag=allergy)
+
+            if allergy in total_allergy:
+                for a in range(len(total_allergy)):
+                    if allergy == total_allergy[a]:
+                        for e in excluded_items:
+                            total_allergy_counts[a] += 1
+            else:
+                allergy_counts = 0
+                for e in excluded_items:
+                    allergy_counts += 1
+                total_allergy_counts.append(allergy_counts)
+                total_allergy.append(allergy)
+
         # for allergy in search.allergy_tags.all():
         #     excluded_items = items.filter(menu_allergy_tag=allergy)
         #     allergy_count = 0
         #     for item in excluded_items:
         #         tag_exclusions['allergy'][f'{item.id}'][f'{allergy.id}'] += 1
         
-        # # Excluded if item has any of the disliked ingredients (record tags that led to it getting excluded)
+        # Excluded if item has any of the disliked ingredients (record tags that led to it getting excluded)
+        for ingredient in search.disliked_ingredients.all():
+            excluded_items = items.filter(ingredients_tag=ingredient)
+
+            if ingredient in total_ingredient:
+                for j in range(len(total_ingredient)):
+                    if ingredient == total_ingredient[j]:
+                        for e in excluded_items:
+                            total_ingredient_counts[j] += 1
+            else:
+                ingredient_counts = 0
+                for e in excluded_items:
+                    ingredient_counts += 1
+                total_ingredient_counts.append(ingredient_counts)
+                total_ingredient.append(ingredient)
+
         # for ingredient in search.disliked_ingredients.all():
         #     excluded_items = items.filter(ingredients_tag=ingredient)
         #     disliked_ingredient_count = 0
@@ -190,19 +229,19 @@ def tag_eliminations_analysis(rest, latest_datestamp):
         #         tag_exclusions['ingredients'][f'{item.id}'][f'{ingredient.id}'] += 1
 
         
-        # Excluded if item does not have restriction tag
+        #Excluded if item does not have restriction tag
         for restriction in search.dietary_restriction_tags.all():
             excluded_items = items.exclude(menu_restriction_tag=restriction)
             #restriction_count = 0
             if restriction in total_restrictions:
                 for i in range(len(total_restrictions)):
                     if restriction == total_restrictions[i]:
-                        while excluded_items:
+                        for e in excluded_items:
                             total_restriction_counts[i] += 1
             else:
                 # print('a')
                 restrictions_counts = 0
-                while excluded_items:
+                for e in excluded_items:
                     restrictions_counts += 1
                     # print('a')
                 total_restriction_counts.append(restrictions_counts)
@@ -218,15 +257,23 @@ def tag_eliminations_analysis(rest, latest_datestamp):
 
 
         # Excluded if item does not have any of the taste tags (record tags that led to it getting excluded)
+        excluded_items = items.exclude(taste_tags=search.patron_taste_tags.all())
+        for e in excluded_items:
+            for taste in search.patron_taste_tags.all():
+                if taste in total_taste:
+                    for t in range(len(total_taste)):
+                        if taste == total_taste[t]:
+                            total_taste_counts[t] += 1
+                else:
+                    taste_counts = 0
+                    taste_counts += 1
+                total_taste_counts.append(taste_counts)
+                total_taste.append(taste) 
+
         # excluded_items = items.exclude(taste_tags__in=search.patron_taste_tags.all())
         # for item in excluded_items:
         #     for taste in search.patron_taste_tags.all():
         #         tag_exclusions['taste'][f'{item.id}'][f'{taste.id}'] += 1
-
-        # for taste in search.patron_taste_tags.all():
-        #     excluded_items = items.exclude(taste_tags = taste)
-        #     taste_count = 0
-        #     for item in excluded_items:
-        #         tag_exclusions['taste'][f'{item.id}'][f'{taste.id}'] += 1
             
-    # print(total_restrictions)
+    print(total_taste)
+    print(total_taste_counts)
