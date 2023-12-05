@@ -192,15 +192,15 @@ class AppSatisfactionAnalytics(models.Model):
 # Model for tracking analytics for restaurants within their geographic area
 class LocalRestaurantAnalytics(models.Model):
     restaurant_id = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
-    # Limit the top 3 menu items to menu items from the same restaurant (done in Analytics Algorithm)
+    # Limit the top 3 menu items to menu items from the same restaurant
     #top_three_items = models.ManyToManyField(MenuItem, limit_choices_to={'restaurant': restaurant_id})
-    # Top 3 items based on (average raing * number of ratings)
     top_three_items = models.JSONField(null=True)
     # Total number of menu items from restaurant added to patron menu item histories
     total_items_added_to_histories = models.PositiveIntegerField()
     # Tag that led to the most menu item elimination between items
     # taste_tags_most_eliminations = models.OneToOneField(TasteTag, on_delete=models.DO_NOTHING)
     # restriction_tags_most_eliminations = models.OneToOneField(RestrictionTag, on_delete=models.DO_NOTHING)
+    # cookStyle_tags_most_eliminations = models.OneToOneField(CookStyleTag, on_delete=models.DO_NOTHING)
     # ingredient_tags_most_eliminations = models.OneToOneField(IngredientTag, on_delete=models.DO_NOTHING)
     # allergies_tags_most_eliminations = models.OneToOneField(AllergyTag, on_delete=models.DO_NOTHING)
     taste_tags_most_eliminations = models.JSONField(null=True)
@@ -284,3 +284,28 @@ class TasteTagExclusionRecord(models.Model):
     
     class Meta:
         db_table = 'TasteTagExclusionRecord'
+
+
+class LoginAnalytics(models.Model):
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    total_logins = models.IntegerField()
+    logins_since = models.IntegerField()
+    date_stamp = models.DateTimeField()
+
+    def __str__(self):
+        return f"{self.menu_item.id}: {self.tag.title} --> {self.exclusion_count}"
+
+    class Meta:
+        db_table = 'LoginAnalytics'
+
+
+class LoginRecord(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    date_stamp = models.DateTimeField()
+
+    def __str__(self):
+        return f"{self.menu_item.id}: {self.tag.title} --> {self.exclusion_count}"
+
+    class Meta:
+        db_table = 'LoginRecord'

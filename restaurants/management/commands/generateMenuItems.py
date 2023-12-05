@@ -52,7 +52,7 @@ class Command(GenerateCommand):
                 if ingredient in valid_ingredient_tag:
                     ingredients_tags.add(ingredient_indices[ingredient])
                     
-            menuItem_type = [" Bowl", " Tacos", " Noodle", " Pizza", " Warp", " Roll", " Over Rice", " Burger", " Curry" , "Fritter", " Stir-fry", " Teriyaki"]
+            menuItem_type = [" Bowl", " Tacos", " Noodle", " Pizza", " Warp", " Roll", " Over Rice", " Burger", " Curry" , " Fritter", " Stir-fry", " Teriyaki"]
             # Update the menuitem_name with 1 elements from chosen_ingredients
             menuitem_names = random.sample(chosen_ingredients, 1) + random.sample(menuItem_type, 1)
 
