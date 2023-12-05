@@ -23,12 +23,6 @@ def restaurant_analysis():
     # Past 3 Days (Data Overlap)
     latest_datestamp = timezone.now() - timedelta(days=3)
 
-    TAG_TYPES = [('allergy', rm.AllergyTag, LocalRestaurantAnalytics), 
-                 ('ingredients', rm.IngredientTag, LocalRestaurantAnalytics), 
-                 ('restrictions', rm.RestrictionTag, LocalRestaurantAnalytics),
-                 ('taste', rm.TasteTag, LocalRestaurantAnalytics),
-                 ('cook_style', rm.CookStyleTag, LocalRestaurantAnalytics)]
-
     # List storing the restaurant fields
     restaurant_data = []
 
@@ -43,7 +37,6 @@ def restaurant_analysis():
     searches = pm.PatronSearchHistory.objects.filter(search_datetime__gte=latest_datestamp)
     current_datestamp = timezone.now()
 
-    
 
     # Get all the fields for each restaurant
     for restaurant in restaurants:
@@ -51,6 +44,7 @@ def restaurant_analysis():
         data['restaurant_id'] = restaurant
         data['top_three_items'] = top_3_items_analysis(restaurant)
         data['total_items_added_to_histories'] = total_added_to_histories(restaurant, latest_datestamp)
+        tag_eliminations_analysis(restaurant, latest_datestamp)
 
         restaurant_data.append(data)
 
@@ -150,4 +144,89 @@ def top_3_items_analysis(rest):
                     #     counter = 'third'
     
     return top_3_items
-    #print(top_3_items)
+
+def tag_eliminations_analysis(rest, latest_datestamp):
+    TAG_TYPES = [#('allergy', rm.AllergyTag, LocalRestaurantAnalytics), 
+                 #('ingredients', rm.IngredientTag, LocalRestaurantAnalytics), 
+                 ('restrictions', rm.RestrictionTag, LocalRestaurantAnalytics)]
+                 #('taste', rm.TasteTag, LocalRestaurantAnalytics)]
+    
+    items = rm.MenuItem.objects.filter(restaurant = rest)
+    searches = pm.PatronSearchHistory.objects.filter(search_datetime__gte=latest_datestamp)
+
+    tag_sets = {tag_type: TagModel.objects.all().order_by('id') for tag_type, TagModel, *_ in TAG_TYPES}
+
+    # tag_exclusions = {
+    #     tag_type:{
+    #         tag: {
+    #             exclusion_count
+    #         }
+    #     }
+    # }
+
+    # tag_exclusions = {
+    #     tag_type: {
+    #         f'{item.id}': {
+    #             f'{tag.id}':0 for tag in tag_sets[tag_type]}
+    #         for item in items} 
+    #     for tag_type, *_ in TAG_TYPES
+    # }
+    total_restriction_counts = []
+    total_restrictions = []
+    
+    for search in searches:
+        # # Excluded if item has allergy tag
+        # for allergy in search.allergy_tags.all():
+        #     excluded_items = items.filter(menu_allergy_tag=allergy)
+        #     allergy_count = 0
+        #     for item in excluded_items:
+        #         tag_exclusions['allergy'][f'{item.id}'][f'{allergy.id}'] += 1
+        
+        # # Excluded if item has any of the disliked ingredients (record tags that led to it getting excluded)
+        # for ingredient in search.disliked_ingredients.all():
+        #     excluded_items = items.filter(ingredients_tag=ingredient)
+        #     disliked_ingredient_count = 0
+        #     for item in excluded_items:
+        #         tag_exclusions['ingredients'][f'{item.id}'][f'{ingredient.id}'] += 1
+
+        
+        # Excluded if item does not have restriction tag
+        for restriction in search.dietary_restriction_tags.all():
+            excluded_items = items.exclude(menu_restriction_tag=restriction)
+            #restriction_count = 0
+            if restriction in total_restrictions:
+                for i in range(len(total_restrictions)):
+                    if restriction == total_restrictions[i]:
+                        while excluded_items:
+                            total_restriction_counts[i] += 1
+            else:
+                # print('a')
+                restrictions_counts = 0
+                while excluded_items:
+                    restrictions_counts += 1
+                    # print('a')
+                total_restriction_counts.append(restrictions_counts)
+                total_restrictions.append(restriction)
+                    
+        #     for item in excluded_items:
+        #         restrictions_counts += 1
+        #     total_restriction_counts[i] = 
+        #         #tag_exclusions['restrictions'][f'{item.id}'][f'{restriction.id}'] += 1
+        # for restrict in restriction_count:
+        #     if total_restrictions[i] == restrictions[i]:
+        #         restrictions[i]
+
+
+        # Excluded if item does not have any of the taste tags (record tags that led to it getting excluded)
+        # excluded_items = items.exclude(taste_tags__in=search.patron_taste_tags.all())
+        # for item in excluded_items:
+        #     for taste in search.patron_taste_tags.all():
+        #         tag_exclusions['taste'][f'{item.id}'][f'{taste.id}'] += 1
+
+        # for taste in search.patron_taste_tags.all():
+        #     excluded_items = items.exclude(taste_tags = taste)
+        #     taste_count = 0
+        #     for item in excluded_items:
+        #         tag_exclusions['taste'][f'{item.id}'][f'{taste.id}'] += 1
+            
+    # print(total_restrictions)
