@@ -21,6 +21,10 @@ class Patron(models.Model):
     patron_taste_tag = models.ManyToManyField(TasteTag)
     calorie_level = models.PositiveIntegerField(null=True)
 
+	#Supporting information for suggestion feeds
+    #suggestion_vector = models.CharField(max_length=128,null=True)
+    profile_updated = models.BooleanField(default=True)
+
     CALORIE_LEVEL_RANGES = [
         (0, 199, 1),
         (200, 399, 2),
@@ -103,6 +107,7 @@ class PatronSearchHistory(models.Model):
         null=True,  # Allow null values
         blank=True
     )
+
     search_datetime = models.DateTimeField(auto_now_add=True)
     
     calorie_level = models.PositiveIntegerField(null=True)
@@ -154,3 +159,17 @@ class MenuItemHistory(models.Model):
 
     class Meta:
         db_table = 'MenuItemHistory'
+
+class PatronSuggestionVector(models.Model):
+    """A suggestion vector associated with a patron"""
+    patron = models.ForeignKey(User, on_delete=models.CASCADE, related_name='suggestion_vector')
+    tag_id = models.PositiveIntegerField()
+    TAG_TABLES = [("FoodTag","FoodTag"), ("TasteTag","TasteTag"), ("CookStyle","CookStyle"), ("IngredientTag","IngredientTag")]
+    tag_table = models.CharField(choices=TAG_TABLES,null=True,max_length=15)
+    rating = models.DecimalField(max_digits=8, decimal_places=7) #this value must exist
+
+    def __str__(self):
+        f'{{"id":{self.id},"username":{self.patron.username},"patron_id":{self.patron.id},"tag_table":{self.tag_table},"tag_id":{self.tag_table},"rating":{self.rating}}}'
+
+    class Meta:
+        db_table = 'PatronSuggestionVector'
