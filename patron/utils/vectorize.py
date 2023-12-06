@@ -7,7 +7,7 @@ import math
 def vectorizePatron(PatronID):
 	eater = Patron.objects.get(pk=PatronID)
 	FoodTagCount = FoodTypeTag.objects.all().count()
-	TasteTagCount = TasteTag.objdislikedects.all().count()
+	TasteTagCount = TasteTag.objects.all().count()
 	CookTagCount = CookStyleTag.objects.all().count()
 	IngredientTagCount = IngredientTag.objects.all().count()
 
@@ -20,9 +20,12 @@ def vectorizePatron(PatronID):
 
 	TagList = [0] * (FoodTagCount + TasteTagCount + CookTagCount + IngredientTagCount)
 	#first we go through the profile and set the saved preferences to 20 giving them a strong initial influence
-	for Tag in eater.taste_tags:
-		TasteList[Tag.id-1] = 20
-	for Tag in eater.disliked_ingredients:
+	#print("LOOK HERE ===========================================================================")
+	#print(eater.patron_taste_tag.values_list())
+	for Tag,name in eater.patron_taste_tag.values_list():
+		#print("tag: " + name + ", id: " + str(Tag))
+		TasteList[Tag-1] = 20
+	for Tag,name in eater.disliked_ingredients.values_list():
 		IngredientList[Tag.id-1] = -20
 	
 	MenuItemHistories = MenuItemHistory.objects.filter(patron=eater.id)	
@@ -61,7 +64,7 @@ def vectorizePatron(PatronID):
 	#compute and save normalizing value
 	inverse_sqrt = 1/math.sqrt(length)
 
-	suggestion_vector = PatronSuggestionVector.object.filter(patron=PatronID)
+	suggestion_vector = PatronSuggestionVector.objects.filter(patron=PatronID)
 
 	for i,element in enumerate(TasteList):
 		if (element == 0):
@@ -81,7 +84,7 @@ def vectorizePatron(PatronID):
 				vectorElement.rating = element * inverse_sqrt
 				vectorElement.save()
 			except (PatronSuggestionVector.DoesNotExist):
-				vectorElement = PatronSuggestionVector(tag_id=i+1,tag_table="TasteTag",rating=element * inverse_sqrt,patron=PatronID)
+				vectorElement = PatronSuggestionVector(tag_id=i+1,tag_table="TasteTag",rating=element * inverse_sqrt,patron=eater.user)
 				vectorElement.save()
 			except (PatronSuggestionVector.MultipleObjectsReturned):
 				print(f"Multiple enteries for tag_id: {i} in the TasteTag table exist.")
@@ -105,7 +108,7 @@ def vectorizePatron(PatronID):
 				vectorElement.rating = element * inverse_sqrt
 				vectorElement.save()
 			except (PatronSuggestionVector.DoesNotExist):
-				vectorElement = PatronSuggestionVector(tag_id=i+1,tag_table="CookTag",rating=element * inverse_sqrt,patron=PatronID)
+				vectorElement = PatronSuggestionVector(tag_id=i+1,tag_table="CookTag",rating=element * inverse_sqrt,patron=eater.user)
 				vectorElement.save()
 			except (PatronSuggestionVector.MultipleObjectsReturned):
 				print(f"Multiple enteries for tag_id: {i} in the FoodTag table exist.")

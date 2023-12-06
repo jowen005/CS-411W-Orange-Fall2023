@@ -134,8 +134,6 @@ class PatronSearchHistory(models.Model):
         self.calorie_level = self.calculate_calorie_level()
         super(PatronSearchHistory, self).save(*args, **kwargs)
 
-    
-
     def formatted_datetime(self):
         return self.search_datetime.strftime('%d/%m/%y %H:%M:%S')
 
