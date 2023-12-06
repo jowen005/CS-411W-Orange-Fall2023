@@ -46,13 +46,13 @@ class Command(BaseCommand):
 
 
     def add_arguments(self, parser: CommandParser):
-        parser.add_argument("userid", nargs=1, type=int)
-        parser.add_argument("userid", nargs=1, type=int)
+        parser.add_argument("email", nargs=1, type=str)
+        # parser.add_argument("userid", nargs=1, type=int)
         parser.add_argument('-n', dest='num_searches', default=1, type=int, 
                             help='Specifies a number of searches')
 
 
-    def handle(self, userid, num_searches, *args, **kwargs):
+    def handle(self, email, num_searches, *args, **kwargs):
         APP_DIR = Path(__file__).resolve().parent.parent
 
         # Tag Relation File
@@ -63,7 +63,8 @@ class Command(BaseCommand):
             self.stdout.write(self.style.ERROR(f"Input of tag relation file failed!"))
             exit()
 
-        user, profile = self.verify_user(userid[0])
+        user, profile = self.verify_email(email[0])
+        # user, profile = self.verify_user_id(userid[0])
 
         search_report = self.generate_search_traffic(user, profile, tag_relations, num_searches)
         bookmark_report = self.generate_bookmark_traffic(user)
@@ -71,8 +72,26 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS(f"{num_searches} search(es) were performed!"))
 
+    def verify_email(self, email: str):
+        try:
+            user = self.User.objects.get(email=email)
+        except self.User.DoesNotExist:
+            self.stdout.write(self.style.ERROR(f'A user with email ({email}) does not exist!'))
+            exit()
 
-    def verify_user(self, userid: int):
+        if user.user_type != 'patron':
+            self.stdout.write(self.style.ERROR(f'The user ({user.email}) with ID {user.id} is not a patron!'))
+            exit()
+
+        try:
+            profile = pm.Patron.objects.get(user=user)
+            return user, profile
+        except pm.Patron.DoesNotExist:
+            self.stdout.write(self.style.ERROR(f'This user ({user.email}) does not have an associated profile!'))
+            exit()
+
+
+    def verify_user_id(self, userid: int):
         try:
             user = self.User.objects.get(id=userid)
         except self.User.DoesNotExist:
