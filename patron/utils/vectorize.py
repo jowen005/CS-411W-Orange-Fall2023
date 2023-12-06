@@ -4,41 +4,6 @@ from patron.models import Patron, MenuItemHistory, PatronSuggestionVector
 from feedback.models import reviews
 import math
 
-def vectorizeMenuItem(MenuID):
-    
-	Item = MenuItem.objects.get(pk=MenuID)
-	FoodTagCount = FoodTypeTag.objects.all().count()
-	TasteTagCount = TasteTag.objects.all().count()
-	CookTagCount = CookStyleTag.objects.all().count()
-	IngredientTagCount = IngredientTag.objects.all().count()
-	
-	TotalTags = FoodTagCount + TasteTagCount + CookTagCount + IngredientTagCount
-
-	FoodString = "0" * FoodTagCount
-	TasteString = "0" * TasteTagCount
-	CookString = "0" * CookTagCount
-	IngredientString = "0" * IngredientTagCount
-	# RestrictionString = "0" * FoodTagCount
-	# AllergyString = "0" * FoodTagCount
-	
-	selected_tags = 2
-	FoodString[Item.food_type_tag.id-1] = '1'	
-	CookString[Item.cook_style_tags.id-1] = '1'
-	
-	for Tag in Item.taste_tags:
-		TasteString[Tag.id-1] = '1'
-		selected_tags += 1
-
-	for Tag in Item.ingredients_tag:
-		IngredientString[Tag.id-1] = '1'
-		selected_tags += 1
-
-	#Maybe I should make this a json with tag names? 
-	FinalVectorString = FoodString + ';' + TasteString + ';' + CookString + ';' + IngredientString + ';'
-	Item.suggestion_vector = FinalVectorString
-	#compute and save normalizing value
-	Item.inverse_sqrt = 1/math.sqrt(selected_tags)
-    
 def vectorizePatron(PatronID):
 	eater = Patron.objects.get(pk=PatronID)
 	FoodTagCount = FoodTypeTag.objects.all().count()
