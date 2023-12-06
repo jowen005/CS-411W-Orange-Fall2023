@@ -22,7 +22,7 @@ class Patron(models.Model):
     calorie_level = models.PositiveIntegerField(null=True)
 
 	#Supporting information for suggestion feeds
-    #suggestion_vector = models.CharField(max_length=128,null=True)
+    suggestion_vector = models.ManyToManyField(PatronSuggestionVector)
     profile_updated = models.BooleanField(default=True)
 
     CALORIE_LEVEL_RANGES = [

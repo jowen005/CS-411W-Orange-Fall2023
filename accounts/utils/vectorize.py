@@ -43,6 +43,8 @@ def vectorizeMenuItem(MenuID):
 	Item.suggestion_vector = FinalVectorString
 	#compute and save normalizing value
 	Item.inverse_sqrt = 1/math.sqrt(selected_tags)
+
+
 	
 def vectorizePatron(PatronID):
 	
@@ -102,8 +104,9 @@ def vectorizePatron(PatronID):
 	#compute and save normalizing value
 	inverse_sqrt = 1/math.sqrt(length)
 
-
-
+	old_suggestion_vector = eater.suggestion_vector
+	for i,element in enumerate(FoodList):
+		
 	eater.profile_updated = False
 	eater.save()
 	return 

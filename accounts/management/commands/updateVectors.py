@@ -22,7 +22,7 @@ class Command(BaseCommand):
         num_updated_patrons = 0
         num_updated_items = 0
 
-        outdated_patrons = Patron.objects.filter(suggestion_vector__isnull=True)
+        outdated_patrons = Patron.objects.filter(profile_updated = True)
         for patron in outdated_patrons:
             patron.save()
             num_updated_patrons += 1
