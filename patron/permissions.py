@@ -1,4 +1,16 @@
 from rest_framework.permissions import BasePermission
+from rest_framework.exceptions import PermissionDenied
+
+class IsAuthPatron(BasePermission):
+    def has_permission(self, request, view):
+        is_authenticated = request.user.is_authenticated
+        is_patron = request.user.user_type == 'patron'
+
+        if is_authenticated and is_patron:
+            return True
+        raise PermissionDenied(f"This user ({request.user.user_type}) is not an " +
+                               f"authenticated patron!")
+
 
 class IsAuthPatronAndIsUser(BasePermission):
     def has_permission(self, request, view):

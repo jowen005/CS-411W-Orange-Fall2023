@@ -1,12 +1,16 @@
 from rest_framework.response import Response
+from rest_framework.request import Request
 from rest_framework import status, viewsets
 from .utils.search import advancedSearch
 from rest_framework.serializers import ValidationError
+from rest_framework.decorators import api_view, permission_classes
 
 from . import models, serializers, permissions
 from restaurants.models import MenuItem
 from restaurants.serializers import MenuItemListSerializer
 from feedback.models import Reviews
+
+from patron.utils.generateSuggestions import generateSuggestions
 
 
 class PatronViewSet(viewsets.ModelViewSet):
@@ -208,3 +212,21 @@ class MenuItemHistoryViewSet(viewsets.ModelViewSet):
                     'error': str(ex),
                 }
                 return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(http_method_names=['GET'])
+@permission_classes([permissions.IsAuthPatron])
+def SuggestionFeedAPI(request:Request):
+
+    try:
+        patron_id = models.Patron.objects.get(user=request.user).id
+    except models.Patron.DoesNotExist:
+        response_data = {
+            'message': 'This user does not have a Patron Profile.',
+        }
+        return Response(response_data, status=status.HTTP_404_NOT_FOUND)
+
+    suggestions = generateSuggestions(patron_id)
+    serializer = MenuItemListSerializer(suggestions, many=True)
+
+    return Response(data=serializer.data, status=status.HTTP_200_OK)

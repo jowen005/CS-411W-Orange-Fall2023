@@ -12,6 +12,7 @@ router.register('', views.PatronViewSet, basename='patron')
 
 
 urlpatterns = [
+    path('suggestions/', views.SuggestionFeedAPI, name='suggestions'),
     path('', include(router.urls))
     
 ]
