@@ -13,6 +13,7 @@ import patron.models as pm
 import patron.serializers as ps
 from feedback.models import Reviews
 
+
 SEARCH_TYPES = ['quick', 'advanced']
 SEARCH_WEIGHTS = [5, 2]
 
@@ -24,6 +25,7 @@ HISTORY_WEIGHTS = [2, 1]
 
 RATING_VALUES = [0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0]
 RATING_WEIGHTS =   [1,   2,   3,   4,   5,   6,   5,   4,   3,   2,   1]
+
 
 class Command(BaseCommand):
 
@@ -45,6 +47,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser: CommandParser):
         parser.add_argument("userid", nargs=1, type=int)
+        parser.add_argument("userid", nargs=1, type=int)
         parser.add_argument('-n', dest='num_searches', default=1, type=int, 
                             help='Specifies a number of searches')
 
@@ -61,8 +64,6 @@ class Command(BaseCommand):
             exit()
 
         user, profile = self.verify_user(userid[0])
-
-
 
         search_report = self.generate_search_traffic(user, profile, tag_relations, num_searches)
         bookmark_report = self.generate_bookmark_traffic(user)
@@ -372,13 +373,10 @@ class Command(BaseCommand):
                 "rating": rating,
                 "review": self.possible_reviews[math.floor(rating)]
             }
-
             print(f'Feedback Data: {feedback_data}') #NOTE
 
             feedback_obj = Reviews.objects.create(**feedback_data)
-
             items_added.append(pm.MenuItemHistory.objects.create(patron=user, review=feedback_obj, menu_item=item))
-
             print(f'Menu Item Added: {item}') #NOTE
 
         bookmark_report = {}

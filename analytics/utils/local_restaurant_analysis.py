@@ -2,6 +2,7 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 from dataclasses import dataclass
 from django.core.serializers import serialize
+from django.db.models import Sum
 import sys
 import time
 
@@ -17,7 +18,7 @@ def driver():
 
     # Save the new analytic records in the model
     for entry in restaurant_data:
-        #print(entry)
+        # print(entry)
         obj = LocalRestaurantAnalytics.objects.create(**entry, date_stamp=current_datestamp)
         print(obj)
         print('\n')
@@ -49,7 +50,11 @@ def restaurant_analysis():
         data['restaurant_id'] = restaurant
         data['top_three_items'] = top_3_items_analysis(restaurant)
         data['total_items_added_to_histories'] = total_added_to_histories(restaurant, latest_datestamp)
-        data['allergies_tags_most_eliminations'], data['ingredient_tags_most_eliminations'], data['restriction_tags_most_eliminations'], data['taste_tags_most_eliminations'] = tag_eliminations_analysis(restaurant, latest_datestamp)
+        # data['allergies_tags_most_eliminations'], data['ingredient_tags_most_eliminations'], data['restriction_tags_most_eliminations'], data['taste_tags_most_eliminations'] = tag_eliminations_analysis(restaurant, latest_datestamp)
+        data['allergies_tags_most_eliminations'] = top_tag_analysis(restaurant, AllergyTagExclusionRecord)
+        data['ingredient_tags_most_eliminations'] = top_tag_analysis(restaurant, IngredientTagExclusionRecord)
+        data['restriction_tags_most_eliminations'] = top_tag_analysis(restaurant, RestrictionTagExclusionRecord)
+        data['taste_tags_most_eliminations'] = top_tag_analysis(restaurant, TasteTagExclusionRecord)
         #tag_eliminations_analysis(restaurant, latest_datestamp)
 
         restaurant_data.append(data)
@@ -150,6 +155,24 @@ def top_3_items_analysis(rest):
                     #     counter = 'third'
     
     return top_3_items
+
+def top_tag_analysis(rest, ExclusionRecord):
+    queryset = ExclusionRecord.objects.filter(
+        menu_item__restaurant=rest
+    ).values('tag__title').annotate(total=Sum('exclusion_count')).order_by('-total')
+
+    top_tag = queryset.first()
+
+    if top_tag is not None:
+        top_tag_data = {
+            "tag": top_tag['tag__title'],
+            "eliminations": top_tag['total']
+        }
+    else:
+        top_tag_data = "N/A"
+
+    return top_tag_data
+
 
 def tag_eliminations_analysis(rest, latest_datestamp):
     # TAG_TYPES = [('allergy', rm.AllergyTag, LocalRestaurantAnalytics), 
