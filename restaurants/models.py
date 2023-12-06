@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from accounts.utils.vectorize import vectorizeMenuItem
 
 User = get_user_model()
 
@@ -195,40 +196,40 @@ class MenuItem(models.Model):
     class Meta:
         db_table = 'MenuItems'
 
-    def vectorizeMenuItem(MenuItemID):
+    # def vectorizeMenuItem(MenuItemID):
 
-        Item = MenuItem.objects.get(id=MenuItemID)
-        FoodTagCount = FoodTypeTag.objects().all.count()
-        TasteTagCount = TasteTag.objects().all.count()
-        CookTagCount = CookStyleTag.objects().all.count()
-        # RestrictionTagCount = RestrictionTag.objects().all.count()
-        # AllergyTagCount = AllergyTag.objects().all.count()
-        IngredientTagCount = IngredientTag.objects().all.count()
+    #     Item = MenuItem.objects.get(id=MenuItemID)
+    #     FoodTagCount = FoodTypeTag.objects().all.count()
+    #     TasteTagCount = TasteTag.objects().all.count()
+    #     CookTagCount = CookStyleTag.objects().all.count()
+    #     # RestrictionTagCount = RestrictionTag.objects().all.count()
+    #     # AllergyTagCount = AllergyTag.objects().all.count()
+    #     IngredientTagCount = IngredientTag.objects().all.count()
         
-        TotalTags = FoodTagCount + TasteTagCount + CookTagCount + IngredientTagCount
+    #     TotalTags = FoodTagCount + TasteTagCount + CookTagCount + IngredientTagCount
 
-        FoodString = "0" * FoodTagCount
-        TasteString = "0" * TasteTagCount
-        CookString = "0" * CookTagCount
-        IngredientString = "0" * IngredientTagCount
-        # RestrictionString = "0" * FoodTagCount
-        # AllergyString = "0" * FoodTagCount
+    #     FoodString = "0" * FoodTagCount
+    #     TasteString = "0" * TasteTagCount
+    #     CookString = "0" * CookTagCount
+    #     IngredientString = "0" * IngredientTagCount
+    #     # RestrictionString = "0" * FoodTagCount
+    #     # AllergyString = "0" * FoodTagCount
         
-        selected_tags = 2
-        FoodString[Item.food_type_tag-1] = '1'    
-        CookString[Item.cook_style_tags-1] = '1'
+    #     selected_tags = 2
+    #     FoodString[Item.food_type_tag-1] = '1'    
+    #     CookString[Item.cook_style_tags-1] = '1'
         
-        for Tag in Item.taste_tags:
-            TasteString[Tag.id-1] = '1'
-            selected_tags += 1
+    #     for Tag in Item.taste_tags:
+    #         TasteString[Tag.id-1] = '1'
+    #         selected_tags += 1
 
-        for Tag in Item.ingredients_tag:
-            IngredientString[Tag.id-1] = '1'
-            selected_tags += 1
+    #     for Tag in Item.ingredients_tag:
+    #         IngredientString[Tag.id-1] = '1'
+    #         selected_tags += 1
 
-        #Maybe I should make this a json with tag names? 
-        FinalVectorString = FoodString + ';' + TasteString + ';' + CookString + ';' + IngredientString + ';'
-        Item.suggestion_vector = FinalVectorString
-        #compute and save normalizing value
-        Item.inverse_sqrt = 1/math.sqrt(selected_tags)
-        Item.save()  
+    #     #Maybe I should make this a json with tag names? 
+    #     FinalVectorString = FoodString + ';' + TasteString + ';' + CookString + ';' + IngredientString + ';'
+    #     Item.suggestion_vector = FinalVectorString
+    #     #compute and save normalizing value
+    #     Item.inverse_sqrt = 1/math.sqrt(selected_tags)
+    #     Item.save()  
