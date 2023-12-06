@@ -1,16 +1,25 @@
 from restaurants.models import MenuItem
 from restaurants.models import FoodTypeTag,TasteTag,CookStyleTag,RestrictionTag,AllergyTag,IngredientTag
-from patrons.models import Patron, MenuItemHistory, PatronSuggestionVector
+from patron.models import Patron, MenuItemHistory, PatronSuggestionVector
 import math
 
-def vectorizeMenuItem(MenuID):
-	Item = MenuItem.objects.get(pk=this_object_id)
-	FoodTagCount = FoodTypeTag.objects().all.count()
-	TasteTagCount = TasteTag.objects().all.count()
-	CookTagCount = CookStyleTag.objects().all.count()
+def vectorizeMenuItem(menu_item, tag_counts):
+	Item = menu_item
+	FoodTagCount = tag_counts['FoodTypeTag']
+	TasteTagCount = tag_counts['TasteTag']
+	CookTagCount = tag_counts['CookStyleTag']
+	IngredientTagCount = tag_counts['IngredientTag']
+
+
+
+	# Item = MenuItem.objects.get(pk=MenuID)
+	# FoodTagCount = FoodTypeTag.objects().all.count()
+	# TasteTagCount = TasteTag.objects().all.count()
+	# CookTagCount = CookStyleTag.objects().all.count()
+	# IngredientTagCount = IngredientTag.objects().all.count()
 	# RestrictionTagCount = RestrictionTag.objects().all.count()
 	# AllergyTagCount = AllergyTag.objects().all.count()
-	IngredientTagCount = IngredientTag.objects().all.count()
+	
 	
 	TotalTags = FoodTagCount + TasteTagCount + CookTagCount + IngredientTagCount
 
