@@ -22,7 +22,7 @@ class Patron(models.Model):
     calorie_level = models.PositiveIntegerField(null=True)
 
 	#Supporting information for suggestion feeds
-    suggestion_vector = models.ManyToManyField(PatronSuggestionVector)
+    #suggestion_vector = models.ManyToManyField(PatronSuggestionVector)
     profile_updated = models.BooleanField(default=True)
 
     CALORIE_LEVEL_RANGES = [
@@ -164,7 +164,7 @@ class PatronSuggestionVector(models.Model):
     """A suggestion vector associated with a patron"""
     patron = models.ForeignKey(User, on_delete=models.CASCADE, related_name='suggestion_vector')
     tag_id = models.PositiveIntegerField()
-    TAG_TABLES = [("FoodTag","FoodTag"), ("TasteTag","TasteTag"), ("CookStyle","CookStyle"), ("IngredientTag","IngredientTag")]
+    TAG_TABLES = [("FoodTag","FoodTag"), ("TasteTag","TasteTag"), ("CookTag","CookTag"), ("IngredientTag","IngredientTag")]
     tag_table = models.CharField(choices=TAG_TABLES,null=True,max_length=15)
     rating = models.DecimalField(max_digits=8, decimal_places=7) #this value must exist
 

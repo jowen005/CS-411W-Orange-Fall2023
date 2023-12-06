@@ -30,7 +30,7 @@ def generateSuggestions(PatronID):
 					vectorSum += int(itemVector[0][suggestion.tag_id - 1] * Item.inverse_sqrt) * suggestion.rating
 				case "TasteTag":
 					vectorSum += int(itemVector[1][suggestion.tag_id - 1] * Item.inverse_sqrt) * suggestion.rating
-				case "CookStyle":
+				case "CookTag":
 					vectorSum += int(itemVector[2][suggestion.tag_id - 1] * Item.inverse_sqrt) * suggestion.rating
 				case "IngredientTag":
 					vectorSum += int(itemVector[3][suggestion.tag_id - 1] * Item.inverse_sqrt) * suggestion.rating

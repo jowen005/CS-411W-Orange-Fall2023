@@ -151,9 +151,9 @@ class MenuItem(models.Model):
     menu_allergy_tag = models.ManyToManyField(AllergyTag)
     ingredients_tag = models.ManyToManyField(IngredientTag)
 
-	#Supporting information for suggestion feeds
+    #Supporting information for suggestion feeds
     suggestion_vector = models.CharField(max_length=128,null=True)
-    inverse_sqrt = models.DecimalField(max_digits=10, decimal_places=8)
+    inverse_sqrt = models.DecimalField(max_digits=10, decimal_places=8, default=1)
     
     time_of_day_available = models.CharField(max_length=20, choices=[
         ('Breakfast', 'Breakfast'),
@@ -186,13 +186,49 @@ class MenuItem(models.Model):
 
     def save(self, *args, **kwargs):
         self.calorie_level = self.calculate_calorie_level()
-        accounts.utils.vectorizeMenuItem(self.id)
+        self.vectorizeMenuItem(MenuItemID=1)
         super(MenuItem, self).save(*args, **kwargs)
-        
-		
 
     def __str__(self):
         return self.item_name
 
     class Meta:
         db_table = 'MenuItems'
+
+    def vectorizeMenuItem(MenuItemID):
+
+        Item = MenuItem.objects.get(id=MenuItemID)
+        FoodTagCount = FoodTypeTag.objects().all.count()
+        TasteTagCount = TasteTag.objects().all.count()
+        CookTagCount = CookStyleTag.objects().all.count()
+        # RestrictionTagCount = RestrictionTag.objects().all.count()
+        # AllergyTagCount = AllergyTag.objects().all.count()
+        IngredientTagCount = IngredientTag.objects().all.count()
+        
+        TotalTags = FoodTagCount + TasteTagCount + CookTagCount + IngredientTagCount
+
+        FoodString = "0" * FoodTagCount
+        TasteString = "0" * TasteTagCount
+        CookString = "0" * CookTagCount
+        IngredientString = "0" * IngredientTagCount
+        # RestrictionString = "0" * FoodTagCount
+        # AllergyString = "0" * FoodTagCount
+        
+        selected_tags = 2
+        FoodString[Item.food_type_tag-1] = '1'    
+        CookString[Item.cook_style_tags-1] = '1'
+        
+        for Tag in Item.taste_tags:
+            TasteString[Tag.id-1] = '1'
+            selected_tags += 1
+
+        for Tag in Item.ingredients_tag:
+            IngredientString[Tag.id-1] = '1'
+            selected_tags += 1
+
+        #Maybe I should make this a json with tag names? 
+        FinalVectorString = FoodString + ';' + TasteString + ';' + CookString + ';' + IngredientString + ';'
+        Item.suggestion_vector = FinalVectorString
+        #compute and save normalizing value
+        Item.inverse_sqrt = 1/math.sqrt(selected_tags)
+        Item.save()  

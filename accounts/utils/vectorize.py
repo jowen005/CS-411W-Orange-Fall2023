@@ -3,12 +3,7 @@ from restaurants.models import FoodTypeTag,TasteTag,CookStyleTag,RestrictionTag,
 from patrons.models import Patron, MenuItemHistory, PatronSuggestionVector
 import math
 
-# def vectorize():
-# 	#This is an initialization function and should only be run if new tags are added or to initialize the database
-# 	MenuItems = MenuItem.objects().all()
-
 def vectorizeMenuItem(MenuID):
-	
 	Item = MenuItem.objects.get(pk=this_object_id)
 	FoodTagCount = FoodTypeTag.objects().all.count()
 	TasteTagCount = TasteTag.objects().all.count()
@@ -43,7 +38,7 @@ def vectorizeMenuItem(MenuID):
 	Item.suggestion_vector = FinalVectorString
 	#compute and save normalizing value
 	Item.inverse_sqrt = 1/math.sqrt(selected_tags)
-
+	Item.save()
 
 	
 def vectorizePatron(PatronID):
@@ -104,9 +99,104 @@ def vectorizePatron(PatronID):
 	#compute and save normalizing value
 	inverse_sqrt = 1/math.sqrt(length)
 
-	old_suggestion_vector = eater.suggestion_vector
+	suggestion_vector = PatronSuggestionVector.object.filter(patron=PatronID)
+
+	for i,element in enumerate(TasteList):
+		if (element == 0):
+			try:
+				vectorElement = suggestion_vector.get(tag_table="TasteTag",tag_id=i+1)
+				vectorElement.rating = 0
+				vectorElement.save()
+			except (PatronSuggestionVector.DoesNotExist):
+				#nothing needs to be done, idk wy get doesn't just return null if no element matchs but I don't make the rules
+				pass
+			except (PatronSuggestionVector.MultipleObjectsReturned):
+				print(f"Multiple enteries for tag_id: {i} in the TasteTag table exist.")
+				print("Something has gone terribly wrong and the database needs rebuilt.")
+		else:
+			try:
+				vectorElement = suggestion_vector.get(tag_table="TasteTag",tag_id=i+1)
+				vectorElement.rating = element * inverse_sqrt
+				vectorElement.save()
+			except (PatronSuggestionVector.DoesNotExist):
+				vectorElement = PatronSuggestionVector(tag_id=i+1,tag_table="TasteTag",rating=element * inverse_sqrt,patron=PatronID)
+				vectorElement.save()
+			except (PatronSuggestionVector.MultipleObjectsReturned):
+				print(f"Multiple enteries for tag_id: {i} in the TasteTag table exist.")
+				print("Something has gone terribly wrong and the database needs rebuilt.")
+
+	for i,element in enumerate(CookList):
+		if (element == 0):
+			try:
+				vectorElement = suggestion_vector.get(tag_table="CookStyle",tag_id=i+1)
+				vectorElement.rating = 0
+				vectorElement.save()
+			except (PatronSuggestionVector.DoesNotExist):
+				#nothing needs to be done, idk wy get doesn't just return null if no element matchs but I don't make the rules
+				pass
+			except (PatronSuggestionVector.MultipleObjectsReturned):
+				print(f"Multiple enteries for tag_id: {i} in the CookTag table exist.")
+				print("Something has gone terribly wrong and the database needs rebuilt.")
+		else:
+			try:
+				vectorElement = suggestion_vector.get(tag_table="CookTag",tag_id=i+1)
+				vectorElement.rating = element * inverse_sqrt
+				vectorElement.save()
+			except (PatronSuggestionVector.DoesNotExist):
+				vectorElement = PatronSuggestionVector(tag_id=i+1,tag_table="CookTag",rating=element * inverse_sqrt,patron=PatronID)
+				vectorElement.save()
+			except (PatronSuggestionVector.MultipleObjectsReturned):
+				print(f"Multiple enteries for tag_id: {i} in the FoodTag table exist.")
+				print("Something has gone terribly wrong and the database needs rebuilt.")
+
 	for i,element in enumerate(FoodList):
-		
+		if (element == 0):
+			try:
+				vectorElement = suggestion_vector.get(tag_table="FoodTag",tag_id=i+1)
+				vectorElement.rating = 0
+				vectorElement.save()
+			except (PatronSuggestionVector.DoesNotExist):
+				#nothing needs to be done, idk wy get doesn't just return null if no element matchs but I don't make the rules
+				pass
+			except (PatronSuggestionVector.MultipleObjectsReturned):
+				print(f"Multiple enteries for tag_id: {i} in the FoodTag table exist.")
+				print("Something has gone terribly wrong and the database needs rebuilt.")
+		else:
+			try:
+				vectorElement = suggestion_vector.get(tag_table="FoodTag",tag_id=i+1)
+				vectorElement.rating = element * inverse_sqrt
+				vectorElement.save()
+			except (PatronSuggestionVector.DoesNotExist):
+				vectorElement = PatronSuggestionVector(tag_id=i+1,tag_table="FoodTag",rating=element * inverse_sqrt,patron=PatronID)
+				vectorElement.save()
+			except (PatronSuggestionVector.MultipleObjectsReturned):
+				print(f"Multiple enteries for tag_id: {i} in the FoodTag table exist.")
+				print("Something has gone terribly wrong and the database needs rebuilt.")
+
+	for i,element in enumerate(IngredientList):
+		if (element == 0):
+			try:
+				vectorElement = suggestion_vector.get(tag_table="IngredientTag",tag_id=i+1)
+				vectorElement.rating = 0
+				vectorElement.save()
+			except (PatronSuggestionVector.DoesNotExist):
+				#nothing needs to be done, idk wy get doesn't just return null if no element matchs but I don't make the rules
+				pass
+			except (PatronSuggestionVector.MultipleObjectsReturned):
+				print(f"Multiple enteries for tag_id: {i} in the IngredientTag table exist.")
+				print("Something has gone terribly wrong and the database needs rebuilt.")
+		else:
+			try:
+				vectorElement = suggestion_vector.get(tag_table="IngredientTag",tag_id=i+1)
+				vectorElement.rating = element * inverse_sqrt
+				vectorElement.save()
+			except (PatronSuggestionVector.DoesNotExist):
+				vectorElement = PatronSuggestionVector(tag_id=i+1,tag_table="IngredientTag",rating=element * inverse_sqrt,patron=PatronID)
+				vectorElement.save()
+			except (PatronSuggestionVector.MultipleObjectsReturned):
+				print(f"Multiple enteries for tag_id: {i} in the IngredientTag table exist.")
+				print("Something has gone terribly wrong and the database needs rebuilt.")
+
 	eater.profile_updated = False
 	eater.save()
 	return 
