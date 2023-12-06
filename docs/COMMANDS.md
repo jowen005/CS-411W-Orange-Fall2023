@@ -18,11 +18,11 @@
 * **python3 manage.py addMenuItems _int_** --> randomly generates and loads a specified number of menu items
 * **python3 manage.py addPatrons _int_** --> randomly generates and loads a specified number of patrons
 
-* **python3 manage.py generatePatronTraffic _patronid_** --> randomly simulates patron traffic with 1 search (default) or a specified number of times (-n _int_). Simulated actions include searching, bookmarking, submitting feedback, and adding to menu item history.
+* **python3 manage.py generatePatronTraffic _patronEmail_** --> randomly simulates patron traffic with 1 search (default) or a specified number of times (-n _int_). Simulated actions include searching, bookmarking, submitting feedback, and adding to menu item history.
 
 * **python3 manage.py updateCalorieLevels** --> manually updates the calorie levels of all menu items, patrons, and searches.
-
 * **python3 manage.py updateFeedback** --> manually updates the patron names associated with all reviews.
+* **python3 manage.py updateVectors** --> manually updates the tag vectors of menu items and patrons.
 
 * **python3 manage.py manualAnalytics** --> manually triggers the execution of all analytic algorithms
 
@@ -66,9 +66,11 @@ Note: See NOTES_DOCKER.md for more information
   * **python3 manage.py generatePatrons _int_** --> generates randomized patron information into patronBuffer.json
   * **python3 manage.py loadPatrons** --> loads patron json objects from patronBuffer.json (default) or a specified file (-f=_filepath_)
 
-* **python3 manage.py generatePatronTraffic _patronemail_** --> randomly simulates patron traffic with 1 search (default) or a specified number of times (-n _int_). Simulated actions include searching, bookmarking, submitting feedback, and adding to menu item history.
+* **python3 manage.py generatePatronTraffic _patronEmail_** --> randomly simulates patron traffic with 1 search (default) or a specified number of times (-n _int_). Simulated actions include searching, bookmarking, submitting feedback, and adding to menu item history.
 
 * **python3 manage.py updateCalorieLevels** --> manually updates the calorie levels of all menu items, patrons, and searches.
+* **python3 manage.py updateFeedback** --> manually updates the patron names associated with all reviews.
+* **python3 manage.py updateVectors** --> manually updates the tag vectors of menu items and patrons.
 
 * **python3 manage.py manualAnalytics** --> manually triggers the execution of all analytic algorithms
 
