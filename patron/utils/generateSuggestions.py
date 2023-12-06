@@ -14,7 +14,7 @@ def generateSuggestions(PatronID):
 	MenuItems = MenuItems.filter(menu_restriction_tag__in = restrictions)
 	patron_suggestion_vector = PatronSuggestionVector.objects.filter(patron = PatronID)
 
-	TagsCount = FoodTypeTag.objects.all().count() + TasteTag.objdislikedects.all().count() + CookStyleTag.objects.all().count() + IngredientTag.objects.all().count()
+	TagsCount = FoodTypeTag.objects.all().count() + TasteTag.objects.all().count() + CookStyleTag.objects.all().count() + IngredientTag.objects.all().count()
 	
 	itemDictionary = PriorityQueue()
 	#python's priority queue implementation has log(n) time complexity and since this list needs to be sorted anyway which sorts in nlog(n) time
@@ -25,14 +25,14 @@ def generateSuggestions(PatronID):
 		vectorSum = 0
 		#this loop takes the dotproduct between the menuItem's suggestion Vector and the patron's suggestion Vector
 		for suggestion in patron_suggestion_vector:
-			match(suggestion.tag_table):
-				case "FoodTag":
+			table = suggestion.tag_table
+			if(table == "FoodTag"):
 					vectorSum += int(itemVector[0][suggestion.tag_id - 1] * Item.inverse_sqrt) * suggestion.rating
-				case "TasteTag":
+			elif(table == "TasteTag"):
 					vectorSum += int(itemVector[1][suggestion.tag_id - 1] * Item.inverse_sqrt) * suggestion.rating
-				case "CookTag":
+			elif(table == "CookTag"):
 					vectorSum += int(itemVector[2][suggestion.tag_id - 1] * Item.inverse_sqrt) * suggestion.rating
-				case "IngredientTag":
+			elif(table == "IngredientTag"):
 					vectorSum += int(itemVector[3][suggestion.tag_id - 1] * Item.inverse_sqrt) * suggestion.rating
 		#because some precision is lost when storing the suggestion vectors the values might be slightly above 1 or below -1 so we'll clip the values
 		#the error will never be significant because our precision is about ±0.00000001

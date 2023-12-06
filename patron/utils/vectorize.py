@@ -1,7 +1,7 @@
 from restaurants.models import MenuItem
 from restaurants.models import FoodTypeTag,TasteTag,CookStyleTag,RestrictionTag,AllergyTag,IngredientTag
 from patron.models import Patron, MenuItemHistory, PatronSuggestionVector
-from feedback.models import reviews
+from feedback.models import Reviews
 import math
 
 def vectorizePatron(PatronID):
