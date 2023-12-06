@@ -189,9 +189,10 @@ class MenuItem(models.Model):
 
     def save(self, *args, **kwargs):
         self.calorie_level = self.calculate_calorie_level()
-        self.vectorizeMenuItem()
+        #self.vectorizeMenuItem()
         # self.prep_for_vector()
         super(MenuItem, self).save(*args, **kwargs)
+        self.vectorizeMenuItem()
 
     def __str__(self):
         return self.item_name 
