@@ -1,16 +1,16 @@
 from restaurants.models import MenuItem
 from restaurants.models import FoodTypeTag,TasteTag,CookStyleTag,RestrictionTag,AllergyTag,IngredientTag
-from patrons.models import Patron, MenuItemHistory, PatronSuggestionVector
+from patron.models import Patron, MenuItemHistory, PatronSuggestionVector
+from feedback.models import reviews
 import math
 
 def vectorizeMenuItem(MenuID):
-	Item = MenuItem.objects.get(pk=this_object_id)
-	FoodTagCount = FoodTypeTag.objects().all.count()
-	TasteTagCount = TasteTag.objects().all.count()
-	CookTagCount = CookStyleTag.objects().all.count()
-	# RestrictionTagCount = RestrictionTag.objects().all.count()
-	# AllergyTagCount = AllergyTag.objects().all.count()
-	IngredientTagCount = IngredientTag.objects().all.count()
+    
+	Item = MenuItem.objects.get(pk=MenuID)
+	FoodTagCount = FoodTypeTag.objects.all().count()
+	TasteTagCount = TasteTag.objects.all().count()
+	CookTagCount = CookStyleTag.objects.all().count()
+	IngredientTagCount = IngredientTag.objects.all().count()
 	
 	TotalTags = FoodTagCount + TasteTagCount + CookTagCount + IngredientTagCount
 
@@ -22,8 +22,8 @@ def vectorizeMenuItem(MenuID):
 	# AllergyString = "0" * FoodTagCount
 	
 	selected_tags = 2
-	FoodString[Item.food_type_tag-1] = '1'	
-	CookString[Item.cook_style_tags-1] = '1'
+	FoodString[Item.food_type_tag.id-1] = '1'	
+	CookString[Item.cook_style_tags.id-1] = '1'
 	
 	for Tag in Item.taste_tags:
 		TasteString[Tag.id-1] = '1'
@@ -38,13 +38,10 @@ def vectorizeMenuItem(MenuID):
 	Item.suggestion_vector = FinalVectorString
 	#compute and save normalizing value
 	Item.inverse_sqrt = 1/math.sqrt(selected_tags)
-	Item.save()
-
-	
+    
 def vectorizePatron(PatronID):
-	
 	eater = Patron.objects.get(pk=PatronID)
-	CookTagCountFoodTagCount = FoodTypeTag.objects.all().count()
+	FoodTagCount = FoodTypeTag.objects.all().count()
 	TasteTagCount = TasteTag.objdislikedects.all().count()
 	CookTagCount = CookStyleTag.objects.all().count()
 	IngredientTagCount = IngredientTag.objects.all().count()
@@ -72,9 +69,9 @@ def vectorizePatron(PatronID):
 		Item = History.menu_item
 		itemVector = Item.suggestion_vector
 		rating = float(patronReviews.filter(menu_item=Item).orderby("-review_datetime").values_list("rating",flat=True)[0])
-		if itemVector is NULL:
+		if itemVector is None:
 			#somehow this menuitem isn't properly initialized, initialize it now and move along
-			Menuitem.save()
+			Item.save()
 		TagStrings = itemVector.split(";")
 
 		for I,bit in enumerate(TagStrings[0]):
