@@ -17,9 +17,9 @@ def driver():
 
     # Save the new analytic records in the model
     for entry in restaurant_data:
-        print(entry)
-        #obj = LocalRestaurantAnalytics.objects.create(**entry, date_stamp=current_datestamp)
-        #print(obj)
+        #print(entry)
+        obj = LocalRestaurantAnalytics.objects.create(**entry, date_stamp=current_datestamp)
+        print(obj)
         print('\n')
 
 
