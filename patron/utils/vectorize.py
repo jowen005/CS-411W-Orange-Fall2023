@@ -1,59 +1,12 @@
 from restaurants.models import MenuItem
 from restaurants.models import FoodTypeTag,TasteTag,CookStyleTag,RestrictionTag,AllergyTag,IngredientTag
 from patron.models import Patron, MenuItemHistory, PatronSuggestionVector
+from feedback.models import reviews
 import math
 
-def vectorizeMenuItem(menu_item, tag_counts):
-	Item = menu_item
-	FoodTagCount = tag_counts['FoodTypeTag']
-	TasteTagCount = tag_counts['TasteTag']
-	CookTagCount = tag_counts['CookStyleTag']
-	IngredientTagCount = tag_counts['IngredientTag']
-
-
-
-	# Item = MenuItem.objects.get(pk=MenuID)
-	# FoodTagCount = FoodTypeTag.objects().all.count()
-	# TasteTagCount = TasteTag.objects().all.count()
-	# CookTagCount = CookStyleTag.objects().all.count()
-	# IngredientTagCount = IngredientTag.objects().all.count()
-	# RestrictionTagCount = RestrictionTag.objects().all.count()
-	# AllergyTagCount = AllergyTag.objects().all.count()
-	
-	
-	TotalTags = FoodTagCount + TasteTagCount + CookTagCount + IngredientTagCount
-
-	FoodString = "0" * FoodTagCount
-	TasteString = "0" * TasteTagCount
-	CookString = "0" * CookTagCount
-	IngredientString = "0" * IngredientTagCount
-	# RestrictionString = "0" * FoodTagCount
-	# AllergyString = "0" * FoodTagCount
-	
-	selected_tags = 2
-	FoodString[Item.food_type_tag-1] = '1'	
-	CookString[Item.cook_style_tags-1] = '1'
-	
-	for Tag in Item.taste_tags:
-		TasteString[Tag.id-1] = '1'
-		selected_tags += 1
-
-	for Tag in Item.ingredients_tag:
-		IngredientString[Tag.id-1] = '1'
-		selected_tags += 1
-
-	#Maybe I should make this a json with tag names? 
-	FinalVectorString = FoodString + ';' + TasteString + ';' + CookString + ';' + IngredientString + ';'
-	Item.suggestion_vector = FinalVectorString
-	#compute and save normalizing value
-	Item.inverse_sqrt = 1/math.sqrt(selected_tags)
-	Item.save()
-
-	
 def vectorizePatron(PatronID):
-	
 	eater = Patron.objects.get(pk=PatronID)
-	CookTagCountFoodTagCount = FoodTypeTag.objects.all().count()
+	FoodTagCount = FoodTypeTag.objects.all().count()
 	TasteTagCount = TasteTag.objdislikedects.all().count()
 	CookTagCount = CookStyleTag.objects.all().count()
 	IngredientTagCount = IngredientTag.objects.all().count()
@@ -81,9 +34,9 @@ def vectorizePatron(PatronID):
 		Item = History.menu_item
 		itemVector = Item.suggestion_vector
 		rating = float(patronReviews.filter(menu_item=Item).orderby("-review_datetime").values_list("rating",flat=True)[0])
-		if itemVector is NULL:
+		if itemVector is None:
 			#somehow this menuitem isn't properly initialized, initialize it now and move along
-			Menuitem.save()
+			Item.save()
 		TagStrings = itemVector.split(";")
 
 		for I,bit in enumerate(TagStrings[0]):

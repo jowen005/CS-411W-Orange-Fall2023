@@ -1,6 +1,6 @@
 from patron.models import Patron, PatronSuggestionVector
 from restaurants.models import MenuItem
-from accounts.utils.vectorize import vectorizePatron
+from patron.utils.vectorize import vectorizePatron
 from queue import PriorityQueue
 
 def generateSuggestions(PatronID):
