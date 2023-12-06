@@ -3,6 +3,7 @@ from . import models
 from django.contrib.auth import get_user_model
 import restaurants.serializers as rs
 import restaurants.models as rm
+import accounts.serializers as acs
 
 User = get_user_model()
 
@@ -89,9 +90,7 @@ class OverallFilterAnalyticsSerializer(serializers.ModelSerializer):
 
 # Menu Item Performance Analytics Serializers
 class MenuItemPerformanceAnalyticsSerializer(serializers.ModelSerializer):
-    menuItem_id = rs.MenuItemListSerializer()
-    # menuItem_id = rs.MenuItemGetSerializer()
-    # menuItem_id = rs.MenuItemSerializer()      # Or this because it would return everything but with tag IDs
+    menuItem_id = rs.MenuItemNameSerializer()
     average_rating = serializers.DecimalField(
         max_digits=8,  # Total number of digits
         decimal_places=2,  # Maximum of 2 decimal places
@@ -115,21 +114,30 @@ class AppSatisfactionAnalyticsSerializer(serializers.ModelSerializer):
         model = models.AppSatisfactionAnalytics
         fields = '__all__'
 
-# Loca Restaurant Analytics Serializer
+# Local Restaurant Analytics Serializer
 class LocalRestaurantAnalyticsSerializer(serializers.ModelSerializer):
-    restaurant_id = rs.RestaurantListSerializer
-    top_three_items = serializers.PrimaryKeyRelatedField(queryset=rm.MenuItem.objects.all(), many=True)
-    taste_tags_most_eliminations = serializers.PrimaryKeyRelatedField(queryset=rm.TasteTag.objects.all())
-    restriction_tags_most_eliminations = serializers.PrimaryKeyRelatedField(queryset=rm.RestrictionTag.objects.all())
-    cookStyle_tags_most_eliminations = serializers.PrimaryKeyRelatedField(queryset=rm.CookStyleTag.objects.all())
-    ingredient_tags_most_eliminations = serializers.PrimaryKeyRelatedField(queryset=rm.IngredientTag.objects.all())
-    allergies_tags_most_eliminations = serializers.PrimaryKeyRelatedField(queryset=rm.AllergyTag.objects.all())
+    restaurant_id = rs.RestaurantListSerializer()
+    #top_three_items = serializers.PrimaryKeyRelatedField(queryset=rm.MenuItem.objects.all(), many=True)
+    # taste_tags_most_eliminations = serializers.PrimaryKeyRelatedField(queryset=rm.TasteTag.objects.all())
+    # restriction_tags_most_eliminations = serializers.PrimaryKeyRelatedField(queryset=rm.RestrictionTag.objects.all())
+    # cookStyle_tags_most_eliminations = serializers.PrimaryKeyRelatedField(queryset=rm.CookStyleTag.objects.all())
+    # ingredient_tags_most_eliminations = serializers.PrimaryKeyRelatedField(queryset=rm.IngredientTag.objects.all())
+    # allergies_tags_most_eliminations = serializers.PrimaryKeyRelatedField(queryset=rm.AllergyTag.objects.all())
 
     class Meta:
         model = models.LocalRestaurantAnalytics
-        fields = ['id', 'restaurant_id', 'top_three_items', 'total_items_added_to_histories', 'taste_tags_most_eliminations',
-                  'restriction_tags_most_eliminations', 'cookStyle_tags_most_eliminations', 'ingredient_tags_most_eliminations', 
-                  'allergies_tags_most_eliminations', 'date_stamp']
+        fields = '__all__'
+        # fields = ['id', 'restaurant_id', 'top_three_items', 'total_items_added_to_histories', 'taste_tags_most_eliminations',
+        #           'restriction_tags_most_eliminations', 'cookStyle_tags_most_eliminations', 'ingredient_tags_most_eliminations', 
+        #           'allergies_tags_most_eliminations', 'date_stamp']
+
+# Login Analytics Serializer
+class LoginAnalyticsSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(max_length=80)
+
+    class Meta:
+        model = models.LoginAnalytics
+        exclude = ['user']
 
 # Made the only serializers available to be the GET-styled serializers
 # So commented out the others

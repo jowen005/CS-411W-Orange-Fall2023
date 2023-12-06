@@ -1,6 +1,8 @@
 from rest_framework.permissions import BasePermission
 from restaurants.models import Restaurant, MenuItem
 
+from rest_framework.exceptions import PermissionDenied
+
 class FeedbackPermission(BasePermission):
     def has_permission(self, request, view):
         is_authenticated = request.user.is_authenticated 
@@ -9,7 +11,7 @@ class FeedbackPermission(BasePermission):
             
             # Anyone can list menu item reviews (lists all reviews for a specific menu item)
             if view.action == 'list':
-                return True
+                raise PermissionDenied(f"This action is not allowed ({view.action})!")        
 
             # Patrons can perform other actions on their data
             if request.user.user_type == 'patron':
@@ -19,7 +21,20 @@ class FeedbackPermission(BasePermission):
                     obj = view.get_object()
                     return obj.patron == request.user
                 
-        return False
+            raise PermissionDenied(f'This user is not a valid authenticated patron!')
+                
+        raise PermissionDenied(f'This user is not authenticated!')
+    
+
+class IsAuth(BasePermission):
+    def has_permission(self, request, view):
+        is_authenticated = request.user.is_authenticated
+
+        if is_authenticated:
+            return True
+
+        raise PermissionDenied(f'This user is not authenticated!')
+        
     
 
 class AdminReadNonAdminWrite(BasePermission):

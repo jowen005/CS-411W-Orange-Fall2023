@@ -12,6 +12,6 @@ router.register('', views.ReviewViewSet, basename='feedback')
 
 urlpatterns = [
     # path('tag_overview/', views.tag_overview, name='analytics'),
-    path('', include(router.urls))
-    
+    path('', include(router.urls)),
+    path('menuitems/<int:pk>/', views.RetrieveMenuItemReviewsAPIView.as_view(), name='retrieve-menuitem-feedback')
 ]

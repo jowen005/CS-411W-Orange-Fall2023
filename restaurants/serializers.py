@@ -136,6 +136,14 @@ class IngredientTagSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class MenuItemNameSerializer(serializers.ModelSerializer):
+    item_name = serializers.CharField(max_length=100)
+
+    class Meta:
+        model = models.MenuItem
+        fields = ['id', 'item_name']
+
+
 # Serializer for Menu Item model
 class MenuItemListSerializer(serializers.ModelSerializer):
     item_name = serializers.CharField(max_length=100)

@@ -11,7 +11,7 @@ User = get_user_model()
 
 # Serializer for combined Review model
 class ReviewsGetSerializer(serializers.ModelSerializer):
-    
+    patron_name = serializers.CharField(max_length = 255)
     menu_item = rs.MenuItemListSerializer()
     # menu_item = serializers.PrimaryKeyRelatedField(queryset=rm.MenuItem.objects.all())
     
@@ -28,7 +28,7 @@ class ReviewsGetSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Reviews
         fields = '__all__'
-        read_only_fields = ['patron']
+        read_only_fields = ['patron_name']
 
 class ReviewsSerializer(serializers.ModelSerializer):
     

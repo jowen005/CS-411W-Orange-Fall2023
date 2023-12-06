@@ -22,6 +22,9 @@ admin.site.register(TasteTagAnalytics)
 from .models import CookStyleAnalytics
 admin.site.register(CookStyleAnalytics)
 
+from .models import OverallFilterAnalytics
+admin.site.register(OverallFilterAnalytics)
+
 from .models import MenuItemPerformanceAnalytics
 admin.site.register(MenuItemPerformanceAnalytics)
 
@@ -30,3 +33,24 @@ admin.site.register(AppSatisfactionAnalytics)
 
 from .models import LocalRestaurantAnalytics
 admin.site.register(LocalRestaurantAnalytics)
+
+from .models import OverallExclusionRecord
+admin.site.register(OverallExclusionRecord)
+
+from .models import AllergyTagExclusionRecord
+admin.site.register(AllergyTagExclusionRecord)
+
+from .models import IngredientTagExclusionRecord
+admin.site.register(IngredientTagExclusionRecord)
+
+from .models import RestrictionTagExclusionRecord
+admin.site.register(RestrictionTagExclusionRecord)
+
+from .models import TasteTagExclusionRecord
+admin.site.register(TasteTagExclusionRecord)
+
+from .models import LoginAnalytics
+admin.site.register(LoginAnalytics)
+
+from .models import LoginRecord
+admin.site.register(LoginRecord)

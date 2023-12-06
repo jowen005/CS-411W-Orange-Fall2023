@@ -5,7 +5,7 @@ from restaurants.models import MenuItem
 
 class Command(BaseCommand):
 
-    help = 'Calls the appropriate load functions to initialize the database'
+    help = 'Updates the Calorie Levels of Patrons, Menu Items, and Search History Objects.'
 
 
     # def add_arguments(self, parser: CommandParser):
