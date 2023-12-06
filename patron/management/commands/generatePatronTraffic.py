@@ -13,6 +13,18 @@ import patron.models as pm
 import patron.serializers as ps
 from feedback.models import Reviews
 
+SEARCH_TYPES = ['quick', 'advanced']
+SEARCH_WEIGHTS = [5, 2]
+
+BOOKMARK_SELECTIONS = [0, 1, 2, 3]
+BOOKMARK_WEIGHTS = [1, 2, 3, 2]
+
+HISTORY_SELECTIONS = [0, 1]
+HISTORY_WEIGHTS = [2, 1]
+
+RATING_VALUES = [0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0]
+RATING_WEIGHTS =   [1,   2,   3,   4,   5,   6,   5,   4,   3,   2,   1]
+
 class Command(BaseCommand):
 
     help = 'Generate and insert fake patron interaction data'
@@ -21,8 +33,6 @@ class Command(BaseCommand):
     User = get_user_model()
     fake = Faker()
 
-    possible_ratings = [0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0]
-    rating_weights =   [1,   2,   3,   4,   5,   6,   5,   4,   3,   2,   1]
     possible_reviews = [
         'This menu item was terrible',  # rating 0 & 0.5
         'This menu item was not good',  # rating 1 & 1.5
@@ -83,11 +93,11 @@ class Command(BaseCommand):
     def generate_search_traffic(self, user: User, profile: pm.Patron, tag_relations ,num_searches:int =1):
         
         ingredients = list(rm.IngredientTag.objects.values_list('title',flat=True))
-        decisions = ['quick', 'advanced']
+        # decisions = ['quick', 'advanced']
         search_report = [{} for _ in range(num_searches)]
 
         for idx in range(num_searches):
-            decision = random.choices(decisions, weights=[5, 2], k=1)[0]
+            decision = random.choices(SEARCH_TYPES, weights=SEARCH_WEIGHTS, k=1)[0]
             # decision = decisions[1] #Force Advanced Search
 
             print('='*100) #NOTE
@@ -106,37 +116,35 @@ class Command(BaseCommand):
 
             # Perform Search
             result_ids = list(advancedSearch(**search_obj))
-            # menu_item_results = list(rm.MenuItem.objects.filter(id__in=search_results))
+
+            # Initialize Search Report
+            search_report[idx] = {
+                'results': len(result_ids),
+                'bookmark': 0,
+                'itemhistory': 0,
+            }
 
             print(f'Result IDs: {result_ids}\n') #NOTE
 
             # Bookmark Menu Items
-            remaining_result_ids, bookmarks = self.generate_bookmarks(user, result_ids)
-            if bookmarks is None:
+            bookmarks = self.generate_bookmarks(user, result_ids)
+            if bookmarks is not None:
+                search_report[idx]['bookmark'] = len(bookmarks)
+            else:
                 self.stdout.write(self.style.ERROR(f"No results found on Search {idx}."))
-                search_report[idx]['results'] = len(result_ids)
-                search_report[idx]['bookmark'] = 0
-                search_report[idx]['itemhistory'] = 0
                 continue
 
-            print(f'Remaining Results: {remaining_result_ids}\n') #NOTE
-            
+            print(f'Remaining Results: {result_ids}\n') #NOTE
 
             # Add Items to Menu Item History
-            items_added = self.generate_item_history(user, remaining_result_ids)
-            if items_added is None:
+            items_added = self.generate_item_history(user, result_ids)
+            if items_added is not None:
+                search_report[idx]['itemhistory'] = len(items_added)
+            else:
                 self.stdout.write(self.style.ERROR(f"All results have been bookmarked on Search {idx}."))
-                search_report[idx]['results'] = len(result_ids)
-                search_report[idx]['bookmark'] = len(bookmarks)
-                search_report[idx]['itemhistory'] = 0
                 continue
 
             print(f'Items Added: {items_added}') #NOTE
-
-            #Collect Reports
-            search_report[idx]['results'] = len(result_ids)
-            search_report[idx]['bookmark'] = len(bookmarks)
-            search_report[idx]['itemhistory'] = len(items_added)
 
         return search_report
     
@@ -223,7 +231,7 @@ class Command(BaseCommand):
         search_data = {
             "patron": user,
             "query": random.choice(valid_queries),
-            "calorie_limit": random.randint(250, 1800),
+            "calorie_limit": random.randint(250, 2200),
             "price_min": 0.02,
             "price_max": 30.0 # NOTE: Adjust to be random
         }
@@ -266,34 +274,27 @@ class Command(BaseCommand):
         print(f'Number of nonbookmarked results: {num_nonbookmark_results}\n') #NOTE
 
         if num_nonbookmark_results == 0:
-            return result_ids, None
-        elif num_nonbookmark_results == 1:
-            selections = [0, 1]
-            weights = [1, 2]
-        else:
-            selections = [0, 1, 2]
-            weights= [1, 5, 2]
+            return None
 
-        num_bookmarks = random.choices(selections, weights=weights, k=1)[0]
+        choice = random.choices(BOOKMARK_SELECTIONS, weights=BOOKMARK_WEIGHTS, k=1)[0]
+        num_bookmarks = min(choice, num_nonbookmark_results)
+        print(f'Number of bookmarks to be selected: {num_bookmarks}') #NOTE
+        
         bookmarks = []
 
-        print(f'Number of bookmarks to be selected: {num_bookmarks}') #NOTE
-
-        # Create Bookmark
+        # Create Bookmarks
         if num_bookmarks != 0:
-
             # grab random bookmarkable items
             for item_id in random.sample(nonbookmarked_results, k=num_bookmarks):
                 result_ids.remove(item_id)
 
                 item = rm.MenuItem.objects.get(id=item_id)
                 bookmarks.append(pm.Bookmark.objects.create(patron=user, menu_item=item))
-
                 print(f'Menu Item Bookmarked: {item_id}') #NOTE
 
         print(f'Successful Bookmarks: {bookmarks}\n') #NOTE
 
-        return result_ids, bookmarks
+        return bookmarks
 
 
     def generate_item_history(self, user: User, result_ids):
@@ -301,15 +302,13 @@ class Command(BaseCommand):
 
         if num_results == 0:
             return None
-        else:
-            selections = [0, 1]
-            weights = [3, 1]
 
-        num_adds = random.choices(selections, weights=weights, k=1)[0]
+        choice = random.choices(HISTORY_SELECTIONS, weights=HISTORY_WEIGHTS, k=1)[0]
+        num_adds = min(num_results, choice)
+        print(f'Number of items to be added: {num_adds}') #NOTE
+
         items_added = []
 
-        print(f'Number of items to be added: {num_adds}') #NOTE
-        
         if num_adds != 0:
             for item_id in random.sample(result_ids, k=num_adds): # num_adds == 1 (loop for robustness)
                 result_ids.remove(item_id)
@@ -317,7 +316,7 @@ class Command(BaseCommand):
                 item = rm.MenuItem.objects.get(id=item_id)
                 
                 # Generate and Create Feedback object
-                rating = random.choices(self.possible_ratings, weights=self.rating_weights, k=1)[0]
+                rating = random.choices(RATING_VALUES, weights=RATING_WEIGHTS, k=1)[0]
                 feedback_data = {
                     "patron": user,
                     "menu_item": item,
@@ -326,14 +325,11 @@ class Command(BaseCommand):
                 }
 
                 print(f'Feedback Data: {feedback_data}') #NOTE
-
                 feedback_obj = Reviews.objects.create(**feedback_data)
-
                 print(f'Feedback Object Successful: {feedback_obj}') #NOTE
 
                 # Create Menu Item History Object
                 items_added.append(pm.MenuItemHistory.objects.create(patron=user, review=feedback_obj, menu_item=item))
-
                 print(f'Menu Item Added: {item_id}') #NOTE
 
             print(f'Successful Adds: {items_added}\n') #NOTE
@@ -369,7 +365,7 @@ class Command(BaseCommand):
             item = bookmark.menu_item
             bookmark.delete()
 
-            rating = random.choices(self.possible_ratings, weights=self.rating_weights, k=1)[0]
+            rating = random.choices(RATING_VALUES, weights=RATING_WEIGHTS, k=1)[0]
             feedback_data = {
                 "patron": user,
                 "menu_item": item,

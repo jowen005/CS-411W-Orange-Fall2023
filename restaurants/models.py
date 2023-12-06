@@ -1,6 +1,8 @@
-from django.db import models
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.db import models
+import math
+
 #from accounts.utils.vectorize import vectorizeMenuItem
 
 User = get_user_model()
@@ -187,25 +189,25 @@ class MenuItem(models.Model):
 
     def save(self, *args, **kwargs):
         self.calorie_level = self.calculate_calorie_level()
-        # self.vectorizeMenuItem(MenuItemID=1)
-        self.prep_for_vector()
+        self.vectorizeMenuItem()
+        # self.prep_for_vector()
         super(MenuItem, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.item_name 
-    
-    TAGS_TO_TRACK = [FoodTypeTag, TasteTag, CookStyleTag, IngredientTag]
 
-    def prep_for_vector(self):
-        tag_counts = {TagModel.__name__:TagModel.objects.all().count() for TagModel in self.TAGS_TO_TRACK}
-        vectorizeMenuItem(self, tag_counts)
-
+    # def prep_for_vector(self):
+    #     tag_counts = {TagModel.__name__:TagModel.objects.all().count() for TagModel in self.TAGS_TO_TRACK}
+    #     vectorizeMenuItem(self, tag_counts)
 
     class Meta:
         db_table = 'MenuItems'
 
-    def vectorizeMenuItem(menu_item, tag_counts):
-        Item = menu_item
+    TAGS_TO_TRACK = [FoodTypeTag, TasteTag, CookStyleTag, IngredientTag]
+
+    def vectorizeMenuItem(self):
+        tag_counts = {TagModel.__name__:TagModel.objects.all().count() for TagModel in self.TAGS_TO_TRACK}
+        Item = self
         FoodTagCount = tag_counts['FoodTypeTag']
         TasteTagCount = tag_counts['TasteTag']
         CookTagCount = tag_counts['CookStyleTag']
