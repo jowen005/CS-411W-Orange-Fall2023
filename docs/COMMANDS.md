@@ -20,9 +20,8 @@
 
 * **python3 manage.py generatePatronTraffic _patronEmail_** --> randomly simulates patron traffic with 1 search (default) or a specified number of times (-n _int_). Simulated actions include searching, bookmarking, submitting feedback, and adding to menu item history.
 
-* **python3 manage.py updateCalorieLevels** --> manually updates the calorie levels of all menu items, patrons, and searches.
-* **python3 manage.py updateFeedback** --> manually updates the patron names associated with all reviews.
-* **python3 manage.py updateVectors** --> manually updates the tag vectors of menu items and patrons.
+
+* **python3 manage.py updateFields** --> updates objects in older databases to be consistent with newer updates.
 
 * **python3 manage.py manualAnalytics** --> manually triggers the execution of all analytic algorithms
 
@@ -68,9 +67,10 @@ Note: See NOTES_DOCKER.md for more information
 
 * **python3 manage.py generatePatronTraffic _patronEmail_** --> randomly simulates patron traffic with 1 search (default) or a specified number of times (-n _int_). Simulated actions include searching, bookmarking, submitting feedback, and adding to menu item history.
 
-* **python3 manage.py updateCalorieLevels** --> manually updates the calorie levels of all menu items, patrons, and searches.
-* **python3 manage.py updateFeedback** --> manually updates the patron names associated with all reviews.
-* **python3 manage.py updateVectors** --> manually updates the tag vectors of menu items and patrons.
+* **python3 manage.py updateFields** --> updates objects in older databases to be consistent with newer updates.
+  * **python3 manage.py updateCalorieLevels** --> manually updates the calorie levels of all menu items, patrons, and searches.
+  * **python3 manage.py updateFeedback** --> manually updates the patron names associated with all reviews.
+  * **python3 manage.py updateVectors** --> manually updates the tag vectors of menu items and patrons.
 
 * **python3 manage.py manualAnalytics** --> manually triggers the execution of all analytic algorithms
 
