@@ -3,13 +3,13 @@ from numpy import polyfit
 DEGREE = 5
 
 
-def calculate(analytics_set, trend_types):
+def calculate(analytics_set, trend_types, obj_string):
     
     # print(analytics_set) #NOTE
     num_analytics = analytics_set.count()
     if num_analytics < 5:
-        print(f'\tOnly {num_analytics} data points were found in the Analytics Table, while 5 are required.')
-        return
+        print(f'\t{obj_string}: {num_analytics} analytics were found, while 5 are required. Trend not Generated.')
+        return None
     
     analytics_set = analytics_set.order_by('date_stamp')
 

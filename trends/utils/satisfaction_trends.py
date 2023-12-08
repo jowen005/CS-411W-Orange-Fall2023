@@ -16,15 +16,16 @@ def driver():
 
     print(f'{AppSatisfactionTrends.__name__}:')
     trend_data = trends.calculate(analytics_set=analytics_set, 
-                                  trend_types=TREND_TYPES)
-    
-    store_data(trend_data)
+                                  trend_types=TREND_TYPES,
+                                  obj_string='App Satisfaction')
+    if trend_data is not None:
+        store_data(trend_data)
 
 
 def store_data(trend_data):
     current_datestamp = timezone.now()
     for entry in trend_data:
-        print(f'\t{entry}')
+        # print(f'\t{entry}')
         obj = AppSatisfactionTrends.objects.create(**entry, date_stamp=current_datestamp)
         print(f'\t{obj}')
     print('\n')

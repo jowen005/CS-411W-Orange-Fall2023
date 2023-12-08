@@ -5,7 +5,10 @@ import restaurants.serializers as rs
 
 class CalorieTrendsSerializer(serializers.ModelSerializer):
     calorie_level = serializers.CharField(source='get_calorie_level_display')
-    trend_type = serializers.CharField(source='get_trend_type_display')
+    trend_type = serializers.SerializerMethodField(source='get_trend_type')
+
+    def get_trend_type(self, instance):
+        return dict(instance.TREND_TYPES).get(instance.trend_type, 'Not Found')
     
     class Meta:
         model = models.CalorieTrends
@@ -14,7 +17,10 @@ class CalorieTrendsSerializer(serializers.ModelSerializer):
 
 class RestrictionTagTrendsSerializer(serializers.ModelSerializer):
     tag = rs.RestrictionTagSerializer()
-    trend_type = serializers.CharField(source='get_trend_type_display')
+    trend_type = serializers.SerializerMethodField(source='get_trend_type')
+
+    def get_trend_type(self, instance):
+        return dict(instance.TREND_TYPES).get(instance.trend_type, 'Not Found')
     
     class Meta:
         model = models.RestrictionTagTrends
@@ -23,7 +29,10 @@ class RestrictionTagTrendsSerializer(serializers.ModelSerializer):
 
 class AllergyTagTrendsSerializer(serializers.ModelSerializer):
     tag = rs.AllergyTagSerializer()
-    trend_type = serializers.CharField(source='get_trend_type_display')
+    trend_type = serializers.SerializerMethodField(source='get_trend_type')
+
+    def get_trend_type(self, instance):
+        return dict(instance.TREND_TYPES).get(instance.trend_type, 'Not Found')
     
     class Meta:
         model = models.AllergyTagTrends
@@ -32,7 +41,10 @@ class AllergyTagTrendsSerializer(serializers.ModelSerializer):
 
 class IngredientTagTrendsSerializer(serializers.ModelSerializer):
     tag = rs.IngredientTagSerializer()
-    trend_type = serializers.CharField(source='get_trend_type_display')
+    trend_type = serializers.SerializerMethodField(source='get_trend_type')
+
+    def get_trend_type(self, instance):
+        return dict(instance.TREND_TYPES).get(instance.trend_type, 'Not Found')
     
     class Meta:
         model = models.IngredientTagTrends
@@ -41,7 +53,10 @@ class IngredientTagTrendsSerializer(serializers.ModelSerializer):
 
 class TasteTagTrendsSerializer(serializers.ModelSerializer):
     tag = rs.TasteTagSerializer()
-    trend_type = serializers.CharField(source='get_trend_type_display')
+    trend_type = serializers.SerializerMethodField(source='get_trend_type')
+
+    def get_trend_type(self, instance):
+        return dict(instance.TREND_TYPES).get(instance.trend_type, 'Not Found')
     
     class Meta:
         model = models.TasteTagTrends
@@ -50,7 +65,10 @@ class TasteTagTrendsSerializer(serializers.ModelSerializer):
 
 class CookStyleTagTrendsSerializer(serializers.ModelSerializer):
     tag = rs.CookStyleTagSerializer()
-    trend_type = serializers.CharField(source='get_trend_type_display')
+    trend_type = serializers.SerializerMethodField(source='get_trend_type')
+
+    def get_trend_type(self, instance):
+        return dict(instance.TREND_TYPES).get(instance.trend_type, 'Not Found')
     
     class Meta:
         model = models.CookStyleTagTrends
@@ -59,7 +77,10 @@ class CookStyleTagTrendsSerializer(serializers.ModelSerializer):
 
 class MenuItemPerformanceTrendsSerializer(serializers.ModelSerializer):
     item = rs.MenuItemNameSerializer()
-    trend_type = serializers.CharField(source='get_trend_type_display')
+    trend_type = serializers.SerializerMethodField(source='get_trend_type')
+
+    def get_trend_type(self, instance):
+        return dict(instance.TREND_TYPES).get(instance.trend_type, 'Not Found')
     
     class Meta:
         model = models.MenuItemPerformanceTrends
@@ -67,7 +88,10 @@ class MenuItemPerformanceTrendsSerializer(serializers.ModelSerializer):
 
 
 class AppSatisfactionTrendsSerializer(serializers.ModelSerializer):
-    trend_type = serializers.CharField(source='get_trend_type_display')
+    trend_type = serializers.SerializerMethodField(source='get_trend_type')
+
+    def get_trend_type(self, instance):
+        return dict(instance.TREND_TYPES).get(instance.trend_type, 'Not Found')
     
     class Meta:
         model = models.AppSatisfactionTrends
