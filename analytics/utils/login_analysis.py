@@ -6,18 +6,23 @@ from ..models import LoginAnalytics, LoginRecord
 
 User = get_user_model()
 
-def driver():
-    login_data , current_datestamp = login_analysis()
+def driver(sim_datetime):
+    login_data , current_datestamp = login_analysis(sim_datetime)
     for entry in login_data:
         # print(entry)
         obj = LoginAnalytics.objects.create(**entry, date_stamp=current_datestamp)
         print(obj)
-        print('\n')
+    print('\n')
 
 
-def login_analysis():
-    current_datestamp = timezone.now()
-    latest_datestamp = timezone.now() - timedelta(days=3)
+def login_analysis(sim_datetime):
+
+    if sim_datetime is None:
+        current_datestamp = timezone.now()
+    else:
+        current_datestamp = sim_datetime
+
+    latest_datestamp = current_datestamp - timedelta(days=3)
     login_data = []
 
     users = User.objects.exclude(user_type = 'admin')

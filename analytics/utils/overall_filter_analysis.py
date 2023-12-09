@@ -8,16 +8,22 @@ from ..models import OverallFilterAnalytics
 import restaurants.models as rm
 
 
-def driver():
-    FILTER_TYPES = [('calories', CalorieAnalytics, ),
-                    ('cookstyletag', CookStyleAnalytics),
-                    ('allergytag', AllergiesTagAnalytics), 
-                    ('ingredienttag', IngredientTagAnalytics), 
-                    ('restrictiontag', RestrictionTagAnalytics),
-                    ('tastetag', TasteTagAnalytics)]
+FILTER_TYPES = [('calories', CalorieAnalytics, ),
+                ('cookstyletag', CookStyleAnalytics),
+                ('allergytag', AllergiesTagAnalytics), 
+                ('ingredienttag', IngredientTagAnalytics), 
+                ('restrictiontag', RestrictionTagAnalytics),
+                ('tastetag', TasteTagAnalytics)]
+
+
+def driver(sim_datetime):
     
-    overall_analytics = analysis(FILTER_TYPES)
-    current_datestamp = timezone.now()
+    overall_analytics = analysis(sim_datetime)
+
+    if sim_datetime is None:
+        current_datestamp = timezone.now()
+    else:
+        current_datestamp = sim_datetime
 
     for entry in overall_analytics:
         # print(entry)
@@ -26,17 +32,22 @@ def driver():
     print('\n')
 
     
-def analysis(FILTER_TYPES):
+def analysis(sim_datetime):
     INDEXES = ['first', 'second', 'third']
     overall_analytics = []
     
     for filter, AnalyticsModel in FILTER_TYPES:
-        try:
-            latest_datestamp = AnalyticsModel.objects.latest('date_stamp').date_stamp
-        except AnalyticsModel.DoesNotExist:
-            print(f'There are No Analytics for {filter}\n')
-            return
+        
+        if sim_datetime is None:
+            try:
+                latest_datestamp = AnalyticsModel.objects.latest('date_stamp').date_stamp
+            except AnalyticsModel.DoesNotExist:
+                print(f'There are No Analytics for {filter}\n')
+                return
+        else:
+            latest_datestamp = sim_datetime # Same Date as simulated filter analytics
 
+        #Perform analytics on latest filter analytics
         analytic_set = AnalyticsModel.objects.filter(date_stamp=latest_datestamp)
         result_data = {}
 

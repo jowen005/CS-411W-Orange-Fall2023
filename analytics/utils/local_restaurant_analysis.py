@@ -13,8 +13,8 @@ from ..models import (AllergyTagExclusionRecord, IngredientTagExclusionRecord,
                       RestrictionTagExclusionRecord, TasteTagExclusionRecord,
                       OverallExclusionRecord)
 
-def driver():
-    restaurant_data, current_datestamp = restaurant_analysis()
+def driver(sim_datetime):
+    restaurant_data, current_datestamp = restaurant_analysis(sim_datetime)
 
     # Save the new analytic records in the model
     for entry in restaurant_data:
@@ -24,10 +24,15 @@ def driver():
         print('\n')
 
 
-def restaurant_analysis():
+def restaurant_analysis(sim_datetime):
+
+    if sim_datetime is None:
+        current_datestamp = timezone.now()
+    else:
+        current_datestamp = sim_datetime
 
     # Past 3 Days (Data Overlap)
-    latest_datestamp = timezone.now() - timedelta(days=3)
+    latest_datestamp = current_datestamp - timedelta(days=3)
 
     # List storing the restaurant fields
     restaurant_data = []
@@ -41,7 +46,7 @@ def restaurant_analysis():
     items = rm.MenuItem.objects.all().order_by('id')
     history_set = pm.MenuItemHistory.objects.filter(MenuItemHS_datetime__gt=latest_datestamp)
     searches = pm.PatronSearchHistory.objects.filter(search_datetime__gte=latest_datestamp)
-    current_datestamp = timezone.now()
+    # current_datestamp = timezone.now()  #Removed bc set at top of function
 
 
     # Get all the fields for each restaurant

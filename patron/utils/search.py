@@ -22,22 +22,22 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
     #print(MenuItems.values_list("ingredients_tag"))
     #the most restrictive tag is likely the allergy tags so we'll filter on that first
     if (allergy_tags is not None) and (len(allergy_tags) > 0):
-        MenuItems = MenuItems.exclude(menu_allergy_tag__in = allergy_tags) #NOTE: I changed this line (!=, AND)
+        MenuItems = MenuItems.exclude(menu_allergy_tag__in = allergy_tags)
         # for allergy in allergy_tags:
-        #     MenuItems = MenuItems.exclude(menu_allergy_tag = allergy) #NOTE: I changed this line (!=, AND)
+        #     MenuItems = MenuItems.exclude(menu_allergy_tag = allergy) 
             # MenuItems = MenuItems.filter(menu_allergy_tag = allergy)
 
     if (disliked_ingredients is not None) and (len(disliked_ingredients) > 0):
         MenuItems = MenuItems.exclude(ingredients_tag__in = disliked_ingredients)
 
-    #note to self this may need to be reworked as a loop to ensure that ALL restriction tags are match
+    # note to self this may need to be reworked as a loop to ensure that ALL restriction tags are match
     #todo test the above theory. done, testing validated theory.  function changed. 
     if (dietary_restriction_tags is not None) and (len(dietary_restriction_tags) > 0):
         for restriction in dietary_restriction_tags:
             MenuItems = MenuItems.filter(menu_restriction_tag = restriction)
 
     if (patron_taste_tags is not None) and (len(patron_taste_tags) > 0):
-        MenuItems = MenuItems.filter(taste_tags__in=patron_taste_tags) #NOTE: I changed this line (==, OR)
+        MenuItems = MenuItems.filter(taste_tags__in=patron_taste_tags)
         # for taste in patron_taste_tags:
         #     MenuItems = MenuItems.filter(taste_tags = taste)
         
@@ -87,31 +87,31 @@ def advancedSearch(query:str, calorie_limit:int=10000, price_min:float=0.0, pric
      #todo: convert this to checking unix time stamp instead
     #weekday = 7
     if(weekday == 0): #monday
-        print("monday")
+        # print("monday") #NOTE
         Restaurants = Restaurants.filter(mon_open__hour__lte = targetTime.hour)
         Restaurants = Restaurants.filter(mon_close__hour__gte = targetTime.hour)
     elif(weekday == 1): #tuesday
-        print("tuesday") #NOTE
+        # print("tuesday") #NOTE
         Restaurants = Restaurants.filter(tue_open__hour__lte = targetTime.hour)
         Restaurants = Restaurants.filter(tue_close__hour__gte = targetTime.hour)
     elif(weekday == 2): #wednesday
-        print("wednesday") #NOTE
+        # print("wednesday") #NOTE
         Restaurants = Restaurants.filter(wed_open__hour__lte = targetTime.hour)
         Restaurants = Restaurants.filter(wed_close__hour__gte = targetTime.hour)
     elif(weekday == 3): #thursday
-        print("thursday") #NOTE
+        # print("thursday") #NOTE
         Restaurants = Restaurants.filter(thu_open__hour__lte = targetTime.hour)
         Restaurants = Restaurants.filter(thu_close__hour__gte = targetTime.hour)
     elif(weekday == 4): #friday
-        print("friday") #NOTE
+        # print("friday") #NOTE
         Restaurants = Restaurants.filter(fri_open__hour__lte = targetTime.hour)
         Restaurants = Restaurants.filter(fri_close__hour__gte = targetTime.hour)
     elif(weekday == 5): #saturday
-        print("saturday") #NOTE
+        # print("saturday") #NOTE
         Restaurants = Restaurants.filter(sat_open__hour__lte = targetTime.hour)
         Restaurants = Restaurants.filter(sat_close__hour__gte = targetTime.hour)
     elif(weekday == 6): #sunday
-        print("sunday") #NOTE
+        # print("sunday") #NOTE
         Restaurants = Restaurants.filter(sun_open__hour__lte = targetTime.hour)
         Restaurants = Restaurants.filter(sun_close__hour__gte = targetTime.hour)
     MenuItems = MenuItems.filter(restaurant__in = Restaurants.values_list("id",flat=True))

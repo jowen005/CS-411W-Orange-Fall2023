@@ -31,7 +31,6 @@ class Command(BaseCommand):
 
     help = 'Generate and insert fake patron interaction data'
     TAG_RELATIONS_PATH = "json_files/tagRelations.json"
-    DEFAULT_JSON_PATH = "json_files/test.json"
     User = get_user_model()
     fake = Faker()
 
@@ -120,9 +119,9 @@ class Command(BaseCommand):
             decision = random.choices(SEARCH_TYPES, weights=SEARCH_WEIGHTS, k=1)[0]
             # decision = decisions[1] #Force Advanced Search
 
-            print('='*100) #NOTE
-            print(f'Search {idx}: {decision}') #NOTE
-            print('='*100) #NOTE
+            # print('='*100) #NOTE
+            # print(f'Search {idx}: {decision}') #NOTE
+            # print('='*100) #NOTE
             
             # Generate and Add Search to Search History
             if decision == 'quick':
@@ -132,7 +131,7 @@ class Command(BaseCommand):
 
             search_obj = self.format_search_object(search_inst)
 
-            print(f'Search Object submitted to search:\n\t{search_obj}\n') #NOTE
+            # print(f'Search Object submitted to search:\n\t{search_obj}\n') #NOTE
 
             # Perform Search
             result_ids = list(advancedSearch(**search_obj))
@@ -144,7 +143,7 @@ class Command(BaseCommand):
                 'itemhistory': 0,
             }
 
-            print(f'Result IDs: {result_ids}\n') #NOTE
+            # print(f'Result IDs: {result_ids}\n') #NOTE
 
             # Bookmark Menu Items
             bookmarks = self.generate_bookmarks(user, result_ids)
@@ -154,7 +153,7 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.ERROR(f"No results found on Search {idx}."))
                 continue
 
-            print(f'Remaining Results: {result_ids}\n') #NOTE
+            # print(f'Remaining Results: {result_ids}\n') #NOTE
 
             # Add Items to Menu Item History
             items_added = self.generate_item_history(user, result_ids)
@@ -164,7 +163,7 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.ERROR(f"All results have been bookmarked on Search {idx}."))
                 continue
 
-            print(f'Items Added: {items_added}') #NOTE
+            # print(f'Items Added: {items_added}') #NOTE
 
         return search_report
     
@@ -194,7 +193,7 @@ class Command(BaseCommand):
             "price_max": profile.price_max
         }
 
-        print(f'Search Data: {search_data}') #NOTE
+        # print(f'Search Data: {search_data}') #NOTE
         
         search_inst = pm.PatronSearchHistory.objects.create(**search_data)
         search_inst.dietary_restriction_tags.set(profile.patron_restriction_tag.all())
@@ -202,9 +201,9 @@ class Command(BaseCommand):
         search_inst.patron_taste_tags.set(profile.patron_taste_tag.all())
         search_inst.disliked_ingredients.set(profile.disliked_ingredients.all())
 
-        print(f'Search Tags for {search_inst}\n\tRestrc: {list(search_inst.dietary_restriction_tags.all())}\n\t'+ #NOTE
-              f'Allerg: {list(search_inst.allergy_tags.all())}\n\tTaste:  {list(search_inst.patron_taste_tags.all())}\n\t'+ #NOTE
-              f'DisIng: {list(search_inst.disliked_ingredients.all())}') #NOTE
+        # print(f'Search Tags for {search_inst}\n\tRestrc: {list(search_inst.dietary_restriction_tags.all())}\n\t'+ #NOTE
+            #   f'Allerg: {list(search_inst.allergy_tags.all())}\n\tTaste:  {list(search_inst.patron_taste_tags.all())}\n\t'+ #NOTE
+            #   f'DisIng: {list(search_inst.disliked_ingredients.all())}') #NOTE
 
         return search_inst
     
@@ -245,7 +244,7 @@ class Command(BaseCommand):
                 if conflict in valid_queries:
                     valid_queries.remove(conflict)
 
-        print(f'Valid Queries: {valid_queries}')
+        # print(f'Valid Queries: {valid_queries}') #NOTE
 
         # Add Advanced Search object to Search History
         search_data = {
@@ -256,7 +255,7 @@ class Command(BaseCommand):
             "price_max": 30.0 # NOTE: Adjust to be random
         }
 
-        print(f'Search Data: {search_data}') #NOTE
+        # print(f'Search Data: {search_data}') #NOTE
         
         search_inst = pm.PatronSearchHistory.objects.create(**search_data)
         search_inst.dietary_restriction_tags.set(selected_restrict_tags)
@@ -264,9 +263,9 @@ class Command(BaseCommand):
         search_inst.patron_taste_tags.set(selected_taste_tags)
         search_inst.disliked_ingredients.set(selected_ingred_tags)
 
-        print(f'Search Tags for {search_inst}\n\tRestrc: {list(search_inst.dietary_restriction_tags.all())}\n\t'+ #NOTE
-              f'Allerg: {list(search_inst.allergy_tags.all())}\n\tTaste:  {list(search_inst.patron_taste_tags.all())}\n\t'+ #NOTE
-              f'DisIng: {list(search_inst.disliked_ingredients.all())}') #NOTE
+        # print(f'Search Tags for {search_inst}\n\tRestrc: {list(search_inst.dietary_restriction_tags.all())}\n\t'+ #NOTE
+            #   f'Allerg: {list(search_inst.allergy_tags.all())}\n\tTaste:  {list(search_inst.patron_taste_tags.all())}\n\t'+ #NOTE
+            #   f'DisIng: {list(search_inst.disliked_ingredients.all())}') #NOTE
 
         return search_inst
     
@@ -289,16 +288,16 @@ class Command(BaseCommand):
         nonbookmarked_results = [item for item in result_ids if item not in bookmark_item_ids]
         num_nonbookmark_results = len(nonbookmarked_results)
         
-        print(f'Bookmark Item IDs: {bookmark_item_ids}') #NOTE
-        print(f'NonBookmarked Results: {nonbookmarked_results}') #NOTE
-        print(f'Number of nonbookmarked results: {num_nonbookmark_results}\n') #NOTE
+        # print(f'Bookmark Item IDs: {bookmark_item_ids}') #NOTE
+        # print(f'NonBookmarked Results: {nonbookmarked_results}') #NOTE
+        # print(f'Number of nonbookmarked results: {num_nonbookmark_results}\n') #NOTE
 
         if num_nonbookmark_results == 0:
             return None
 
         choice = random.choices(BOOKMARK_SELECTIONS, weights=BOOKMARK_WEIGHTS, k=1)[0]
         num_bookmarks = min(choice, num_nonbookmark_results)
-        print(f'Number of bookmarks to be selected: {num_bookmarks}') #NOTE
+        # print(f'Number of bookmarks to be selected: {num_bookmarks}') #NOTE
         
         bookmarks = []
 
@@ -310,9 +309,9 @@ class Command(BaseCommand):
 
                 item = rm.MenuItem.objects.get(id=item_id)
                 bookmarks.append(pm.Bookmark.objects.create(patron=user, menu_item=item))
-                print(f'Menu Item Bookmarked: {item_id}') #NOTE
+                # print(f'Menu Item Bookmarked: {item_id}') #NOTE
 
-        print(f'Successful Bookmarks: {bookmarks}\n') #NOTE
+        # print(f'Successful Bookmarks: {bookmarks}\n') #NOTE
 
         return bookmarks
 
@@ -325,7 +324,7 @@ class Command(BaseCommand):
 
         choice = random.choices(HISTORY_SELECTIONS, weights=HISTORY_WEIGHTS, k=1)[0]
         num_adds = min(num_results, choice)
-        print(f'Number of items to be added: {num_adds}') #NOTE
+        # print(f'Number of items to be added: {num_adds}') #NOTE
 
         items_added = []
 
@@ -344,31 +343,31 @@ class Command(BaseCommand):
                     "review": self.possible_reviews[math.floor(rating)]
                 }
 
-                print(f'Feedback Data: {feedback_data}') #NOTE
+                # print(f'Feedback Data: {feedback_data}') #NOTE
                 feedback_obj = Reviews.objects.create(**feedback_data)
-                print(f'Feedback Object Successful: {feedback_obj}') #NOTE
+                # print(f'Feedback Object Successful: {feedback_obj}') #NOTE
 
                 # Create Menu Item History Object
                 items_added.append(pm.MenuItemHistory.objects.create(patron=user, review=feedback_obj, menu_item=item))
-                print(f'Menu Item Added: {item_id}') #NOTE
+                # print(f'Menu Item Added: {item_id}') #NOTE
 
-            print(f'Successful Adds: {items_added}\n') #NOTE
+            # print(f'Successful Adds: {items_added}\n') #NOTE
 
         return items_added
 
 
     def generate_bookmark_traffic(self, user: User):
 
-        print('='*100) #NOTE
-        print(f'Bookmark Traffic') #NOTE
-        print('='*100+'\n') #NOTE
+        # print('='*100) #NOTE
+        # print(f'Bookmark Traffic') #NOTE
+        # print('='*100+'\n') #NOTE
 
         valid_bookmarks = list(pm.Bookmark.objects.all())
         items_added = []
 
         num_bookmarks = len(valid_bookmarks)
 
-        print(f'Number of Bookmarks {num_bookmarks}') #NOTE
+        # print(f'Number of Bookmarks {num_bookmarks}') #NOTE
 
         if num_bookmarks == 0:
             return {'itemsadded':0, 'itemsremaining':0}
@@ -379,7 +378,7 @@ class Command(BaseCommand):
         else:
             num_selections = num_bookmarks - 3
 
-        print(f'Number of Selections: {num_selections}') #NOTE
+        # print(f'Number of Selections: {num_selections}') #NOTE
 
         for bookmark in random.sample(valid_bookmarks, k=num_selections):
             item = bookmark.menu_item
@@ -392,17 +391,17 @@ class Command(BaseCommand):
                 "rating": rating,
                 "review": self.possible_reviews[math.floor(rating)]
             }
-            print(f'Feedback Data: {feedback_data}') #NOTE
+            # print(f'Feedback Data: {feedback_data}') #NOTE
 
             feedback_obj = Reviews.objects.create(**feedback_data)
             items_added.append(pm.MenuItemHistory.objects.create(patron=user, review=feedback_obj, menu_item=item))
-            print(f'Menu Item Added: {item}') #NOTE
+            # print(f'Menu Item Added: {item}') #NOTE
 
         bookmark_report = {}
         bookmark_report['itemsadded'] = len(items_added)
         bookmark_report['itemsremaining'] = num_bookmarks - num_selections
 
-        print('\n') #NOTE
+        # print('\n') #NOTE
 
         return bookmark_report
     

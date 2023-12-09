@@ -1,0 +1,32 @@
+# 1st Run (First Day):
+#  * Generate Traffic 1-8
+#  * Generate Analytics 1-5
+#  * Generate Trend 1
+
+# 2nd Run (Same Day):
+#  * Generate More Traffic 8 (Additional Traffic)
+#  * Generate Analytic 6
+#  * Generate Trend 2
+
+# ORRRRRRR
+
+#  * Generate More Traffic 8 (Additional Traffic)
+#  * Regenerate Analytic 5
+#  * Regenerate Trend 1
+
+# 3rd Run (Next Day):
+#  * Generate Traffic 9
+#  * Generate Analytic 7 OR 6
+#  * Generate Trend 3 OR 2
+
+
+# perform trends --> (all analytics)
+
+#  1         2         3         4          5          6         7         T        
+# Mon      Tues       Wed      Thurs      Friday      Sat       Sun       Mon      Tues      Wed
+#  -         -         -         1
+#            |         |         |          2
+#                      |         |          |          3
+#                                |          |          |         4
+#                                           |          |         |         5     
+#                                                      |         |         |         6
