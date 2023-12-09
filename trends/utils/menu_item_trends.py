@@ -14,12 +14,16 @@ TREND_TYPES = [('excluded', 'exclusion_count'),
                 ('avg_rating', 'average_rating')]
 
 
-def driver():
-        
-    items = list(MenuItem.objects.all().order_by('id'))
+def driver(sim_datetime):
 
+    if sim_datetime is None:
+        current_datestamp = timezone.now()
+    else:
+        current_datestamp = sim_datetime
+
+    items = list(MenuItem.objects.all().order_by('id'))
     analytics_set = MenuItemPerformanceAnalytics.objects.all()
-    current_datestamp=timezone.now()
+    
     objs_to_create = []
 
     print(f'{MenuItemPerformanceTrends.__name__}:')

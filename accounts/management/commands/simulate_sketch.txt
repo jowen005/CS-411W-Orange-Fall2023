@@ -22,7 +22,7 @@
 
 # perform trends --> (all analytics)
 
-#  1         2         3         4          5          6         7         T        
+#  0         1         2         3          4          5         6         T        
 # Mon      Tues       Wed      Thurs      Friday      Sat       Sun       Mon      Tues      Wed
 #  -         -         -         1
 #            |         |         |          2

@@ -28,7 +28,7 @@ FILTER_MODELS = [(RestrictionTag, RestrictionTagAnalytics, RestrictionTagTrends,
                         'number_of_searches', 'number_of_items_added_HIS')]
 
 
-def driver():
+def driver(sim_datetime):
 
     for TagModel, AnalyticsModel, TrendsModel, search_attr, history_attr in FILTER_MODELS:
         
@@ -51,8 +51,12 @@ def driver():
             print("Invalid Model Data")
             exit()
 
+        if sim_datetime is None:
+            current_datestamp = timezone.now()
+        else:
+            current_datestamp = sim_datetime
+
         analytics_set = AnalyticsModel.objects.all()
-        current_datestamp=timezone.now()
         objs_to_create = []
 
         print(f'{TrendsModel.__name__}:')

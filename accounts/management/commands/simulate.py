@@ -10,8 +10,10 @@ from pathlib import Path
 
 import restaurants.models as rm
 from patron.models import Patron
-from analytics.models import LoginRecord
+from analytics.models import LoginRecord, GlobalAnalytics
 
+
+DATETIME_STR_FORMAT = "%Y-%m-%d_%H:%M:%S"
 
 
 class Command(BaseCommand):
@@ -27,57 +29,63 @@ class Command(BaseCommand):
         #                     help='Specifies a number of searches')
 
     def handle(self, *args, **kwargs):
-        APP_DIR = Path(__file__).resolve().parent.parent
 
-        #decide if this is first run (check global analytics for num of objects)
-        # if num of global analytics < 5
-            # get current date time
-            # initialize list of days for 7 days ago to 1 day ago (days 1-7)
-            # generate traffic for days 1-3 and take analytic with day 4 as current
-            # generate traffic for day 4 and take analytic with day 5 as current
-            # generate traffic for day 5 and take analytic with day 6 as current
-            # generate traffic for day 6 and take analytic with day 7 as current
+        patron_accounts = self.retrieve_valid_accounts()
 
-        # generate traffic for day 8 and take analytic with TODAY as current
-        # generate trends for all analytics
+        today = timezone.now()
+        if GlobalAnalytics.objects.all().count() < 5:
+            self.simulate_past_data(today, patron_accounts)
 
+        self.simulate_today(today, patron_accounts)
 
-
-
-
-
-
-
-
-
-        # patron_accounts = self.User.objects.filter(
-        #     user_type='patron'
-        # ).order_by('id')
-
-        # current = timezone.now()
-        # days = [current - timedelta(days=x) for x in range(5)]
-
-
-        
-    
-
-        self.simulate_patron_traffic(patron_accounts)  
-        call_command('manualAnalytics')
-
+        call_command('manualTrends', '-d', today.strftime(DATETIME_STR_FORMAT))
 
         self.stdout.write(self.style.SUCCESS(f"The Simulation Succesfully Completed!"))
 
 
-    def simulate_patron_traffic(self, patron_accounts):
+    def retrieve_valid_accounts(self):
         profile_set = Patron.objects.all()
-        for account in patron_accounts:
-            try:
-                profile_set.get(user=account)
-            except Patron.DoesNotExist:
-                self.stdout.write(self.style.ERROR(f"This Patron Account {account.email} " + 
-                                             "does not have an Associated Patron Profile"))
-            
-            LoginRecord.objects.create(user=account, date_stamp=current_datestamp)
+        valid_patron_accounts = self.User.objects.filter(
+            user_type='patron',
+            user__in=profile_set.values('user')
+        ).order_by('id')
 
+        return valid_patron_accounts
+
+
+    def simulate_past_data(self, today, patron_accounts):
+        
+        days = [today - timedelta(days=x) for x in range(1,8)]
+        days.reverse() # Days Increasing from 7 days ago to 1 day ago
+
+        for idx in range(len(days)):
+            date = days[idx]
+            date_str = date.strftime(DATETIME_STR_FORMAT)
+            num_days_simulated = idx
+
+            # patron traffic for current day
+            self.simulate_patron_traffic(patron_accounts, date, date_str) 
+            
+            if num_days_simulated >= 3:
+                call_command('manualAnalytics', '-d', date_str)
+
+
+    def simulate_today(self, today, patron_accounts):
+        today_str = today.strftime(DATETIME_STR_FORMAT)
+        
+        self.simulate_patron_traffic(patron_accounts, today, today_str)
+        
+        call_command('manualAnalytics', '-d', today_str)
+
+
+    def simulate_patron_traffic(self, patron_accounts, date, date_str):
+        
+        for account in patron_accounts:
+            #TODO: Do we want multiple logins a day? Do we want a random number if so?
+            LoginRecord.objects.create(user=account, date_stamp=date)
+
+            #TODO: Do we want random number of searches?
             NUM_SEARCHES = 10
-            call_command('generatePatronTraffic', account.email, '-n', str(NUM_SEARCHES))
+            call_command('generatePatronTraffic', account.email, 
+                         '-n', str(NUM_SEARCHES),
+                         '-d', date_str)
