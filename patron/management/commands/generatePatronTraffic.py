@@ -1,6 +1,8 @@
 from django.core.management.base import BaseCommand, CommandParser
 from django.contrib.auth import get_user_model
 from faker import Faker
+from datetime import datetime
+from django.utils import timezone
 
 import json
 from pathlib import Path
@@ -49,27 +51,27 @@ class Command(BaseCommand):
         # parser.add_argument("userid", nargs=1, type=int)
         parser.add_argument('-n', dest='num_searches', default=1, type=int, 
                             help='Specifies a number of searches')
+        parser.add_argument('-d', dest='sim_datetime', default=None, 
+                            help='Specifies a datetime to simulate analytics for.',)
 
 
-    def handle(self, email, num_searches, *args, **kwargs):
-        APP_DIR = Path(__file__).resolve().parent.parent
-
-        # Tag Relation File
-        try:
-            with open(APP_DIR/self.TAG_RELATIONS_PATH) as infile:
-                tag_relations = json.load(infile)
-        except IOError:
-            self.stdout.write(self.style.ERROR(f"Input of tag relation file failed!"))
-            exit()
+    def handle(self, email, num_searches, sim_datetime, *args, **kwargs):
 
         user, profile = self.verify_email(email[0])
-        # user, profile = self.verify_user_id(userid[0])
 
-        search_report = self.generate_search_traffic(user, profile, tag_relations, num_searches)
-        bookmark_report = self.generate_bookmark_traffic(user)
+        if sim_datetime is not None:
+            datetime_format = "%Y-%m-%d_%H:%M:%S"
+            sim_datetime = datetime.strptime(sim_datetime, datetime_format)
+            sim_curr_delta = timezone.now() - sim_datetime
+        else:
+            sim_curr_delta = 0
+
+        search_report = self.generate_search_traffic(user, profile, num_searches, sim_curr_delta)
+        bookmark_report = self.generate_bookmark_traffic(user, sim_curr_delta)
         self.output_reports(search_report, bookmark_report)
 
         self.stdout.write(self.style.SUCCESS(f"{num_searches} search(es) were performed!"))
+
 
     def verify_email(self, email: str):
         try:
@@ -88,31 +90,20 @@ class Command(BaseCommand):
         except pm.Patron.DoesNotExist:
             self.stdout.write(self.style.ERROR(f'This user ({user.email}) does not have an associated profile!'))
             exit()
-
-
-    def verify_user_id(self, userid: int):
-        try:
-            user = self.User.objects.get(id=userid)
-        except self.User.DoesNotExist:
-            self.stdout.write(self.style.ERROR(f'A user with ID {userid} does not exist!'))
-            exit()
-
-        if user.user_type != 'patron':
-            self.stdout.write(self.style.ERROR(f'The user ({user.email}) with ID {userid} is not a patron!'))
-            exit()
-
-        try:
-            profile = pm.Patron.objects.get(user=user)
-            return user, profile
-        except pm.Patron.DoesNotExist:
-            self.stdout.write(self.style.ERROR(f'This user ({user.email}) does not have an associated profile!'))
-            exit()
         
 
-    def generate_search_traffic(self, user: User, profile: pm.Patron, tag_relations ,num_searches:int =1):
+    def generate_search_traffic(self, user: User, profile: pm.Patron, num_searches, sim_curr_delta):
         
+        # Tag Relation File
+        APP_DIR = Path(__file__).resolve().parent.parent
+        try:
+            with open(APP_DIR/self.TAG_RELATIONS_PATH) as infile:
+                tag_relations = json.load(infile)
+        except IOError:
+            self.stdout.write(self.style.ERROR(f"Input of tag relation file failed!"))
+            exit()
+
         ingredients = list(rm.IngredientTag.objects.values_list('title',flat=True))
-        # decisions = ['quick', 'advanced']
         search_report = [{} for _ in range(num_searches)]
 
         for idx in range(num_searches):
@@ -125,9 +116,11 @@ class Command(BaseCommand):
             
             # Generate and Add Search to Search History
             if decision == 'quick':
-                search_inst = self.generate_quick_search(user, profile, tag_relations, ingredients)
+                search_inst = self.generate_quick_search(user, profile, tag_relations,
+                                                sim_curr_delta, valid_queries=ingredients)
             else:
-                search_inst = self.generate_advanced_search(user, tag_relations, ingredients)
+                search_inst = self.generate_advanced_search(user, tag_relations, 
+                                                sim_curr_delta, valid_queries=ingredients)
 
             search_obj = self.format_search_object(search_inst)
 
@@ -146,21 +139,21 @@ class Command(BaseCommand):
             # print(f'Result IDs: {result_ids}\n') #NOTE
 
             # Bookmark Menu Items
-            bookmarks = self.generate_bookmarks(user, result_ids)
-            if bookmarks is not None:
-                search_report[idx]['bookmark'] = len(bookmarks)
+            num_bookmarks = self.generate_bookmarks(user, result_ids, sim_curr_delta)
+            if num_bookmarks is not None:
+                search_report[idx]['bookmark'] = num_bookmarks
             else:
-                self.stdout.write(self.style.ERROR(f"No results found on Search {idx}."))
+                self.stdout.write(self.style.ERROR(f"No results found on Search {idx+1}."))
                 continue
 
             # print(f'Remaining Results: {result_ids}\n') #NOTE
 
             # Add Items to Menu Item History
-            items_added = self.generate_item_history(user, result_ids)
-            if items_added is not None:
-                search_report[idx]['itemhistory'] = len(items_added)
+            num_items_added = self.generate_item_history(user, result_ids, sim_curr_delta)
+            if num_items_added is not None:
+                search_report[idx]['itemhistory'] = num_items_added
             else:
-                self.stdout.write(self.style.ERROR(f"All results have been bookmarked on Search {idx}."))
+                self.stdout.write(self.style.ERROR(f"All results have been bookmarked on Search {idx+1}."))
                 continue
 
             # print(f'Items Added: {items_added}') #NOTE
@@ -168,7 +161,8 @@ class Command(BaseCommand):
         return search_report
     
 
-    def generate_quick_search(self, user: User, profile: pm.Patron, tag_relations, valid_queries):
+    def generate_quick_search(self, user: User, profile: pm.Patron, tag_relations,
+                              sim_curr_delta, valid_queries):
         # Remove possible queries that conflict with tag selections
         for ingred in list(profile.disliked_ingredients.all()):
             if ingred.title in valid_queries:
@@ -201,6 +195,11 @@ class Command(BaseCommand):
         search_inst.patron_taste_tags.set(profile.patron_taste_tag.all())
         search_inst.disliked_ingredients.set(profile.disliked_ingredients.all())
 
+        # If Simulation, Modify to custom datetime
+        if sim_curr_delta != 0:
+            search_inst.search_datetime = timezone.now() - sim_curr_delta
+            search_inst.save()
+
         # print(f'Search Tags for {search_inst}\n\tRestrc: {list(search_inst.dietary_restriction_tags.all())}\n\t'+ #NOTE
             #   f'Allerg: {list(search_inst.allergy_tags.all())}\n\tTaste:  {list(search_inst.patron_taste_tags.all())}\n\t'+ #NOTE
             #   f'DisIng: {list(search_inst.disliked_ingredients.all())}') #NOTE
@@ -208,7 +207,8 @@ class Command(BaseCommand):
         return search_inst
     
 
-    def generate_advanced_search(self, user: User, tag_relations, valid_queries):
+    def generate_advanced_search(self, user: User, tag_relations,
+                                 sim_curr_delta, valid_queries):
         # Grab Valid Tags
         valid_restrict_tags = list(rm.RestrictionTag.objects.all())
         valid_allergy_tags = list(rm.AllergyTag.objects.all())
@@ -263,6 +263,11 @@ class Command(BaseCommand):
         search_inst.patron_taste_tags.set(selected_taste_tags)
         search_inst.disliked_ingredients.set(selected_ingred_tags)
 
+        # If Simulation, Modify to custom datetime
+        if sim_curr_delta != 0:
+            search_inst.search_datetime = timezone.now() - sim_curr_delta
+            search_inst.save()
+
         # print(f'Search Tags for {search_inst}\n\tRestrc: {list(search_inst.dietary_restriction_tags.all())}\n\t'+ #NOTE
             #   f'Allerg: {list(search_inst.allergy_tags.all())}\n\tTaste:  {list(search_inst.patron_taste_tags.all())}\n\t'+ #NOTE
             #   f'DisIng: {list(search_inst.disliked_ingredients.all())}') #NOTE
@@ -281,8 +286,8 @@ class Command(BaseCommand):
         return search_obj
     
 
-    def generate_bookmarks(self, user: User, result_ids):
-        # num_nonbookmark_results = len(result_ids)
+    def generate_bookmarks(self, user: User, result_ids, sim_curr_delta):
+
         # find menu items that have not been bookmarked
         bookmark_item_ids = list(pm.Bookmark.objects.filter(patron=user).values_list('menu_item', flat=True))
         nonbookmarked_results = [item for item in result_ids if item not in bookmark_item_ids]
@@ -308,15 +313,21 @@ class Command(BaseCommand):
                 result_ids.remove(item_id)
 
                 item = rm.MenuItem.objects.get(id=item_id)
-                bookmarks.append(pm.Bookmark.objects.create(patron=user, menu_item=item))
+                bookmark = pm.Bookmark.objects.create(patron=user, menu_item=item)
+                bookmarks.append(bookmark)
                 # print(f'Menu Item Bookmarked: {item_id}') #NOTE
+
+                # If Simulation, Modify to custom datetime
+                if sim_curr_delta != 0:
+                    bookmark.bookmarked_datetime = timezone.now() - sim_curr_delta
+                    bookmark.save()
 
         # print(f'Successful Bookmarks: {bookmarks}\n') #NOTE
 
-        return bookmarks
+        return len(bookmarks)
 
 
-    def generate_item_history(self, user: User, result_ids):
+    def generate_item_history(self, user: User, result_ids, sim_curr_delta):
         num_results = len(result_ids)
 
         if num_results == 0:
@@ -348,15 +359,24 @@ class Command(BaseCommand):
                 # print(f'Feedback Object Successful: {feedback_obj}') #NOTE
 
                 # Create Menu Item History Object
-                items_added.append(pm.MenuItemHistory.objects.create(patron=user, review=feedback_obj, menu_item=item))
+                history_obj = pm.MenuItemHistory.objects.create(patron=user, review=feedback_obj, menu_item=item)
+                items_added.append(history_obj)
                 # print(f'Menu Item Added: {item_id}') #NOTE
+
+                # If Simulation, Modify to custom datetime
+                if sim_curr_delta != 0:
+                    feedback_obj.review_datetime = timezone.now() - sim_curr_delta
+                    feedback_obj.save()
+
+                    history_obj.MenuItemHS_datetime = timezone.now() - sim_curr_delta
+                    history_obj.save()
 
             # print(f'Successful Adds: {items_added}\n') #NOTE
 
-        return items_added
+        return len(items_added)
 
 
-    def generate_bookmark_traffic(self, user: User):
+    def generate_bookmark_traffic(self, user: User, sim_curr_delta):
 
         # print('='*100) #NOTE
         # print(f'Bookmark Traffic') #NOTE
@@ -394,8 +414,16 @@ class Command(BaseCommand):
             # print(f'Feedback Data: {feedback_data}') #NOTE
 
             feedback_obj = Reviews.objects.create(**feedback_data)
-            items_added.append(pm.MenuItemHistory.objects.create(patron=user, review=feedback_obj, menu_item=item))
+            history_obj = pm.MenuItemHistory.objects.create(patron=user, review=feedback_obj, menu_item=item)
+            items_added.append(history_obj)
             # print(f'Menu Item Added: {item}') #NOTE
+
+            if sim_curr_delta != 0:
+                feedback_obj.review_datetime = timezone.now() - sim_curr_delta
+                feedback_obj.save()
+
+                history_obj.MenuItemHS_datetime = timezone.now() - sim_curr_delta
+                history_obj.save()
 
         bookmark_report = {}
         bookmark_report['itemsadded'] = len(items_added)
