@@ -143,7 +143,7 @@ class Command(BaseCommand):
             if num_bookmarks is not None:
                 search_report[idx]['bookmark'] = num_bookmarks
             else:
-                self.stdout.write(self.style.ERROR(f"No results found on Search {idx+1}."))
+                self.stdout.write(self.style.ERROR(f"Nothing Bookmarked on Search {idx+1}: No results found."))
                 continue
 
             # print(f'Remaining Results: {result_ids}\n') #NOTE
@@ -153,7 +153,7 @@ class Command(BaseCommand):
             if num_items_added is not None:
                 search_report[idx]['itemhistory'] = num_items_added
             else:
-                self.stdout.write(self.style.ERROR(f"All results have been bookmarked on Search {idx+1}."))
+                self.stdout.write(self.style.ERROR(f"Nothing Added to History on Search {idx+1}: All results have been bookmarked."))
                 continue
 
             # print(f'Items Added: {items_added}') #NOTE
