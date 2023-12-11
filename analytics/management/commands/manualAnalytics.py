@@ -1,5 +1,7 @@
 from django.core.management.base import BaseCommand, CommandParser
 from django.core.management import call_command
+from django.utils import timezone
+from datetime import datetime
 
 import analytics.utils.exclusion_analysis as ea
 import analytics.utils.global_analysis as ga
@@ -11,7 +13,6 @@ import analytics.utils.satisfaction_analysis as sa
 import analytics.utils.local_restaurant_analysis as lra
 import analytics.utils.login_analysis as loga
 
-from datetime import datetime
 
 class Command(BaseCommand):
 
@@ -25,7 +26,7 @@ class Command(BaseCommand):
 
         if sim_datetime is not None:
             datetime_format = "%Y-%m-%d_%H:%M:%S"
-            sim_datetime = datetime.strptime(sim_datetime, datetime_format)
+            sim_datetime = timezone.make_aware(datetime.strptime(sim_datetime, datetime_format))
 
         ea.driver(sim_datetime)
 

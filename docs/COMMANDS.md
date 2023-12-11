@@ -18,6 +18,13 @@
 * **python3 manage.py addMenuItems _int_** --> randomly generates and loads a specified number of menu items
 * **python3 manage.py addPatrons _int_** --> randomly generates and loads a specified number of patrons
 
+* **python3 manage.py simulate** --> Runs a simulation with the following specifications (NOTE: would suggest running a hard reset before using)
+  * If no analytics in database (simulate has not been run), generates patronTraffic, restaurantTraffic, and analytics for the past 7 days. It then generates patronTraffic, restaurantTraffic, analytics, and trends for today.
+  * If analytics are in database (simulate has been run), it generates patronTraffic, restaurantTraffic, analytics, and trends for today.
+  * FLAGS
+    * **--soft_reset** --> deletes all traffic, analytics, and trends for TODAY
+    * **--hard_reset** --> deletes all traffic, analytics, and trends for the LAST 7 DAYS
+
 * **python3 manage.py generatePatronTraffic _patronEmail_** --> randomly simulates patron traffic with 1 search (default) or a specified number of times (-n _int_). Simulated actions include searching, bookmarking, submitting feedback, and adding to menu item history.
 
 

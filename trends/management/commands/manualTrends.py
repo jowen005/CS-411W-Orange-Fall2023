@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand, CommandParser
 from django.core.management import call_command
+from django.utils import timezone
 from datetime import datetime
 
 import trends.utils.filter_trends as ft
@@ -19,7 +20,7 @@ class Command(BaseCommand):
 
         if sim_datetime is not None:
             datetime_format = "%Y-%m-%d_%H:%M:%S"
-            sim_datetime = datetime.strptime(sim_datetime, datetime_format)
+            sim_datetime = timezone.make_aware(datetime.strptime(sim_datetime, datetime_format))
 
         ft.driver(sim_datetime)
         mt.driver(sim_datetime)

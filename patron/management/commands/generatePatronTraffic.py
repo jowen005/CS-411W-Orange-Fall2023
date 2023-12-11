@@ -52,25 +52,28 @@ class Command(BaseCommand):
         parser.add_argument('-n', dest='num_searches', default=1, type=int, 
                             help='Specifies a number of searches')
         parser.add_argument('-d', dest='sim_datetime', default=None, 
-                            help='Specifies a datetime to simulate analytics for.',)
+                            help='Specifies a datetime to simulate analytics for.')
+        parser.add_argument('--no_report', action='store_true', help='Will not print a report')
 
 
-    def handle(self, email, num_searches, sim_datetime, *args, **kwargs):
+    def handle(self, email, num_searches, sim_datetime, *args, **options):
 
         user, profile = self.verify_email(email[0])
 
         if sim_datetime is not None:
             datetime_format = "%Y-%m-%d_%H:%M:%S"
-            sim_datetime = datetime.strptime(sim_datetime, datetime_format)
+            # sim_datetime = datetime.strptime(sim_datetime, datetime_format)
+            sim_datetime = timezone.make_aware(datetime.strptime(sim_datetime, datetime_format))
             sim_curr_delta = timezone.now() - sim_datetime
         else:
             sim_curr_delta = 0
 
         search_report = self.generate_search_traffic(user, profile, num_searches, sim_curr_delta)
         bookmark_report = self.generate_bookmark_traffic(user, sim_curr_delta)
-        self.output_reports(search_report, bookmark_report)
-
-        self.stdout.write(self.style.SUCCESS(f"{num_searches} search(es) were performed!"))
+        
+        if options['no_report'] == False:
+            self.output_reports(search_report, bookmark_report)
+            self.stdout.write(self.style.SUCCESS(f"{email[0]} - {num_searches} search(es) were performed!"))
 
 
     def verify_email(self, email: str):
@@ -143,7 +146,7 @@ class Command(BaseCommand):
             if num_bookmarks is not None:
                 search_report[idx]['bookmark'] = num_bookmarks
             else:
-                self.stdout.write(self.style.ERROR(f"Nothing Bookmarked on Search {idx+1}: No results found."))
+                # self.stdout.write(self.style.ERROR(f"Nothing Bookmarked on Search {idx+1}: No results found."))
                 continue
 
             # print(f'Remaining Results: {result_ids}\n') #NOTE
@@ -153,7 +156,7 @@ class Command(BaseCommand):
             if num_items_added is not None:
                 search_report[idx]['itemhistory'] = num_items_added
             else:
-                self.stdout.write(self.style.ERROR(f"Nothing Added to History on Search {idx+1}: All results have been bookmarked."))
+                # self.stdout.write(self.style.ERROR(f"Nothing Added to History on Search {idx+1}: All results have been bookmarked."))
                 continue
 
             # print(f'Items Added: {items_added}') #NOTE
