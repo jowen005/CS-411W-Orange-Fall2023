@@ -22,7 +22,7 @@ SEARCH_WEIGHTS = [1, 1, 1, 1]
 
 DATETIME_STR_FORMAT = "%Y-%m-%d_%H:%M:%S"
 
-num_analytics = 0
+NUM_DAYS_BACK = 8
 
 
 class Command(BaseCommand):
@@ -69,8 +69,7 @@ class Command(BaseCommand):
         print("Simulating Past Data") #NOTE
         print('*'*50 + '\n') #NOTE
         
-        global num_analytics
-        days = [today - timedelta(days=x) for x in range(1,8)]
+        days = [today - timedelta(days=x) for x in range(1,NUM_DAYS_BACK+1)]
         days.reverse() # Days Increasing from 7 days ago to 1 day ago
 
         for idx in range(len(days)):
@@ -86,13 +85,11 @@ class Command(BaseCommand):
             if num_days_simulated >= 3:
                 print('\tCalling manualAnalytics') #NOTE
                 call_command('manualAnalytics', '-d', date_str)
-                num_analytics += 1
         print('\n') #NOTE
 
 
     def simulate_today(self, today, patron_accounts, rest_accounts):
         today_str = today.strftime(DATETIME_STR_FORMAT)
-        global num_analytics
 
         print('*'*50) #NOTE
         print("Simulating Today's Data") #NOTE
@@ -104,12 +101,9 @@ class Command(BaseCommand):
         
         print('\tCalling manualAnalytics') #NOTE
         call_command('manualAnalytics', '-d', today_str)
-        num_analytics += 1
 
         print('\tCalling manualTrends') #NOTE
         call_command('manualTrends', '-d', today_str)
-
-        print(f'Number of Analytics: {num_analytics}')
     
 
     def simulate_patron_traffic(self, patron_accounts, date, date_str):
@@ -152,7 +146,7 @@ class Command(BaseCommand):
 
         # Delete Patron Traffic from the past 7 days
         today = timezone.now()
-        lower_bound = today - timedelta(days=7)
+        lower_bound = today - timedelta(days=NUM_DAYS_BACK)
         self.clear_traffic(lower_bound)
 
         # Delete All Analytics and Trends
