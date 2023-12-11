@@ -27,11 +27,12 @@ class CalorieAnalyticsSerializer(serializers.ModelSerializer):
     ]
 
     # calorie_level = serializers.ChoiceField(choices=LEVEL_CALORIE)
-    calorie_level = serializers.CharField(source='get_calorie_level_display')
+    
+    calorie_name = serializers.CharField(source='get_calorie_level_display')
 
     class Meta:
         model = models.CalorieAnalytics
-        fields = ['id', 'calorie_level', 'number_of_profiles', 'number_of_menuItems', 'date_stamp']
+        fields = ['id', 'calorie_level', 'calorie_name', 'number_of_profiles', 'number_of_menuItems', 'date_stamp']
 
 
 # Restriction Tag Analytics Serializers    
