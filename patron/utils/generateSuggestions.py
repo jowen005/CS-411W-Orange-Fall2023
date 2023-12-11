@@ -30,7 +30,7 @@ def generateSuggestions(PatronID):
 	#[("FoodTag","FoodTag"), ("TasteTag","TasteTag"), ("CookStyle","CookStyle"), ("IngredientTag","IngredientTag")]
 	#i = 0
 	for Item in MenuItems:
-		itemVector = Item.suggestion_vector.split(';')
+		itemVector = str(Item.suggestion_vector).split(';')
 		vectorSum = 0
 		#this loop takes the dotproduct between the menuItem's suggestion Vector and the patron's suggestion Vector
 		for suggestion in patron_suggestion_vector:
