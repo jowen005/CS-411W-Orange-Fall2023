@@ -18,6 +18,7 @@ router.register('satisfaction', views.AppSatisfactionAnalyticsViewset, basename=
 
 menu_router = DefaultRouter()
 menu_router.register('menuitems', views.LocalMenuItemPerformanceViewset, basename='localmenuitems')
+menu_router.register('overall', views.LocalRestaurantAnalyticsViewset, basename='overallrest')
 
 urlpatterns = [
     # path('tag_overview/', views.tag_overview, name='analytics'),

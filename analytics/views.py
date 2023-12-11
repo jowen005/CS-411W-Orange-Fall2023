@@ -254,19 +254,12 @@ class LocalRestaurantAnalyticsViewset(viewsets.ModelViewSet):
             restaurant = rm.Restaurant.objects.get(pk=requested_id)
 
             try:
-                #latest_datestamp = models.LocalRestaurantAnalytics.objects.filter(
-                models.LocalRestaurantAnalytics.objects.filter(
-                    restaurant_id_restaurant=restaurant,
-                ).latest('date_stamp').date_stamp
+                return [models.LocalRestaurantAnalytics.objects.filter(
+                    restaurant_id=restaurant,
+                ).latest('date_stamp')]
             except models.LocalRestaurantAnalytics.DoesNotExist: # No Analytics for a Restaurant
                 return models.LocalRestaurantAnalytics.objects.none()
 
-            # queryset = models.LocalRestaurantAnalytics.objects.filter(
-            #     restaurant_id_restaurant=restaurant,
-            #     date_stamp=latest_datestamp
-            # ).order_by('restaurant_id')
-
-            # return queryset
         
         # def retrieve(self, request, *args, **kwargs):
         #     requested_id = int(kwargs.get('pk'))
