@@ -187,6 +187,17 @@ class IsAuthAdminAndCreate(BasePermission):
                                f"authenticated admin user!")
     
 
-
+class IsAuthAdminAndGET(BasePermission):
+    def has_permission(self,request,view):
+        is_authenticated = request.user.is_authenticated 
+        is_admin = request.user.user_type == 'admin'
+        
+        if is_authenticated and is_admin:
+            if request.method == 'GET':
+                return True
+            raise PermissionDenied(f"This HTTP method is not allowed ({request.method})!")
+        
+        raise PermissionDenied(f"This user ({request.user.user_type}) is not an " +
+                               f"authenticated admin user!")
         
     

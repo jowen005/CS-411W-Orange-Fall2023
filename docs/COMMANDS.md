@@ -23,7 +23,7 @@
   * If analytics are in database (simulate has been run), it generates patronTraffic, restaurantTraffic, analytics, and trends for today.
   * FLAGS
     * **--soft_reset** --> deletes all traffic, analytics, and trends for TODAY
-    * **--hard_reset** --> deletes all traffic, analytics, and trends for the LAST 7 DAYS
+    * **--hard_reset** --> deletes all traffic for the LAST 8 DAYS and ALL analytics/trends
 
 * **python3 manage.py generatePatronTraffic _patronEmail_** --> randomly simulates patron traffic with 1 search (default) or a specified number of times (-n _int_). Simulated actions include searching, bookmarking, submitting feedback, and adding to menu item history.
 
