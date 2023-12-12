@@ -18,11 +18,14 @@ router.register('satisfaction', views.AppSatisfactionAnalyticsViewset, basename=
 
 menu_router = DefaultRouter()
 menu_router.register('menuitems', views.LocalMenuItemPerformanceViewset, basename='localmenuitems')
+menu_router.register('overall', views.LocalRestaurantAnalyticsViewset, basename='overallrest')
 
 urlpatterns = [
     # path('tag_overview/', views.tag_overview, name='analytics'),
     path('', include(router.urls)),
     path('<int:restaurant_id>/', include(menu_router.urls)),
     path('manual/', views.ManualAnalyticsCommandView.as_view(), name='manual'),
-    path('overall/<str:filter_type>/', views.OverallFilterAnalyticsViewset.as_view({'get':'list'}), name='overallfilters')
+    path('overall/login/', views.OverallLoginAnalyticsView.as_view(), name='overalllogins'),
+    path('overall/<str:filter_type>/', views.OverallFilterAnalyticsViewset.as_view({'get':'list'}), name='overallfilters'),
+    
 ]

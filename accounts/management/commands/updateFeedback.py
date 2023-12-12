@@ -32,5 +32,5 @@ class Command(BaseCommand):
         return report
 
     def output_report(self, report):
-        print(f'Number of Reviews Updated: {report["num_updated_reviews"]}\n')
+        print(f'Number of Reviews Updated: {report["num_updated_reviews"]}')
         self.stdout.write(self.style.SUCCESS(f'This command successfully completed'))

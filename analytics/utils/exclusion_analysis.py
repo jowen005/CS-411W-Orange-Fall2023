@@ -16,37 +16,36 @@ class Exclusion:
     count: int = 0
     is_excluded: bool = False
 
-def driver():
 
-    # Since Last Analytic (Data in exclusive ranges)
-    # try:
-    #     latest_datestamp = OverallExclusionRecord.objects.latest('date_stamp').date_stamp
-    # except OverallExclusionRecord.DoesNotExist:
-    #     latest_datestamp = datetime.utcfromtimestamp(0).replace(tzinfo=timezone.utc)
+TAG_TYPES = [('allergy', rm.AllergyTag, AllergyTagExclusionRecord), 
+             ('ingredients', rm.IngredientTag, IngredientTagExclusionRecord), 
+             ('restrictions', rm.RestrictionTag, RestrictionTagExclusionRecord),
+             ('taste', rm.TasteTag, TasteTagExclusionRecord)]
+
+
+def driver(sim_datetime):
+
+    if sim_datetime is None:
+        current_datestamp = timezone.now()
+    else:
+        current_datestamp = sim_datetime
 
     # Past 3 Days (Data Overlap)
-    latest_datestamp = timezone.now() - timedelta(days=3)
+    latest_datestamp = current_datestamp - timedelta(days=3)
     
     searches = pm.PatronSearchHistory.objects.filter(search_datetime__gte=latest_datestamp)
     menu_items = rm.MenuItem.objects.all().order_by('id')
-    current_datestamp = timezone.now()
-
-    TAG_TYPES = [('allergy', rm.AllergyTag, AllergyTagExclusionRecord), 
-                 ('ingredients', rm.IngredientTag, IngredientTagExclusionRecord), 
-                 ('restrictions', rm.RestrictionTag, RestrictionTagExclusionRecord),
-                 ('taste', rm.TasteTag, TasteTagExclusionRecord)]
-    
     tag_sets = {tag_type: TagModel.objects.all().order_by('id') for tag_type, TagModel, *_ in TAG_TYPES}
 
     # Perform Analysis
-    overall_exclusions, tag_exclusions = analysis(searches, menu_items, tag_sets, TAG_TYPES)
+    overall_exclusions, tag_exclusions = analysis(searches, menu_items, tag_sets)
 
     # Store data
     store_overall_exclusions(overall_exclusions, menu_items, current_datestamp)
-    store_tag_exclusions(tag_exclusions, menu_items, tag_sets, TAG_TYPES)
+    store_tag_exclusions(tag_exclusions, menu_items, tag_sets)
 
 
-def analysis(searches, menu_items, tag_sets, TAG_TYPES):
+def analysis(searches, menu_items, tag_sets):
     overall_exclusions = {f'{item.id}': Exclusion() for item in menu_items}
     tag_exclusions = {
         tag_type: {
@@ -131,7 +130,7 @@ def store_overall_exclusions(overall_exclusions, menu_items, current_datestamp):
     print('\n')
 
 
-def store_tag_exclusions(tag_exclusions, menu_items, tag_sets, TAG_TYPES):
+def store_tag_exclusions(tag_exclusions, menu_items, tag_sets):
     analytic_sets = {tag_type: ExclusionModel.objects.all() for tag_type, _, ExclusionModel in TAG_TYPES}
 
     for tag_type, _, ExclusionModel in TAG_TYPES:

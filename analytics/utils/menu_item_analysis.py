@@ -12,9 +12,9 @@ from ..models import (AllergyTagExclusionRecord, IngredientTagExclusionRecord,
 
 # Number of searches Menu Items were excluded from (total since)
 
-def driver():
+def driver(sim_datetime):
 
-    item_data, current_datestamp = item_analysis()
+    item_data, current_datestamp = item_analysis(sim_datetime)
 
     item_data = item_exclusion_analysis(item_data)
 
@@ -26,23 +26,21 @@ def driver():
         update_menu_item(entry)
     print('\n')
 
-def item_analysis():
+def item_analysis(sim_datetime):
 
-    # Since Last Analytic (Data in exclusive ranges)
-    # try:
-    #     latest_datestamp = MenuItemPerformanceAnalytics.objects.latest('date_stamp').date_stamp
-    # except MenuItemPerformanceAnalytics.DoesNotExist:
-    #     latest_datestamp = datetime.utcfromtimestamp(0).replace(tzinfo=timezone.utc)
+    if sim_datetime is None:
+        current_datestamp = timezone.now()
+    else:
+        current_datestamp = sim_datetime
 
     # Past 3 Days (Data Overlap)
-    latest_datestamp = timezone.now() - timedelta(days=3)
+    latest_datestamp = current_datestamp - timedelta(days=3)
     
     item_data = []
 
     items = rm.MenuItem.objects.all().order_by('id')
     history_set = pm.MenuItemHistory.objects.filter(MenuItemHS_datetime__gt=latest_datestamp)
     review_set = Reviews.objects.all()
-    current_datestamp = timezone.now()
 
     for item in items:
         data = {}

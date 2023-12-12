@@ -21,7 +21,7 @@ class GlobalAnalytics(models.Model):
     total_patrons = models.IntegerField()
     total_restaurants = models.IntegerField()
     total_menu_items = models.IntegerField()
-    date_stamp = models.DateTimeField(auto_now_add=True)
+    date_stamp = models.DateTimeField()
 
     def __str__(self):
         return f"{self.date_stamp} | Global Analytics - {self.id}"
@@ -180,7 +180,7 @@ class AppSatisfactionAnalytics(models.Model):
         decimal_places=2,  # Maximum of 2 decimal places
     )
     number_of_rating_total = models.PositiveIntegerField()
-    date_stamp = models.DateTimeField(auto_now_add=True)
+    date_stamp = models.DateTimeField()
 
     def __str__(self):
         return f"{self.date_stamp} | AppSatisfactionAnalytics - {self.id}"

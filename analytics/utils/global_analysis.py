@@ -11,7 +11,12 @@ from ..models import GlobalAnalytics
 
 User = get_user_model()
 
-def driver ():
+def driver (sim_datetime):
+    if sim_datetime is None:
+        current_datestamp = timezone.now()
+    else:
+        current_datestamp = sim_datetime
+
     overall_data = overall_analysis()
     gender_data = gender_analysis()
     age_data = age_analysis()
@@ -20,15 +25,16 @@ def driver ():
     
     # print(f'\nGlobal Analytics Object: {global_data}') #NOTE
 
-    obj = GlobalAnalytics.objects.create(**global_data)
+    obj = GlobalAnalytics.objects.create(**global_data, date_stamp=current_datestamp)
     print(f'{obj}\n')
 
 def overall_analysis():
     overall_data = {}
+    user_set = User.objects.all()
 
-    overall_data['total_users'] = User.objects.all().count()
-    overall_data['total_patrons'] = User.objects.filter(user_type='patron').count()
-    overall_data['total_restaurants'] = User.objects.filter(user_type='patron').count()
+    overall_data['total_users'] = user_set.count()
+    overall_data['total_patrons'] = user_set.filter(user_type='patron').count()
+    overall_data['total_restaurants'] = user_set.filter(user_type='patron').count()
     overall_data['total_menu_items'] = rm.MenuItem.objects.all().count()
 
     # print(f"Overall Analysis:\n\tTotal Users: {overall_data['total_users']}"+ #NOTE
@@ -41,9 +47,10 @@ def overall_analysis():
 def gender_analysis():
     gender_data = {}
 
-    gender_data['total_males'] = pm.Patron.objects.filter(gender='Male').count()
-    gender_data['total_females'] = pm.Patron.objects.filter(gender='Female').count()
-    gender_data['total_other'] = pm.Patron.objects.filter(gender='Other').count()
+    patron_set = pm.Patron.objects.all()
+    gender_data['total_males'] = patron_set.filter(gender='Male').count()
+    gender_data['total_females'] = patron_set.filter(gender='Female').count()
+    gender_data['total_other'] = patron_set.filter(gender='Other').count()
 
     # print(f"Gender Analysis:\n\tTotal Males: {gender_data['total_males']}"+ #NOTE
                         #  f"\n\tTotal Females: {gender_data['total_females']}"+ #NOTE
@@ -54,6 +61,7 @@ def gender_analysis():
 def age_analysis():
 
     age_data = {}
+    patron_set = pm.Patron.objects.all()
     current_day = date.today()
     bound_info = [(18, 24, 'users_18_24'), (25, 34, 'users_25_34'), (35, 44, 'users_35_44'),
                   (45, 54, 'users_45_54'), (55, 64, 'users_55_64'), (65, -1, 'users_65_and_up')]
@@ -63,12 +71,12 @@ def age_analysis():
         if upper != -1:
             upper_day = current_day - timedelta(days=365.25*(upper+1)-1)
     
-            age_data[idx] = pm.Patron.objects.filter(
+            age_data[idx] = patron_set.filter(
                 dob__gte=upper_day,
                 dob__lte=lower_day
             ).count()
         else:
-            age_data[idx] = pm.Patron.objects.filter(
+            age_data[idx] = patron_set.filter(
                 dob__lte=lower_day
             ).count()
 

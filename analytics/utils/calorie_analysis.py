@@ -9,8 +9,8 @@ from ..models import CalorieAnalytics
 NUM_OF_CAL_LEVELS = 11
 
 
-def driver():
-    calorie_data, current_datestamp = calorie_analysis()
+def driver(sim_datetime):
+    calorie_data, current_datestamp = calorie_analysis(sim_datetime)
         
     for entry in calorie_data:
         # print(entry) #NOTE
@@ -19,16 +19,15 @@ def driver():
     print('\n')
 
 
-def calorie_analysis():
-
-    # Since Last Analytic (Data in exclusive ranges)
-    # try:
-    #     latest_datestamp = CalorieAnalytics.objects.latest('date_stamp').date_stamp
-    # except CalorieAnalytics.DoesNotExist:
-    #     latest_datestamp = datetime.utcfromtimestamp(0).replace(tzinfo=timezone.utc)
+def calorie_analysis(sim_datetime):
     
+    if sim_datetime is None:
+        current_datestamp = timezone.now()
+    else:
+        current_datestamp = sim_datetime
+
     # Past 3 Days (Data Overlap)
-    latest_datestamp = timezone.now() - timedelta(days=3)
+    latest_datestamp = current_datestamp - timedelta(days=3)
 
     calorie_data = [{} for _ in range(NUM_OF_CAL_LEVELS)]
 
@@ -36,7 +35,6 @@ def calorie_analysis():
     item_set = rm.MenuItem.objects.all()
     search_set = pm.PatronSearchHistory.objects.filter(search_datetime__gt=latest_datestamp)
     history_set = pm.MenuItemHistory.objects.filter(MenuItemHS_datetime__gt=latest_datestamp)
-    current_datestamp = timezone.now()
 
     for idx in range(NUM_OF_CAL_LEVELS):
         current_level = idx + 1

@@ -1,6 +1,8 @@
 from django.core.management.base import BaseCommand, CommandParser
 from django.contrib.auth import get_user_model
 from faker import Faker
+from datetime import datetime
+from django.utils import timezone
 
 import json
 from pathlib import Path
@@ -31,7 +33,6 @@ class Command(BaseCommand):
 
     help = 'Generate and insert fake patron interaction data'
     TAG_RELATIONS_PATH = "json_files/tagRelations.json"
-    DEFAULT_JSON_PATH = "json_files/test.json"
     User = get_user_model()
     fake = Faker()
 
@@ -50,27 +51,30 @@ class Command(BaseCommand):
         # parser.add_argument("userid", nargs=1, type=int)
         parser.add_argument('-n', dest='num_searches', default=1, type=int, 
                             help='Specifies a number of searches')
+        parser.add_argument('-d', dest='sim_datetime', default=None, 
+                            help='Specifies a datetime to simulate analytics for.')
+        parser.add_argument('--no_report', action='store_true', help='Will not print a report')
 
 
-    def handle(self, email, num_searches, *args, **kwargs):
-        APP_DIR = Path(__file__).resolve().parent.parent
-
-        # Tag Relation File
-        try:
-            with open(APP_DIR/self.TAG_RELATIONS_PATH) as infile:
-                tag_relations = json.load(infile)
-        except IOError:
-            self.stdout.write(self.style.ERROR(f"Input of tag relation file failed!"))
-            exit()
+    def handle(self, email, num_searches, sim_datetime, *args, **options):
 
         user, profile = self.verify_email(email[0])
-        # user, profile = self.verify_user_id(userid[0])
 
-        search_report = self.generate_search_traffic(user, profile, tag_relations, num_searches)
-        bookmark_report = self.generate_bookmark_traffic(user)
-        self.output_reports(search_report, bookmark_report)
+        if sim_datetime is not None:
+            datetime_format = "%Y-%m-%d_%H:%M:%S"
+            # sim_datetime = datetime.strptime(sim_datetime, datetime_format)
+            sim_datetime = timezone.make_aware(datetime.strptime(sim_datetime, datetime_format))
+            sim_curr_delta = timezone.now() - sim_datetime
+        else:
+            sim_curr_delta = 0
 
-        self.stdout.write(self.style.SUCCESS(f"{num_searches} search(es) were performed!"))
+        search_report = self.generate_search_traffic(user, profile, num_searches, sim_curr_delta)
+        bookmark_report = self.generate_bookmark_traffic(user, sim_curr_delta)
+        
+        if options['no_report'] == False:
+            self.output_reports(search_report, bookmark_report)
+            self.stdout.write(self.style.SUCCESS(f"{email[0]} - {num_searches} search(es) were performed!"))
+
 
     def verify_email(self, email: str):
         try:
@@ -89,50 +93,41 @@ class Command(BaseCommand):
         except pm.Patron.DoesNotExist:
             self.stdout.write(self.style.ERROR(f'This user ({user.email}) does not have an associated profile!'))
             exit()
-
-
-    def verify_user_id(self, userid: int):
-        try:
-            user = self.User.objects.get(id=userid)
-        except self.User.DoesNotExist:
-            self.stdout.write(self.style.ERROR(f'A user with ID {userid} does not exist!'))
-            exit()
-
-        if user.user_type != 'patron':
-            self.stdout.write(self.style.ERROR(f'The user ({user.email}) with ID {userid} is not a patron!'))
-            exit()
-
-        try:
-            profile = pm.Patron.objects.get(user=user)
-            return user, profile
-        except pm.Patron.DoesNotExist:
-            self.stdout.write(self.style.ERROR(f'This user ({user.email}) does not have an associated profile!'))
-            exit()
         
 
-    def generate_search_traffic(self, user: User, profile: pm.Patron, tag_relations ,num_searches:int =1):
+    def generate_search_traffic(self, user: User, profile: pm.Patron, num_searches, sim_curr_delta):
         
+        # Tag Relation File
+        APP_DIR = Path(__file__).resolve().parent.parent
+        try:
+            with open(APP_DIR/self.TAG_RELATIONS_PATH) as infile:
+                tag_relations = json.load(infile)
+        except IOError:
+            self.stdout.write(self.style.ERROR(f"Input of tag relation file failed!"))
+            exit()
+
         ingredients = list(rm.IngredientTag.objects.values_list('title',flat=True))
-        # decisions = ['quick', 'advanced']
         search_report = [{} for _ in range(num_searches)]
 
         for idx in range(num_searches):
             decision = random.choices(SEARCH_TYPES, weights=SEARCH_WEIGHTS, k=1)[0]
             # decision = decisions[1] #Force Advanced Search
 
-            print('='*100) #NOTE
-            print(f'Search {idx}: {decision}') #NOTE
-            print('='*100) #NOTE
+            # print('='*100) #NOTE
+            # print(f'Search {idx}: {decision}') #NOTE
+            # print('='*100) #NOTE
             
             # Generate and Add Search to Search History
             if decision == 'quick':
-                search_inst = self.generate_quick_search(user, profile, tag_relations, ingredients)
+                search_inst = self.generate_quick_search(user, profile, tag_relations,
+                                                sim_curr_delta, valid_queries=ingredients)
             else:
-                search_inst = self.generate_advanced_search(user, tag_relations, ingredients)
+                search_inst = self.generate_advanced_search(user, tag_relations, 
+                                                sim_curr_delta, valid_queries=ingredients)
 
             search_obj = self.format_search_object(search_inst)
 
-            print(f'Search Object submitted to search:\n\t{search_obj}\n') #NOTE
+            # print(f'Search Object submitted to search:\n\t{search_obj}\n') #NOTE
 
             # Perform Search
             result_ids = list(advancedSearch(**search_obj))
@@ -144,32 +139,33 @@ class Command(BaseCommand):
                 'itemhistory': 0,
             }
 
-            print(f'Result IDs: {result_ids}\n') #NOTE
+            # print(f'Result IDs: {result_ids}\n') #NOTE
 
             # Bookmark Menu Items
-            bookmarks = self.generate_bookmarks(user, result_ids)
-            if bookmarks is not None:
-                search_report[idx]['bookmark'] = len(bookmarks)
+            num_bookmarks = self.generate_bookmarks(user, result_ids, sim_curr_delta)
+            if num_bookmarks is not None:
+                search_report[idx]['bookmark'] = num_bookmarks
             else:
-                self.stdout.write(self.style.ERROR(f"No results found on Search {idx}."))
+                # self.stdout.write(self.style.ERROR(f"Nothing Bookmarked on Search {idx+1}: No results found."))
                 continue
 
-            print(f'Remaining Results: {result_ids}\n') #NOTE
+            # print(f'Remaining Results: {result_ids}\n') #NOTE
 
             # Add Items to Menu Item History
-            items_added = self.generate_item_history(user, result_ids)
-            if items_added is not None:
-                search_report[idx]['itemhistory'] = len(items_added)
+            num_items_added = self.generate_item_history(user, result_ids, sim_curr_delta)
+            if num_items_added is not None:
+                search_report[idx]['itemhistory'] = num_items_added
             else:
-                self.stdout.write(self.style.ERROR(f"All results have been bookmarked on Search {idx}."))
+                # self.stdout.write(self.style.ERROR(f"Nothing Added to History on Search {idx+1}: All results have been bookmarked."))
                 continue
 
-            print(f'Items Added: {items_added}') #NOTE
+            # print(f'Items Added: {items_added}') #NOTE
 
         return search_report
     
 
-    def generate_quick_search(self, user: User, profile: pm.Patron, tag_relations, valid_queries):
+    def generate_quick_search(self, user: User, profile: pm.Patron, tag_relations,
+                              sim_curr_delta, valid_queries):
         # Remove possible queries that conflict with tag selections
         for ingred in list(profile.disliked_ingredients.all()):
             if ingred.title in valid_queries:
@@ -194,7 +190,7 @@ class Command(BaseCommand):
             "price_max": profile.price_max
         }
 
-        print(f'Search Data: {search_data}') #NOTE
+        # print(f'Search Data: {search_data}') #NOTE
         
         search_inst = pm.PatronSearchHistory.objects.create(**search_data)
         search_inst.dietary_restriction_tags.set(profile.patron_restriction_tag.all())
@@ -202,14 +198,20 @@ class Command(BaseCommand):
         search_inst.patron_taste_tags.set(profile.patron_taste_tag.all())
         search_inst.disliked_ingredients.set(profile.disliked_ingredients.all())
 
-        print(f'Search Tags for {search_inst}\n\tRestrc: {list(search_inst.dietary_restriction_tags.all())}\n\t'+ #NOTE
-              f'Allerg: {list(search_inst.allergy_tags.all())}\n\tTaste:  {list(search_inst.patron_taste_tags.all())}\n\t'+ #NOTE
-              f'DisIng: {list(search_inst.disliked_ingredients.all())}') #NOTE
+        # If Simulation, Modify to custom datetime
+        if sim_curr_delta != 0:
+            search_inst.search_datetime = timezone.now() - sim_curr_delta
+            search_inst.save()
+
+        # print(f'Search Tags for {search_inst}\n\tRestrc: {list(search_inst.dietary_restriction_tags.all())}\n\t'+ #NOTE
+            #   f'Allerg: {list(search_inst.allergy_tags.all())}\n\tTaste:  {list(search_inst.patron_taste_tags.all())}\n\t'+ #NOTE
+            #   f'DisIng: {list(search_inst.disliked_ingredients.all())}') #NOTE
 
         return search_inst
     
 
-    def generate_advanced_search(self, user: User, tag_relations, valid_queries):
+    def generate_advanced_search(self, user: User, tag_relations,
+                                 sim_curr_delta, valid_queries):
         # Grab Valid Tags
         valid_restrict_tags = list(rm.RestrictionTag.objects.all())
         valid_allergy_tags = list(rm.AllergyTag.objects.all())
@@ -245,7 +247,7 @@ class Command(BaseCommand):
                 if conflict in valid_queries:
                     valid_queries.remove(conflict)
 
-        print(f'Valid Queries: {valid_queries}')
+        # print(f'Valid Queries: {valid_queries}') #NOTE
 
         # Add Advanced Search object to Search History
         search_data = {
@@ -256,7 +258,7 @@ class Command(BaseCommand):
             "price_max": 30.0 # NOTE: Adjust to be random
         }
 
-        print(f'Search Data: {search_data}') #NOTE
+        # print(f'Search Data: {search_data}') #NOTE
         
         search_inst = pm.PatronSearchHistory.objects.create(**search_data)
         search_inst.dietary_restriction_tags.set(selected_restrict_tags)
@@ -264,9 +266,14 @@ class Command(BaseCommand):
         search_inst.patron_taste_tags.set(selected_taste_tags)
         search_inst.disliked_ingredients.set(selected_ingred_tags)
 
-        print(f'Search Tags for {search_inst}\n\tRestrc: {list(search_inst.dietary_restriction_tags.all())}\n\t'+ #NOTE
-              f'Allerg: {list(search_inst.allergy_tags.all())}\n\tTaste:  {list(search_inst.patron_taste_tags.all())}\n\t'+ #NOTE
-              f'DisIng: {list(search_inst.disliked_ingredients.all())}') #NOTE
+        # If Simulation, Modify to custom datetime
+        if sim_curr_delta != 0:
+            search_inst.search_datetime = timezone.now() - sim_curr_delta
+            search_inst.save()
+
+        # print(f'Search Tags for {search_inst}\n\tRestrc: {list(search_inst.dietary_restriction_tags.all())}\n\t'+ #NOTE
+            #   f'Allerg: {list(search_inst.allergy_tags.all())}\n\tTaste:  {list(search_inst.patron_taste_tags.all())}\n\t'+ #NOTE
+            #   f'DisIng: {list(search_inst.disliked_ingredients.all())}') #NOTE
 
         return search_inst
     
@@ -282,23 +289,23 @@ class Command(BaseCommand):
         return search_obj
     
 
-    def generate_bookmarks(self, user: User, result_ids):
-        # num_nonbookmark_results = len(result_ids)
+    def generate_bookmarks(self, user: User, result_ids, sim_curr_delta):
+
         # find menu items that have not been bookmarked
         bookmark_item_ids = list(pm.Bookmark.objects.filter(patron=user).values_list('menu_item', flat=True))
         nonbookmarked_results = [item for item in result_ids if item not in bookmark_item_ids]
         num_nonbookmark_results = len(nonbookmarked_results)
         
-        print(f'Bookmark Item IDs: {bookmark_item_ids}') #NOTE
-        print(f'NonBookmarked Results: {nonbookmarked_results}') #NOTE
-        print(f'Number of nonbookmarked results: {num_nonbookmark_results}\n') #NOTE
+        # print(f'Bookmark Item IDs: {bookmark_item_ids}') #NOTE
+        # print(f'NonBookmarked Results: {nonbookmarked_results}') #NOTE
+        # print(f'Number of nonbookmarked results: {num_nonbookmark_results}\n') #NOTE
 
         if num_nonbookmark_results == 0:
             return None
 
         choice = random.choices(BOOKMARK_SELECTIONS, weights=BOOKMARK_WEIGHTS, k=1)[0]
         num_bookmarks = min(choice, num_nonbookmark_results)
-        print(f'Number of bookmarks to be selected: {num_bookmarks}') #NOTE
+        # print(f'Number of bookmarks to be selected: {num_bookmarks}') #NOTE
         
         bookmarks = []
 
@@ -309,15 +316,21 @@ class Command(BaseCommand):
                 result_ids.remove(item_id)
 
                 item = rm.MenuItem.objects.get(id=item_id)
-                bookmarks.append(pm.Bookmark.objects.create(patron=user, menu_item=item))
-                print(f'Menu Item Bookmarked: {item_id}') #NOTE
+                bookmark = pm.Bookmark.objects.create(patron=user, menu_item=item)
+                bookmarks.append(bookmark)
+                # print(f'Menu Item Bookmarked: {item_id}') #NOTE
 
-        print(f'Successful Bookmarks: {bookmarks}\n') #NOTE
+                # If Simulation, Modify to custom datetime
+                if sim_curr_delta != 0:
+                    bookmark.bookmarked_datetime = timezone.now() - sim_curr_delta
+                    bookmark.save()
 
-        return bookmarks
+        # print(f'Successful Bookmarks: {bookmarks}\n') #NOTE
+
+        return len(bookmarks)
 
 
-    def generate_item_history(self, user: User, result_ids):
+    def generate_item_history(self, user: User, result_ids, sim_curr_delta):
         num_results = len(result_ids)
 
         if num_results == 0:
@@ -325,7 +338,7 @@ class Command(BaseCommand):
 
         choice = random.choices(HISTORY_SELECTIONS, weights=HISTORY_WEIGHTS, k=1)[0]
         num_adds = min(num_results, choice)
-        print(f'Number of items to be added: {num_adds}') #NOTE
+        # print(f'Number of items to be added: {num_adds}') #NOTE
 
         items_added = []
 
@@ -344,31 +357,40 @@ class Command(BaseCommand):
                     "review": self.possible_reviews[math.floor(rating)]
                 }
 
-                print(f'Feedback Data: {feedback_data}') #NOTE
+                # print(f'Feedback Data: {feedback_data}') #NOTE
                 feedback_obj = Reviews.objects.create(**feedback_data)
-                print(f'Feedback Object Successful: {feedback_obj}') #NOTE
+                # print(f'Feedback Object Successful: {feedback_obj}') #NOTE
 
                 # Create Menu Item History Object
-                items_added.append(pm.MenuItemHistory.objects.create(patron=user, review=feedback_obj, menu_item=item))
-                print(f'Menu Item Added: {item_id}') #NOTE
+                history_obj = pm.MenuItemHistory.objects.create(patron=user, review=feedback_obj, menu_item=item)
+                items_added.append(history_obj)
+                # print(f'Menu Item Added: {item_id}') #NOTE
 
-            print(f'Successful Adds: {items_added}\n') #NOTE
+                # If Simulation, Modify to custom datetime
+                if sim_curr_delta != 0:
+                    feedback_obj.review_datetime = timezone.now() - sim_curr_delta
+                    feedback_obj.save()
 
-        return items_added
+                    history_obj.MenuItemHS_datetime = timezone.now() - sim_curr_delta
+                    history_obj.save()
+
+            # print(f'Successful Adds: {items_added}\n') #NOTE
+
+        return len(items_added)
 
 
-    def generate_bookmark_traffic(self, user: User):
+    def generate_bookmark_traffic(self, user: User, sim_curr_delta):
 
-        print('='*100) #NOTE
-        print(f'Bookmark Traffic') #NOTE
-        print('='*100+'\n') #NOTE
+        # print('='*100) #NOTE
+        # print(f'Bookmark Traffic') #NOTE
+        # print('='*100+'\n') #NOTE
 
         valid_bookmarks = list(pm.Bookmark.objects.all())
         items_added = []
 
         num_bookmarks = len(valid_bookmarks)
 
-        print(f'Number of Bookmarks {num_bookmarks}') #NOTE
+        # print(f'Number of Bookmarks {num_bookmarks}') #NOTE
 
         if num_bookmarks == 0:
             return {'itemsadded':0, 'itemsremaining':0}
@@ -379,7 +401,7 @@ class Command(BaseCommand):
         else:
             num_selections = num_bookmarks - 3
 
-        print(f'Number of Selections: {num_selections}') #NOTE
+        # print(f'Number of Selections: {num_selections}') #NOTE
 
         for bookmark in random.sample(valid_bookmarks, k=num_selections):
             item = bookmark.menu_item
@@ -392,17 +414,25 @@ class Command(BaseCommand):
                 "rating": rating,
                 "review": self.possible_reviews[math.floor(rating)]
             }
-            print(f'Feedback Data: {feedback_data}') #NOTE
+            # print(f'Feedback Data: {feedback_data}') #NOTE
 
             feedback_obj = Reviews.objects.create(**feedback_data)
-            items_added.append(pm.MenuItemHistory.objects.create(patron=user, review=feedback_obj, menu_item=item))
-            print(f'Menu Item Added: {item}') #NOTE
+            history_obj = pm.MenuItemHistory.objects.create(patron=user, review=feedback_obj, menu_item=item)
+            items_added.append(history_obj)
+            # print(f'Menu Item Added: {item}') #NOTE
+
+            if sim_curr_delta != 0:
+                feedback_obj.review_datetime = timezone.now() - sim_curr_delta
+                feedback_obj.save()
+
+                history_obj.MenuItemHS_datetime = timezone.now() - sim_curr_delta
+                history_obj.save()
 
         bookmark_report = {}
         bookmark_report['itemsadded'] = len(items_added)
         bookmark_report['itemsremaining'] = num_bookmarks - num_selections
 
-        print('\n') #NOTE
+        # print('\n') #NOTE
 
         return bookmark_report
     

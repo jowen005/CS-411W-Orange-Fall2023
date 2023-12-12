@@ -31,7 +31,8 @@ class TrendsMixin(models.Model):
 
 # (num_cal_levels * num_trend_types) per datestamp
 class CalorieTrends(TrendsMixin):
-    TREND_TYPES = [('search', 'search'), ('history', 'history')]
+    TREND_TYPES = [('search', 'Number Searches within this Calorie Range'),
+                   ('history', 'Number of Items added to History within this Calorie Range')]
     LEVEL_CALORIE = [
         (0, 'Invalid'),(1, "0 - 199"), (2, '200 - 399'), (3 , '400 - 599'), 
         (4, '600 - 799'), (5, '800 - 999'), (6, '1000 - 1199'),
@@ -49,7 +50,8 @@ class CalorieTrends(TrendsMixin):
 
 # (num_tags * num_trend_types) per datestamp
 class RestrictionTagTrends(TrendsMixin):
-    TREND_TYPES = [('search', 'search'), ('history', 'history')]
+    TREND_TYPES = [('search', 'Number Searches with this Tag'), 
+                   ('history', 'Number of Items added to History with this Tag')]
     tag = models.ForeignKey(RestrictionTag, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -61,7 +63,8 @@ class RestrictionTagTrends(TrendsMixin):
 
 # (num_tags * num_trend_types) per datestamp
 class AllergyTagTrends(TrendsMixin):
-    TREND_TYPES = [('search', 'search'), ('history', 'history')]
+    TREND_TYPES = [('search', 'Number Searches with this Tag'), 
+                   ('history', 'Number of Items added to History with this Tag')]
     tag = models.ForeignKey(AllergyTag, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -73,7 +76,8 @@ class AllergyTagTrends(TrendsMixin):
 
 # (num_tags * num_trend_types) per datestamp
 class IngredientTagTrends(TrendsMixin):
-    TREND_TYPES = [('search', 'search'), ('history', 'history')]
+    TREND_TYPES = [('search', 'Number Searches with this Tag'), 
+                   ('history', 'Number of Items added to History with this Tag')]
     tag = models.ForeignKey(IngredientTag, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -85,7 +89,8 @@ class IngredientTagTrends(TrendsMixin):
 
 # (num_tags * num_trend_types) per datestamp
 class TasteTagTrends(TrendsMixin):
-    TREND_TYPES = [('search', 'search'), ('history', 'history')]
+    TREND_TYPES = [('search', 'Number Searches with this Tag'), 
+                   ('history', 'Number of Items added to History with this Tag')]
     tag = models.ForeignKey(TasteTag, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -97,7 +102,8 @@ class TasteTagTrends(TrendsMixin):
 
 # (num_tags * num_trend_types) per datestamp
 class CookStyleTagTrends(TrendsMixin):
-    TREND_TYPES = [('search', 'search'), ('history', 'history')]
+    TREND_TYPES = [('search', 'Number Searches with this Tag'), 
+                   ('history', 'Number of Items added to History with this Tag')]
     tag = models.ForeignKey(CookStyleTag, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -109,7 +115,9 @@ class CookStyleTagTrends(TrendsMixin):
 
 # (num_menu_items * num_trend_types) per datestamp
 class MenuItemPerformanceTrends(TrendsMixin):
-    TREND_TYPES = [('excluded', 'excluded'), ('history', 'history'), ('avg_rating', 'avg_rating')]
+    TREND_TYPES = [('excluded', 'Number of times this Menu Item was Excluded from a Search'), 
+                   ('history', 'Number of times this Menu Item was added to History'), 
+                   ('avg_rating', 'Average Rating')]
     item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -121,7 +129,8 @@ class MenuItemPerformanceTrends(TrendsMixin):
 
 # (num_trend_types) per datestamp
 class AppSatisfactionTrends(TrendsMixin):
-    TREND_TYPES = [('num_ratings', 'num_ratings'), ('avg_rating', 'avg_rating')]
+    TREND_TYPES = [('num_ratings', 'Total Number of Ratings'), 
+                   ('avg_rating', 'Average Rating')]
 
     def __str__(self):
         return f"{self.date_stamp} | AppSatisfactionTrends - {self.id}"

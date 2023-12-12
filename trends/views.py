@@ -43,6 +43,8 @@ class FilterTrendsViewset(viewsets.ModelViewSet):
             date_stamp=latest_datestamp
         ).order_by(id_attr)
 
+        # print(queryset.first().get_trend_type_display())
+
         return queryset
     
     def retrieve(self, request, *args, **kwargs):

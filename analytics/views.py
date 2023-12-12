@@ -2,6 +2,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import status, viewsets, generics, views
 from django.core.management import call_command
+from django.db.models import Sum
 
 from django.contrib.auth import get_user_model
 from . import models, serializers, permissions
@@ -254,19 +255,12 @@ class LocalRestaurantAnalyticsViewset(viewsets.ModelViewSet):
             restaurant = rm.Restaurant.objects.get(pk=requested_id)
 
             try:
-                #latest_datestamp = models.LocalRestaurantAnalytics.objects.filter(
-                models.LocalRestaurantAnalytics.objects.filter(
-                    restaurant_id_restaurant=restaurant,
-                ).latest('date_stamp').date_stamp
+                return [models.LocalRestaurantAnalytics.objects.filter(
+                    restaurant_id=restaurant,
+                ).latest('date_stamp')]
             except models.LocalRestaurantAnalytics.DoesNotExist: # No Analytics for a Restaurant
                 return models.LocalRestaurantAnalytics.objects.none()
 
-            # queryset = models.LocalRestaurantAnalytics.objects.filter(
-            #     restaurant_id_restaurant=restaurant,
-            #     date_stamp=latest_datestamp
-            # ).order_by('restaurant_id')
-
-            # return queryset
         
         # def retrieve(self, request, *args, **kwargs):
         #     requested_id = int(kwargs.get('pk'))
@@ -333,3 +327,37 @@ class LoginAnalyticsViewset(viewsets.ModelViewSet):
         serializer = self.get_serializer(analytic_obj)
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
+    
+
+class OverallLoginAnalyticsView(views.APIView):
+    permission_classes = [permissions.IsAuthAdminAndGET]
+
+    def get(self, request, *args, **kwargs):
+        
+        login_set = models.LoginAnalytics.objects.all()
+        try:
+            latest_datestamp = login_set.latest('date_stamp').date_stamp
+        except models.LoginAnalytics.DoesNotExist: # No Analytics At All
+            response = {
+                'message': 'No LoginAnalytics Found!'
+            }
+            return Response(data=response, status=status.HTTP_404_NOT_FOUND)
+        
+        patron_logins = login_set.filter(
+            user__user_type='patron',
+            date_stamp=latest_datestamp
+        )
+
+        rest_logins = login_set.filter(
+            user__user_type='restaurant',
+            date_stamp=latest_datestamp
+        )
+
+        response = {
+            'patron_total_logins': patron_logins.aggregate(total=Sum('total_logins'))['total'],
+            'patron_logins_since': patron_logins.aggregate(total=Sum('logins_since'))['total'],
+            'rest_total_logins': rest_logins.aggregate(total=Sum('total_logins'))['total'],
+            'rest_logins_since': rest_logins.aggregate(total=Sum('logins_since'))['total']
+        }
+
+        return Response(data=response, status=status.HTTP_200_OK)

@@ -13,8 +13,8 @@ from ..models import (AllergyTagExclusionRecord, IngredientTagExclusionRecord,
                       RestrictionTagExclusionRecord, TasteTagExclusionRecord,
                       OverallExclusionRecord)
 
-def driver():
-    restaurant_data, current_datestamp = restaurant_analysis()
+def driver(sim_datetime):
+    restaurant_data, current_datestamp = restaurant_analysis(sim_datetime)
 
     # Save the new analytic records in the model
     for entry in restaurant_data:
@@ -24,24 +24,25 @@ def driver():
         print('\n')
 
 
-def restaurant_analysis():
+def restaurant_analysis(sim_datetime):
+
+    if sim_datetime is None:
+        current_datestamp = timezone.now()
+    else:
+        current_datestamp = sim_datetime
 
     # Past 3 Days (Data Overlap)
-    latest_datestamp = timezone.now() - timedelta(days=3)
+    latest_datestamp = current_datestamp - timedelta(days=3)
 
     # List storing the restaurant fields
     restaurant_data = []
 
 
     restaurants = rm.Restaurant.objects.all()
-    # List storing all fields for an entry in the LocalRestaurantAnalytics Model
-    #restaurant_data = ['total_items_added_to_histories', '']
-
 
     items = rm.MenuItem.objects.all().order_by('id')
     history_set = pm.MenuItemHistory.objects.filter(MenuItemHS_datetime__gt=latest_datestamp)
     searches = pm.PatronSearchHistory.objects.filter(search_datetime__gte=latest_datestamp)
-    current_datestamp = timezone.now()
 
 
     # Get all the fields for each restaurant
@@ -50,35 +51,12 @@ def restaurant_analysis():
         data['restaurant_id'] = restaurant
         data['top_three_items'] = top_3_items_analysis(restaurant)
         data['total_items_added_to_histories'] = total_added_to_histories(restaurant, latest_datestamp)
-        # data['allergies_tags_most_eliminations'], data['ingredient_tags_most_eliminations'], data['restriction_tags_most_eliminations'], data['taste_tags_most_eliminations'] = tag_eliminations_analysis(restaurant, latest_datestamp)
         data['allergies_tags_most_eliminations'] = top_tag_analysis(restaurant, AllergyTagExclusionRecord)
         data['ingredient_tags_most_eliminations'] = top_tag_analysis(restaurant, IngredientTagExclusionRecord)
         data['restriction_tags_most_eliminations'] = top_tag_analysis(restaurant, RestrictionTagExclusionRecord)
         data['taste_tags_most_eliminations'] = top_tag_analysis(restaurant, TasteTagExclusionRecord)
-        #tag_eliminations_analysis(restaurant, latest_datestamp)
 
         restaurant_data.append(data)
-
-    
-    #data = {}
-    #for restaurant in restaurants:
-       
-
-    # Go through all menu items in each history and count which ones have the same restaurant id as 'restaurant'
-    #for history in history_set:
-        # Number of items from restaurant in that history, add each iteration
-     #   pass
-    # Will have the number added to histories for each restaurant
-
-        # The below does not work (I don't think)
-
-        # data['total_items_added_to_histories'] = history_set.filter(
-        #     menu_restaurant_id = restaurant.id
-        # ).count()
-
-        # restaurant_data.append(data)
-
-        # For each tag which one excludes the most items (use similar algorithm to exclusion analysis)
 
     return restaurant_data, current_datestamp
 
@@ -101,14 +79,6 @@ def total_added_to_histories(rest, latest_datestamp):
         for h_item in items_in_histories:
             if item == h_item:
                 total_items_added_to_histories += 1
-
-       # history_count = history.menu_item.filter(restaurant = rest).count()
-        #total_items_added_to_histories += history_count
-            # restaurant_items = items.filter(restaurant=rest)
-            # for item in restaurant_items:
-    # for history in history_set:
-    #     for item in items:
-    #         if history.menu_item.id = item.id:
 
 
         # Number of items from restaurant in that history, add each iteration
@@ -149,10 +119,6 @@ def top_3_items_analysis(rest):
                     }
                     counter += 1
                     top_3_items.append(item)
-                    # if counter == 'first':
-                    #     counter = 'second'
-                    # else:
-                    #     counter = 'third'
     
     return top_3_items
 
@@ -174,32 +140,10 @@ def top_tag_analysis(rest, ExclusionRecord):
     return top_tag_data
 
 
-def tag_eliminations_analysis(rest, latest_datestamp):
-    # TAG_TYPES = [('allergy', rm.AllergyTag, LocalRestaurantAnalytics), 
-    #              ('ingredients', rm.IngredientTag, LocalRestaurantAnalytics), 
-    #              ('restrictions', rm.RestrictionTag, LocalRestaurantAnalytics),
-    #              ('taste', rm.TasteTag, LocalRestaurantAnalytics)]
-    
+def tag_eliminations_analysis(rest, latest_datestamp): 
     items = rm.MenuItem.objects.filter(restaurant = rest)
     searches = pm.PatronSearchHistory.objects.filter(search_datetime__gte=latest_datestamp)
 
-    #tag_sets = {tag_type: TagModel.objects.all().order_by('id') for tag_type, TagModel, *_ in TAG_TYPES}
-
-    # tag_exclusions = {
-    #     tag_type:{
-    #         tag: {
-    #             exclusion_count
-    #         }
-    #     }
-    # }
-
-    # tag_exclusions = {
-    #     tag_type: {
-    #         f'{item.id}': {
-    #             f'{tag.id}':0 for tag in tag_sets[tag_type]}
-    #         for item in items} 
-    #     for tag_type, *_ in TAG_TYPES
-    # }
     total_allergy_counts = []
     total_allergy = []
 
@@ -228,12 +172,6 @@ def tag_eliminations_analysis(rest, latest_datestamp):
                     allergy_counts += 1
                 total_allergy_counts.append(allergy_counts)
                 total_allergy.append(allergy)
-
-        # for allergy in search.allergy_tags.all():
-        #     excluded_items = items.filter(menu_allergy_tag=allergy)
-        #     allergy_count = 0
-        #     for item in excluded_items:
-        #         tag_exclusions['allergy'][f'{item.id}'][f'{allergy.id}'] += 1
         
         # Excluded if item has any of the disliked ingredients (record tags that led to it getting excluded)
         for ingredient in search.disliked_ingredients.all():
@@ -250,12 +188,6 @@ def tag_eliminations_analysis(rest, latest_datestamp):
                     ingredient_counts += 1
                 total_ingredient_counts.append(ingredient_counts)
                 total_ingredient.append(ingredient)
-
-        # for ingredient in search.disliked_ingredients.all():
-        #     excluded_items = items.filter(ingredients_tag=ingredient)
-        #     disliked_ingredient_count = 0
-        #     for item in excluded_items:
-        #         tag_exclusions['ingredients'][f'{item.id}'][f'{ingredient.id}'] += 1
 
         
         #Excluded if item does not have restriction tag
@@ -275,14 +207,6 @@ def tag_eliminations_analysis(rest, latest_datestamp):
                     # print('a')
                 total_restriction_counts.append(restrictions_counts)
                 total_restrictions.append(restriction)
-                    
-        #     for item in excluded_items:
-        #         restrictions_counts += 1
-        #     total_restriction_counts[i] = 
-        #         #tag_exclusions['restrictions'][f'{item.id}'][f'{restriction.id}'] += 1
-        # for restrict in restriction_count:
-        #     if total_restrictions[i] == restrictions[i]:
-        #         restrictions[i]
 
 
         # Excluded if item does not have any of the taste tags (record tags that led to it getting excluded)
@@ -298,11 +222,6 @@ def tag_eliminations_analysis(rest, latest_datestamp):
                     taste_counts += 1
                 total_taste_counts.append(taste_counts)
                 total_taste.append(taste) 
-
-        # excluded_items = items.exclude(taste_tags__in=search.patron_taste_tags.all())
-        # for item in excluded_items:
-        #     for taste in search.patron_taste_tags.all():
-        #         tag_exclusions['taste'][f'{item.id}'][f'{taste.id}'] += 1
         
         
     # Get the max of each total count and the correspoding tag
