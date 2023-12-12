@@ -207,6 +207,7 @@ class MenuItem(models.Model):
     TAGS_TO_TRACK = [FoodTypeTag, TasteTag, CookStyleTag, IngredientTag]
 
     def vectorizeMenuItem(self):
+        # print('Im vectorizing')
         tag_counts = {TagModel.__name__:TagModel.objects.all().count() for TagModel in self.TAGS_TO_TRACK}
         Item = self
         FoodTagCount = tag_counts['FoodTypeTag']
@@ -241,6 +242,8 @@ class MenuItem(models.Model):
         IngrString = "".join(IngredientList)
         FinalVectorString = FoodString + ';' + TasteString + ';' + CookString + ';' + IngrString + ';'
         Item.suggestion_vector = FinalVectorString
+        print(FinalVectorString)
         #compute and save normalizing value
         Item.inverse_sqrt = 1/math.sqrt(selected_tags)
+        super(MenuItem, self).save()
     
