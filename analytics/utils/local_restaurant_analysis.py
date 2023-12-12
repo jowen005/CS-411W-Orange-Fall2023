@@ -90,7 +90,8 @@ def top_3_items_analysis(rest):
     INDEXES = ['first', 'second', 'third']
     items = rm.MenuItem.objects.filter(restaurant = rest)
     top_3_scores = []
-    top_3_items = []
+    # top_3_items = []
+    top_3_items = {}
     performance_scores = []
     
     # Calculate the performance scores
@@ -111,14 +112,18 @@ def top_3_items_analysis(rest):
         for item in reversed(items):
             if counter < 3:
                 if p_score == item.average_rating * item.number_of_rating:
-                    item = {
-                        INDEXES[counter]: {
+                    # item = {
+                    #     INDEXES[counter]: {
+                    #     'title': item.item_name,
+                    #     'score': p_score
+                    #     }
+                    # }
+                    counter += 1
+                    # top_3_items.append(item)
+                    top_3_items[INDEXES[counter]] = {
                         'title': item.item_name,
                         'score': p_score
-                        }
                     }
-                    counter += 1
-                    top_3_items.append(item)
     
     return top_3_items
 
