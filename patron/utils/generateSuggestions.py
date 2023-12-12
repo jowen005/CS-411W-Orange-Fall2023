@@ -61,12 +61,14 @@ def generateSuggestions(PatronID):
 		#print(f'{Item.id}, score = {vectorSum} suck vector:')
 		#print(str(Item.suggestion_vector).split(';'))
 		vectorSum = 1 - vectorSum
-		itemDictionary.put((vectorSum,Item.id))
+		itemDictionary.put((vectorSum,Item.id,Item))
 		#break
 	
 	#because for some reason of ALL things the priorityqueue cant be cast to a list we do this
 	print("Items Found = " + str(itemDictionary.qsize()))
+	
 	results = []
 	for i in range(itemDictionary.qsize()):
-		results.append(itemDictionary.get()[1])
+		results.append(itemDictionary.get()[2])
+	#print(results)
 	return results

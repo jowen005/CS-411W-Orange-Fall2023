@@ -226,9 +226,9 @@ def SuggestionFeedAPI(request:Request):
         }
         return Response(response_data, status=status.HTTP_404_NOT_FOUND)
 
-    suggestion_ids = generateSuggestions(patron_id)
+    suggestions = generateSuggestions(patron_id)
 
-    suggestions = MenuItem.objects.filter(id__in=suggestion_ids)
+    #suggestions = MenuItem.objects.filter(id__in=suggestion_ids)
 
     serializer = MenuItemListSerializer(suggestions, many=True)
 

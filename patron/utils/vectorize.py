@@ -35,14 +35,13 @@ def vectorizePatron(PatronID):
 	patronReviews = Reviews.objects.filter(patron=eater.user) #Reviews.objects.get(patron=eater.user,menu_item=Item)
 
 	for History in MenuItemHistories:
-		try:
-			Item = History.menu_item
-			itemVector = str(Item.suggestion_vector)
-			rating = float(patronReviews.filter(menu_item=Item).order_by("-review_datetime").values_list("rating",flat=True)[0])
-			if itemVector is None:
-				#somehow this menuitem isn't properly initialized, initialize it now and move along
-				Item.save()
-			TagStrings = itemVector.split(";")
+		Item = History.menu_item
+		itemVector = str(Item.suggestion_vector)
+		rating = float(patronReviews.filter(menu_item=Item).order_by("-review_datetime").values_list("rating",flat=True).first())
+		if itemVector is None:
+			#somehow this menuitem isn't properly initialized, initialize it now and move along
+			Item.save()
+		TagStrings = itemVector.split(";")
 
 			for I,bit in enumerate(TagStrings[0]):
 				FoodList[I] += int(bit) * rating

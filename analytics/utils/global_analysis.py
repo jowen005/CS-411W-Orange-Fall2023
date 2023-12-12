@@ -32,9 +32,9 @@ def overall_analysis():
     overall_data = {}
     user_set = User.objects.all()
 
-    overall_data['total_users'] = user_set.count()
+    overall_data['total_users'] = user_set.exclude(user_type='admin').count()
     overall_data['total_patrons'] = user_set.filter(user_type='patron').count()
-    overall_data['total_restaurants'] = user_set.filter(user_type='patron').count()
+    overall_data['total_restaurants'] = user_set.filter(user_type='restaurant').count()
     overall_data['total_menu_items'] = rm.MenuItem.objects.all().count()
 
     # print(f"Overall Analysis:\n\tTotal Users: {overall_data['total_users']}"+ #NOTE
