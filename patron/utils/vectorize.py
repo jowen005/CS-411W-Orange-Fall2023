@@ -49,19 +49,17 @@ def vectorizePatron(PatronID):
 			Item.save()
 		TagStrings = itemVector.split(";")
 
-			for I,bit in enumerate(TagStrings[0]):
-				FoodList[I] += int(bit) * rating
-			
-			for I,bit in enumerate(TagStrings[1]):
-				TasteList[I] += int(bit) * rating
+		for I,bit in enumerate(TagStrings[0]):
+			FoodList[I] += int(bit) * rating
+		
+		for I,bit in enumerate(TagStrings[1]):
+			TasteList[I] += int(bit) * rating
 
-			for I,bit in enumerate(TagStrings[2]):
-				CookList[I] += int(bit) * rating
+		for I,bit in enumerate(TagStrings[2]):
+			CookList[I] += int(bit) * rating
 
-			for I,bit in enumerate(TagStrings[3]):
-				IngredientList[I] += int(bit) * rating
-		except:
-			print("BALLS")
+		for I,bit in enumerate(TagStrings[3]):
+			IngredientList[I] += int(bit) * rating
 
 	#Still need a way to reject suggestions
 	vectorWithZeros = FoodList + TasteList + CookList + IngredientList
