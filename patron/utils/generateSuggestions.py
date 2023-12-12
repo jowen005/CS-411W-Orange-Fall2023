@@ -70,5 +70,5 @@ def generateSuggestions(PatronID):
 	results = []
 	for i in range(itemDictionary.qsize()):
 		results.append(itemDictionary.get()[2])
-	print(results)
+	#print(results)
 	return results
