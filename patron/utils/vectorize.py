@@ -37,7 +37,7 @@ def vectorizePatron(PatronID):
 	for History in MenuItemHistories:
 		Item = History.menu_item
 		itemVector = str(Item.suggestion_vector)
-		rating = float(patronReviews.filter(menu_item=Item).orderby("-review_datetime").values_list("rating",flat=True)[0])
+		rating = float(patronReviews.filter(menu_item=Item).order_by("-review_datetime").values_list("rating",flat=True).first())
 		if itemVector is None:
 			#somehow this menuitem isn't properly initialized, initialize it now and move along
 			Item.save()
