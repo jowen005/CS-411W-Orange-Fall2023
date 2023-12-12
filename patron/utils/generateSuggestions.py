@@ -66,7 +66,9 @@ def generateSuggestions(PatronID):
 	
 	#because for some reason of ALL things the priorityqueue cant be cast to a list we do this
 	print("Items Found = " + str(itemDictionary.qsize()))
+	
 	results = []
 	for i in range(itemDictionary.qsize()):
 		results.append(itemDictionary.get()[1])
+	#print(results)
 	return results
