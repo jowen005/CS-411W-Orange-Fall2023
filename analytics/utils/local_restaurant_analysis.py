@@ -118,12 +118,13 @@ def top_3_items_analysis(rest):
                     #     'score': p_score
                     #     }
                     # }
-                    counter += 1
+
                     # top_3_items.append(item)
                     top_3_items[INDEXES[counter]] = {
                         'title': item.item_name,
                         'score': p_score
                     }
+                    counter += 1
     
     return top_3_items
 
