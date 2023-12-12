@@ -19,7 +19,7 @@ class Command(BaseCommand):
 
 
     def update_objects(self):
-        num_updated_patrons = 0
+        # num_updated_patrons = 0
         num_updated_items = 0
 
         # outdated_patrons = Patron.objects.filter(profile_updated = True)
@@ -32,11 +32,13 @@ class Command(BaseCommand):
             item.save()
             num_updated_items += 1
 
-        report = {'num_updated_patrons': num_updated_patrons,
-                  'num_updated_items': num_updated_items}
+        report = {
+            # 'num_updated_patrons': num_updated_patrons,
+            'num_updated_items': num_updated_items
+        }
         return report
 
     def output_report(self, report):
-        print(f'Number of Profiles Updated: {report["num_updated_patrons"]}')
+        # print(f'Number of Profiles Updated: {report["num_updated_patrons"]}')
         print(f'Number of Menu Items Updated: {report["num_updated_items"]}')
         self.stdout.write(self.style.SUCCESS(f'This command successfully completed'))
