@@ -5,6 +5,7 @@ from feedback.models import Reviews
 import math
 
 def vectorizePatron(PatronID):
+	print("Vectorizing")
 	eater = Patron.objects.get(pk=PatronID)
 	FoodTagCount = FoodTypeTag.objects.all().count()
 	TasteTagCount = TasteTag.objects.all().count()
@@ -26,7 +27,7 @@ def vectorizePatron(PatronID):
 		#print("tag: " + name + ", id: " + str(Tag))
 		TasteList[Tag-1] = 20
 	for Tag,name in eater.disliked_ingredients.values_list():
-		IngredientList[Tag.id-1] = -20
+		IngredientList[Tag-1] = -20
 	
 	MenuItemHistories = MenuItemHistory.objects.filter(patron=eater.id)	
 	MenuItems = MenuItem.objects.filter(id__in=list(MenuItemHistories.values_list("menu_item",flat=True)))
@@ -35,7 +36,7 @@ def vectorizePatron(PatronID):
 
 	for History in MenuItemHistories:
 		Item = History.menu_item
-		itemVector = Item.suggestion_vector
+		itemVector = str(Item.suggestion_vector)
 		rating = float(patronReviews.filter(menu_item=Item).orderby("-review_datetime").values_list("rating",flat=True)[0])
 		if itemVector is None:
 			#somehow this menuitem isn't properly initialized, initialize it now and move along
@@ -64,11 +65,13 @@ def vectorizePatron(PatronID):
 	#compute and save normalizing value
 	inverse_sqrt = 1/math.sqrt(length)
 
-	suggestion_vector = PatronSuggestionVector.objects.filter(patron=PatronID)
+	print(PatronID)
+	suggestion_vector = PatronSuggestionVector.objects.filter(patron_id=PatronID)
 
 	for i,element in enumerate(TasteList):
 		if (element == 0):
 			try:
+				#if element is zero and the suggestion_vector is not zero set it to be zero and move along
 				vectorElement = suggestion_vector.get(tag_table="TasteTag",tag_id=i+1)
 				vectorElement.rating = 0
 				vectorElement.save()
@@ -84,8 +87,8 @@ def vectorizePatron(PatronID):
 				vectorElement.rating = element * inverse_sqrt
 				vectorElement.save()
 			except (PatronSuggestionVector.DoesNotExist):
-				vectorElement = PatronSuggestionVector(tag_id=i+1,tag_table="TasteTag",rating=element * inverse_sqrt,patron=eater.user)
-				vectorElement.save()
+				PatronSuggestionVector.objects.create(tag_id=i+1,tag_table="TasteTag",rating=element * inverse_sqrt,patron_id=PatronID)
+				#vectorElement.save()
 			except (PatronSuggestionVector.MultipleObjectsReturned):
 				print(f"Multiple enteries for tag_id: {i} in the TasteTag table exist.")
 				print("Something has gone terribly wrong and the database needs rebuilt.")
@@ -108,8 +111,8 @@ def vectorizePatron(PatronID):
 				vectorElement.rating = element * inverse_sqrt
 				vectorElement.save()
 			except (PatronSuggestionVector.DoesNotExist):
-				vectorElement = PatronSuggestionVector(tag_id=i+1,tag_table="CookTag",rating=element * inverse_sqrt,patron=eater.user)
-				vectorElement.save()
+				PatronSuggestionVector.objects.create(tag_id=i+1,tag_table="CookTag",rating=element * inverse_sqrt,patron_id=PatronID)
+				#vectorElement.save()
 			except (PatronSuggestionVector.MultipleObjectsReturned):
 				print(f"Multiple enteries for tag_id: {i} in the FoodTag table exist.")
 				print("Something has gone terribly wrong and the database needs rebuilt.")
@@ -132,8 +135,8 @@ def vectorizePatron(PatronID):
 				vectorElement.rating = element * inverse_sqrt
 				vectorElement.save()
 			except (PatronSuggestionVector.DoesNotExist):
-				vectorElement = PatronSuggestionVector(tag_id=i+1,tag_table="FoodTag",rating=element * inverse_sqrt,patron=PatronID)
-				vectorElement.save()
+				PatronSuggestionVector.objects.create(tag_id=i+1,tag_table="FoodTag",rating=element * inverse_sqrt,patron_id=PatronID)
+				#vectorElement.save()
 			except (PatronSuggestionVector.MultipleObjectsReturned):
 				print(f"Multiple enteries for tag_id: {i} in the FoodTag table exist.")
 				print("Something has gone terribly wrong and the database needs rebuilt.")
@@ -156,8 +159,8 @@ def vectorizePatron(PatronID):
 				vectorElement.rating = element * inverse_sqrt
 				vectorElement.save()
 			except (PatronSuggestionVector.DoesNotExist):
-				vectorElement = PatronSuggestionVector(tag_id=i+1,tag_table="IngredientTag",rating=element * inverse_sqrt,patron=PatronID)
-				vectorElement.save()
+				PatronSuggestionVector.objects.create(tag_id=i+1,tag_table="IngredientTag",rating=element * inverse_sqrt,patron_id=PatronID)
+				#vectorElement.save()
 			except (PatronSuggestionVector.MultipleObjectsReturned):
 				print(f"Multiple enteries for tag_id: {i} in the IngredientTag table exist.")
 				print("Something has gone terribly wrong and the database needs rebuilt.")
