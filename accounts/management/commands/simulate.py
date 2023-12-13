@@ -124,7 +124,7 @@ class Command(BaseCommand):
                          '-d', date_str,
                          '--no_report')
             
-            print(f'\t\t{account.email} Logged In and Performed {num_searches} Search(es)') #NOTE
+            print(f'\t\t{account.email} Logged In and Performed {search_num} Search(es)') #NOTE
         print('\n') #NOTE
 
 
