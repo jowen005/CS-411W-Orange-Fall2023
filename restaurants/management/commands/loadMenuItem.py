@@ -14,7 +14,6 @@ class Command(LoadCommand):
             menu_allergy_tag_id = obj.pop('menu_allergy_tag')
             menu_restriction_id = obj.pop('menu_restriction_id')
             ingredients_tag_id = obj.pop('ingredients_tag')
-
             # Retrieve objects references by PKFields
             restaurant = Restaurant.objects.get(pk=restaurant_id)
             food_type_tag = FoodTypeTag.objects.get(pk=food_type_tag_id)
@@ -50,4 +49,5 @@ class Command(LoadCommand):
             item.ingredients_tag.set(ingredients_tag)
             item.menu_allergy_tag.set(menu_allergy_tag)
             item.menu_restriction_tag.set(menu_restriction_tag)
+            item.save()
  
