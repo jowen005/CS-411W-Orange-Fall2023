@@ -26,8 +26,8 @@ class Command(BaseCommand):
         # for patron in outdated_patrons:
         #     patron.save()
         #     num_updated_patrons += 1
-
-        outdated_items = MenuItem.objects.filter(suggestion_vector__isnull=True)
+        outdated_items = MenuItem.objects.all()
+        # outdated_items = MenuItem.objects.filter(suggestion_vector__isnull=True)
         for item in outdated_items:
             item.save()
             num_updated_items += 1

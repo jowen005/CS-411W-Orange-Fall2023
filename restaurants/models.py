@@ -242,7 +242,7 @@ class MenuItem(models.Model):
         IngrString = "".join(IngredientList)
         FinalVectorString = FoodString + ';' + TasteString + ';' + CookString + ';' + IngrString + ';'
         Item.suggestion_vector = FinalVectorString
-        print(FinalVectorString)
+        # print(FinalVectorString)
         #compute and save normalizing value
         Item.inverse_sqrt = 1/math.sqrt(selected_tags)
         super(MenuItem, self).save()
