@@ -171,7 +171,9 @@ class MenuItemHistoryViewSet(viewsets.ModelViewSet):
                 'results': history_serializer.data,
             }
 			#SAVE HERE NOTE =================================================================================================================================
-            models.Patron.objects.get(user=request.user).save(profile_updated=True)
+            patron = models.Patron.objects.get(user=request.user)
+            patron.profile_updated = True
+            patron.save()
             return Response(response_data, status=status.HTTP_201_CREATED)
         
         # Handle if adding from bookmarks
@@ -191,7 +193,9 @@ class MenuItemHistoryViewSet(viewsets.ModelViewSet):
                         'results': history_serializer.data,
                     }
 					#SAVE HERE NOTE =================================================================================================================================
-                    models.Patron.objects.get(user=request.user).save(profile_updated=True)
+                    patron = models.Patron.objects.get(user=request.user)
+                    patron.profile_updated = True
+                    patron.save()
                     return Response(response_data, status=status.HTTP_201_CREATED)
                 
                 else:
