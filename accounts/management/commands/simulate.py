@@ -115,10 +115,12 @@ class Command(BaseCommand):
                 LoginRecord.objects.create(user=account, date_stamp=date)
 
             if num_searches == -1:
-                num_searches = random.choices(SEARCH_COUNTS, SEARCH_WEIGHTS, k=1)[0]
+                search_num = random.choices(SEARCH_COUNTS, SEARCH_WEIGHTS, k=1)[0]
+            else:
+                search_num = num_searches
                 
             call_command('generatePatronTraffic', account.email, 
-                         '-n', str(num_searches),
+                         '-n', str(search_num),
                          '-d', date_str,
                          '--no_report')
             
