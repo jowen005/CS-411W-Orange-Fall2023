@@ -34,8 +34,10 @@ class Command(BaseCommand):
     def add_arguments(self, parser: CommandParser):
         parser.add_argument('--soft_reset', action='store_true', help='Soft Reset')
         parser.add_argument('--hard_reset', action='store_true', help='Hard Reset')
+        parser.add_argument('-n', dest='num_searches', default=-1, type=int, 
+                            help='Specifies a number of searches')
 
-    def handle(self, *args, **options):
+    def handle(self, num_searches, *args, **options):
 
         self.check_flags(options)
         
@@ -43,9 +45,9 @@ class Command(BaseCommand):
 
         today = timezone.now()
         if GlobalAnalytics.objects.all().count() < 5 and not options['soft_reset']:
-            self.simulate_past_data(today, patron_accounts, rest_accounts)
+            self.simulate_past_data(today, patron_accounts, rest_accounts, num_searches)
 
-        self.simulate_today(today, patron_accounts, rest_accounts)
+        self.simulate_today(today, patron_accounts, rest_accounts, num_searches)
 
         self.stdout.write(self.style.SUCCESS(f"The Simulation Succesfully Completed!"))
 
@@ -64,7 +66,7 @@ class Command(BaseCommand):
         return valid_patron_accounts, valid_rest_accounts
 
 
-    def simulate_past_data(self, today, patron_accounts, rest_accounts):
+    def simulate_past_data(self, today, patron_accounts, rest_accounts, num_searches):
         print('*'*50) #NOTE
         print("Simulating Past Data") #NOTE
         print('*'*50 + '\n') #NOTE
@@ -79,7 +81,7 @@ class Command(BaseCommand):
             print(f'Day {idx} - {date_str}')
 
             # patron traffic for current day
-            self.simulate_patron_traffic(patron_accounts, date, date_str) 
+            self.simulate_patron_traffic(patron_accounts, date, date_str, num_searches) 
             self.simulate_restaurant_traffic(rest_accounts, date)
             
             if num_days_simulated >= 3:
@@ -88,7 +90,7 @@ class Command(BaseCommand):
         print('\n') #NOTE
 
 
-    def simulate_today(self, today, patron_accounts, rest_accounts):
+    def simulate_today(self, today, patron_accounts, rest_accounts, num_searches):
         today_str = today.strftime(DATETIME_STR_FORMAT)
 
         print('*'*50) #NOTE
@@ -96,7 +98,7 @@ class Command(BaseCommand):
         print('*'*50 + '\n') #NOTE
 
         print(f'Today - {today_str}') #NOTE
-        self.simulate_patron_traffic(patron_accounts, today, today_str)
+        self.simulate_patron_traffic(patron_accounts, today, today_str, num_searches)
         self.simulate_restaurant_traffic(rest_accounts, today)
         
         print('\tCalling manualAnalytics') #NOTE
@@ -106,13 +108,15 @@ class Command(BaseCommand):
         call_command('manualTrends', '-d', today_str)
     
 
-    def simulate_patron_traffic(self, patron_accounts, date, date_str):
+    def simulate_patron_traffic(self, patron_accounts, date, date_str, num_searches):
         print('\tSimulating Patron Traffic') #NOTE
         for account in patron_accounts:
             for _ in range(random.choices(LOGIN_COUNTS, LOGIN_WEIGHTS, k=1)[0]):
                 LoginRecord.objects.create(user=account, date_stamp=date)
 
-            num_searches = random.choices(SEARCH_COUNTS, SEARCH_WEIGHTS, k=1)[0]
+            if num_searches == -1:
+                num_searches = random.choices(SEARCH_COUNTS, SEARCH_WEIGHTS, k=1)[0]
+                
             call_command('generatePatronTraffic', account.email, 
                          '-n', str(num_searches),
                          '-d', date_str,
