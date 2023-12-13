@@ -4,6 +4,7 @@ import random  # Import the random module
 from restaurants.models import RestrictionTag, AllergyTag, TasteTag
 
 from lcc_project.commands.generate import GenerateCommand, add_file_path
+from django.core.management.base import CommandParser
 @add_file_path
 
 class Command(GenerateCommand):
@@ -27,6 +28,14 @@ class Command(GenerateCommand):
 
         data_list = []
         for _ in range(count):
+            force_vegan = random.choices([True, False], weights=[5, 3], k=1)[0]
+            vegan_tag_id = RestrictionTag.objects.get(title='vegan').id
+            
+            restrict_tag_ids = list(set(self.fake.random_choices(elements=valid_restriction_tags)))
+
+            if vegan_tag_id not in restrict_tag_ids and force_vegan == True:
+                restrict_tag_ids.append(vegan_tag_id)
+
             #Generate and Store Data
             email = self.fake.email()
             data = {
@@ -39,7 +48,7 @@ class Command(GenerateCommand):
                 "gender" : self.fake.random_element(elements=('Male', 'Female', 'Other')),
                 "price_max": int(self.fake.random_int(min=10, max=100)),
                 "zipcode": random.choice(valid_vb_zip_codes),
-                "patron_restriction_tag": list(set(self.fake.random_choices(elements=valid_restriction_tags))),
+                "patron_restriction_tag": restrict_tag_ids,
                 "patron_allergy_tag": list(set(self.fake.random_choices(elements=valid_allergy_tags))),
                 "patron_taste_tag": list(set(self.fake.random_choices(elements=valid_taste_tags))),
             }
