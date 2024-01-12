@@ -1,13 +1,16 @@
 from django.contrib import admin
-import models as rm
+from .models import (
+    RestTag, Restaurant, FoodTypeTag, CookStyleTag, TasteTag,
+    RestrictionTag, AllergyTag, IngredientTag, MenuItem
+)
 
-admin.site.register(rm.RestTag)
-admin.site.register(rm.Restaurant)
-admin.site.register(rm.FoodTypeTag)
-admin.site.register(rm.CookStyleTag)
-admin.site.register(rm.TasteTag)
-admin.site.register(rm.RestrictionTag)
-admin.site.register(rm.AllergyTag)
-admin.site.register(rm.IngredientTag)
-admin.site.register(rm.MenuItem)
+admin.site.register(RestTag)
+admin.site.register(Restaurant)
+admin.site.register(FoodTypeTag)
+admin.site.register(CookStyleTag)
+admin.site.register(TasteTag)
+admin.site.register(RestrictionTag)
+admin.site.register(AllergyTag)
+admin.site.register(IngredientTag)
+admin.site.register(MenuItem)
 
