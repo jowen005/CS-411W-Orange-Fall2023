@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 from django.utils import timezone
 from django.db.models import Avg
 
@@ -19,7 +19,7 @@ def driver(sim_datetime):
     item_data = item_exclusion_analysis(item_data)
 
     for entry in item_data:
-        # print(f'{current_datestamp} | {entry}') #NOTE
+        # print(f'{current_datestamp} | {entry}') #DEBUG
         obj = MenuItemPerformanceAnalytics.objects.create(**entry, date_stamp=current_datestamp)
         print(obj)
 
@@ -100,27 +100,3 @@ def item_exclusion_analysis(item_data):
 
     return item_data
 
-
-
-# # Store exclusion
-    # for entry in item_data:
-    #     menu_item = entry['menuItem_id']
-
-    #     #Overall Exclusion
-    #     entry['exclusion_count'] = overall_exclusions[f'{menu_item.id}'].count
-
-    #     for tag_type, *_ in TAG_TYPES:
-    #         tag_counts = tag_exclusions[tag_type][f'{menu_item.id}']
-    #         sorted_tags = sorted(tag_counts.items(), key=lambda x: x[1], reverse=True)
-    #         top_3 = sorted_tags[:3]
-            
-    #         idx, tag_dict = 1, {}
-    #         for tag_id, count in top_3:
-    #             tag_dict[f'{idx}'] = {
-    #                 'title':tag_sets[tag_type].get(id=tag_id).title,
-    #                 'count':count
-    #             }
-    #         entry[f'top_3_{tag_type}'] = tag_dict
-
-    # return item_data
-                

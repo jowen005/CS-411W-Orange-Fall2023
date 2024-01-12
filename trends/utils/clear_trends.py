@@ -15,3 +15,4 @@ def driver(lower_bound=None):
 
     for TrendModel in TREND_MODELS:
         TrendModel.objects.filter(date_stamp__gte=lower_bound).delete()
+

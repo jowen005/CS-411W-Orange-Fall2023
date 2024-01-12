@@ -13,7 +13,7 @@ def driver (sim_datetime):
 
     app_data = app_satisfaction_analysis()
 
-    # print(f'App Satisfaction Analytics: {app_data}') #NOTE
+    # print(f'App Satisfaction Analytics: {app_data}') #DEBUG
 
     obj = AppSatisfactionAnalytics.objects.create(**app_data, date_stamp=current_datestamp)
     print(f'{obj}\n')
@@ -28,3 +28,4 @@ def app_satisfaction_analysis():
     app_data['average_rating'] = ratings.aggregate(avg_rating=Avg('rating'))['avg_rating'] or 0
 
     return app_data
+

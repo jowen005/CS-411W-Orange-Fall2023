@@ -24,7 +24,6 @@ class Command(GenerateCommand):
             "veal", "venison", "vinegar", "wheat"
         ]
 
-        # valid_owners = list(self.User.objects.filter(user_type='restaurant').values_list('id',flat=True))
         valid_owners = list(Restaurant.objects.all().values_list('id',flat=True))
         for monarch_id in monarch_rest_ids:
             valid_owners.remove(monarch_id)
@@ -32,12 +31,6 @@ class Command(GenerateCommand):
         valid_cook_style_tags = list(CookStyleTag.objects.values_list('id',flat=True))
         valid_taste_tags = list(TasteTag.objects.values_list('id',flat=True))
 
-        # for tag in AllergyTag.objects.all():
-        #     print(f'{tag.id} - {tag.title}')
-
-        # print('\n')
-        # for tag in RestrictionTag.objects.all():
-        #     print(f'{tag.id} - {tag.title}')
 
         data_list = []
         for _ in range(count):
@@ -76,37 +69,14 @@ class Command(GenerateCommand):
                     if allergen_ingredient in allergens:
                         allergy_tags.add(allergy_indices[allergy_type])
             
-            # Get the restriction values associated with RestrictionTag
-            # restriction_values = list(RestrictionTag.objects.values_list('title', flat=True).order_by('id'))
             # Get the restriction values for each ingredient
             restriction_tags = set()
-            # Initialize a set to store common restriction values
-            # common_restriction_values = None
 
-            # for ingredient in chosen_ingredients:
-            #     if ingredient in ingredient_to_allergy_mapping:
-            #         # Gather all the restriction values for each ingredient
-            #         restriction_values = set(ingredient_to_allergy_mapping[ingredient])
-                    
-            #         # Update common restriction values on the first iteration
-            #         if common_restriction_values is None:
-            #             common_restriction_values = restriction_values
-            #         else:
-            #             # Update common restriction values by taking the intersection
-            #             common_restriction_values.intersection_update(restriction_values)
-            
-            # # Check if all ingredients have the common restriction values
-            # if common_restriction_values is not None:
-            #     restriction_tags.update(common_restriction_values)
             # # Create a mapping of restriction values to their respective indices (+1)
             def_restriction_values = list(RestrictionTag.objects.values_list('title', flat=True).order_by('id'))
             def_restriction_ids = list(RestrictionTag.objects.values_list('id', flat=True).order_by('id'))
             restriction_indices = {value: def_restriction_ids[index] for index, value in enumerate(def_restriction_values)}
             
-            # restriction_tags_id = set()
-            # for restriction in common_restriction_values:
-            #         if restriction in def_restriction_values:
-            #             restriction_tags_id.add(restriction_indices[restriction])
             valid_restrictions = def_restriction_values
             for res_ing in chosen_ingredients:
                 for tag, conflicts in tagRelations['restrictions'].items():
@@ -137,3 +107,4 @@ class Command(GenerateCommand):
             data_list.append(data)
 
         return data_list
+    

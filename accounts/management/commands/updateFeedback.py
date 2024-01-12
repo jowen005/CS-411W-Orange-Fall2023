@@ -1,16 +1,9 @@
-from django.core.management.base import BaseCommand, CommandParser
-from django.core.management import call_command
+from django.core.management.base import BaseCommand
 from feedback.models import Reviews
-from restaurants.models import MenuItem
 
 class Command(BaseCommand):
 
     help = 'Updates the Patron Names of Review Objects.'
-
-
-    # def add_arguments(self, parser: CommandParser):
-    #     parser.add_argument('-f', dest='json_path', default=self.DEFAULT_JSON_PATH, 
-    #                         help='Specifies a file to load',)
 
 
     def handle(self, *args, **options):
@@ -34,3 +27,4 @@ class Command(BaseCommand):
     def output_report(self, report):
         print(f'Number of Reviews Updated: {report["num_updated_reviews"]}')
         self.stdout.write(self.style.SUCCESS(f'This command successfully completed'))
+

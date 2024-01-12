@@ -65,3 +65,4 @@ class Command(LoadCommand):
             print("CREATED | These owner emails were registered but the address was not associated with a restaurant:")
             for email in created_restaurants:
                 print(f" - {email}")
+

@@ -5,7 +5,7 @@ DEGREE = 5
 
 def calculate(analytics_set, trend_types, obj_string):
     
-    # print(analytics_set) #NOTE
+    # print(analytics_set) #DEBUG
     num_analytics = analytics_set.count()
     if num_analytics < 5:
         print(f'\t{obj_string}: {num_analytics} analytics were found, while 5 are required. Trend not Generated.')
@@ -18,24 +18,24 @@ def calculate(analytics_set, trend_types, obj_string):
 
     first_timestamp = first_datestamp.timestamp()
     dates = [analytic.date_stamp.timestamp() - first_timestamp for analytic in analytics_set]
-    # print(dates) #NOTE
+    # print(dates) #DEBUG
 
     trend_data = []
     for trend_type, analytic_attr in trend_types:
         values = [float(val) for val in analytics_set.values_list(analytic_attr, flat=True)]
         coefficients = list(polyfit(dates, values, DEGREE))
         coefficients.reverse()
-        # print(coefficients) #NOTE
+        # print(coefficients) #DEBUG
 
         data = {'trend_type': trend_type}
         for idx, coeff in enumerate(coefficients):
-            # print(f'{idx} - {coeff}') #NOTE
+            # print(f'{idx} - {coeff}') #DEBUG
             data[f'coeff{idx}'] = coeff
         data['x_min'] = first_datestamp
         data['x_max'] = last_datestamp
         data['y_min'] = min(values)
         data['y_max'] = max(values)
-        # print(data) #NOTE
+        # print(data) #DEBUG
 
         trend_data.append(data)
 

@@ -54,3 +54,4 @@ class Command(LoadCommand):
             print("CREATED | These accounts were successfully created:")
             for email in added_emails:
                 print(f" - {email}")
+

@@ -73,51 +73,10 @@ def driver(sim_datetime):
                 entry[trend_attr] = filt
                 obj = TrendsModel(**entry, date_stamp=current_datestamp)
 
-                # print(f'{obj} | Size in Bytes: {sys.getsizeof(serialize("json", [obj]))}') #NOTE
+                # print(f'{obj} | Size in Bytes: {sys.getsizeof(serialize("json", [obj]))}') #DEBUG
                 objs_to_create.append(obj)
         
         TrendsModel.objects.bulk_create(objs_to_create)     # @425 bytes per model, ~157.9K bulk per
         print(f"\tNumber Created: {len(objs_to_create)}\n")
 
-        
-        
-
-
-
-        
-
-            
-
-
-
-
-
-
-# def calculate_trends(AnalyticsModel, trend_types):
-    
-#     print(f'{AnalyticsModel.__name__}:')
-#     num_analytics = AnalyticsModel.objects.all().count()
-#     if num_analytics < 5:
-#         print(f'\tOnly {num_analytics} were found in database, while 5 are required.')
-#         return
-    
-#     analytics = AnalyticsModel.objects.all().order_by('date_stamp')
-#     first_timestamp = analytics[0].date_stamp.timestamp()
-#     dates = [analytic.date_stamp.timestamp() - first_timestamp for analytic in analytics]
-
-#     trend_data = []
-#     for trend_type, analytic_attr in trend_types:
-#         values = list(analytics.values_list(analytic_attr, flat=True))
-#         coefficients = list(polyfit(dates, values, DEGREE)).reverse()
-
-#         data = {'trend_type': trend_type}
-#         for idx, coeff in enumerate(coefficients):
-#             data[f'coeff{idx}'] = coeff
-#         data['behavior'] = '' #TODO
-
-#         trend_data.append(data)
-
-#     return trend_data
-
-
-
+   

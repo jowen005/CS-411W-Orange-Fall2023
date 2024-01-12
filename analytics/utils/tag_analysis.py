@@ -1,12 +1,11 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 from django.utils import timezone
-from django.db.models import Max, Sum
+from django.db.models import Sum
 
 import patron.models as pm
 import restaurants.models as rm
 from ..models import (RestrictionTagAnalytics, AllergiesTagAnalytics, 
                       TasteTagAnalytics, IngredientTagAnalytics, CookStyleAnalytics)
-
 from ..models import (AllergyTagExclusionRecord, IngredientTagExclusionRecord,
                       RestrictionTagExclusionRecord, TasteTagExclusionRecord)
 
@@ -23,7 +22,7 @@ def driver(sim_datetime):
 
 def store_data(AnalyticsModel, tag_data, current_datestamp):
     for entry in tag_data:
-        # print(entry) #NOTE
+        # print(entry) #DEBUG
         obj = AnalyticsModel.objects.create(**entry, date_stamp=current_datestamp)
         print(obj)
     print('\n')

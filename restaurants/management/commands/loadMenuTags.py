@@ -7,12 +7,10 @@ class Command(LoadCommand):
     help = 'load menu item tag definitions from menutags.json.  [optional] specify -f to provide an alterintive tags.json file.'
     DEFAULT_JSON_PATH = 'json_files/menutags.json'
     
+
     def load(self, data_list):
         #opening menu tag file to read
         TAGS = data_list
-              
-        #clearing the tag tables before load, don't want a evergrownig table of duplicates! --- checking against database instead
-        #FoodTypeTag.objects.all().delete()
 
         PresentRestTags = list(RestTag.objects.values_list('title',flat=True))
         PresentFoodTags = list(FoodTypeTag.objects.values_list('title',flat=True))
@@ -80,3 +78,4 @@ class Command(LoadCommand):
         print("\t" + str(newTastTags) + " new taste       tags added.")
         print("\t" + str(newRestrTags) + " new restriction tags added.")
         print("\t" + str(newIngrTags) + " new ingredient  tags added.")
+

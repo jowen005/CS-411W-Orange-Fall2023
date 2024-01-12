@@ -1,17 +1,12 @@
 from django.utils import timezone
-from datetime import datetime, timedelta
-from dataclasses import dataclass
-from django.core.serializers import serialize
+from datetime import timedelta
 from django.db.models import Sum
-import sys
-import time
 
 import restaurants.models as rm
 import patron.models as pm
 from ..models import LocalRestaurantAnalytics
 from ..models import (AllergyTagExclusionRecord, IngredientTagExclusionRecord,
-                      RestrictionTagExclusionRecord, TasteTagExclusionRecord,
-                      OverallExclusionRecord)
+                      RestrictionTagExclusionRecord, TasteTagExclusionRecord)
 
 def driver(sim_datetime):
     restaurant_data, current_datestamp = restaurant_analysis(sim_datetime)
@@ -40,11 +35,6 @@ def restaurant_analysis(sim_datetime):
 
     restaurants = rm.Restaurant.objects.all()
 
-    items = rm.MenuItem.objects.all().order_by('id')
-    history_set = pm.MenuItemHistory.objects.filter(MenuItemHS_datetime__gt=latest_datestamp)
-    searches = pm.PatronSearchHistory.objects.filter(search_datetime__gte=latest_datestamp)
-
-
     # Get all the fields for each restaurant
     for restaurant in restaurants:
         data = {}
@@ -61,7 +51,6 @@ def restaurant_analysis(sim_datetime):
     return restaurant_data, current_datestamp
 
     
-
 # Function for finding total items from a restaurant added to histories (the restaurant and latest datestamp is supplied)
 def total_added_to_histories(rest, latest_datestamp):
     history_set = pm.MenuItemHistory.objects.filter(MenuItemHS_datetime__gt=latest_datestamp)
@@ -90,7 +79,6 @@ def top_3_items_analysis(rest):
     INDEXES = ['first', 'second', 'third']
     items = rm.MenuItem.objects.filter(restaurant = rest)
     top_3_scores = []
-    # top_3_items = []
     top_3_items = {}
     performance_scores = []
     
@@ -107,19 +95,11 @@ def top_3_items_analysis(rest):
     # Get the items associated with the top 3 scores (the first 3 reached will be counted, ties do not matter)
     # This is why the list is being sorted backwards, so items added recently have advantage
     counter = 0
-    #counter = 'first'
     for p_score in top_3_scores:
         for item in reversed(items):
             if counter < 3:
                 if p_score == item.average_rating * item.number_of_rating:
-                    # item = {
-                    #     INDEXES[counter]: {
-                    #     'title': item.item_name,
-                    #     'score': p_score
-                    #     }
-                    # }
-
-                    # top_3_items.append(item)
+                    
                     top_3_items[INDEXES[counter]] = {
                         'title': item.item_name,
                         'score': p_score
@@ -145,136 +125,3 @@ def top_tag_analysis(rest, ExclusionRecord):
 
     return top_tag_data
 
-
-def tag_eliminations_analysis(rest, latest_datestamp): 
-    items = rm.MenuItem.objects.filter(restaurant = rest)
-    searches = pm.PatronSearchHistory.objects.filter(search_datetime__gte=latest_datestamp)
-
-    total_allergy_counts = []
-    total_allergy = []
-
-    total_ingredient_counts = []
-    total_ingredient = []
-
-    total_restriction_counts = []
-    total_restrictions = []
-
-    total_taste_counts = []
-    total_taste = []
-    
-    for search in searches:
-        # Excluded if item has allergy tag
-        for allergy in search.allergy_tags.all():
-            excluded_items = items.filter(menu_allergy_tag=allergy)
-
-            if allergy in total_allergy:
-                for a in range(len(total_allergy)):
-                    if allergy == total_allergy[a]:
-                        for e in excluded_items:
-                            total_allergy_counts[a] += 1
-            else:
-                allergy_counts = 0
-                for e in excluded_items:
-                    allergy_counts += 1
-                total_allergy_counts.append(allergy_counts)
-                total_allergy.append(allergy)
-        
-        # Excluded if item has any of the disliked ingredients (record tags that led to it getting excluded)
-        for ingredient in search.disliked_ingredients.all():
-            excluded_items = items.filter(ingredients_tag=ingredient)
-
-            if ingredient in total_ingredient:
-                for j in range(len(total_ingredient)):
-                    if ingredient == total_ingredient[j]:
-                        for e in excluded_items:
-                            total_ingredient_counts[j] += 1
-            else:
-                ingredient_counts = 0
-                for e in excluded_items:
-                    ingredient_counts += 1
-                total_ingredient_counts.append(ingredient_counts)
-                total_ingredient.append(ingredient)
-
-        
-        #Excluded if item does not have restriction tag
-        for restriction in search.dietary_restriction_tags.all():
-            excluded_items = items.exclude(menu_restriction_tag=restriction)
-            #restriction_count = 0
-            if restriction in total_restrictions:
-                for i in range(len(total_restrictions)):
-                    if restriction == total_restrictions[i]:
-                        for e in excluded_items:
-                            total_restriction_counts[i] += 1
-            else:
-                # print('a')
-                restrictions_counts = 0
-                for e in excluded_items:
-                    restrictions_counts += 1
-                    # print('a')
-                total_restriction_counts.append(restrictions_counts)
-                total_restrictions.append(restriction)
-
-
-        # Excluded if item does not have any of the taste tags (record tags that led to it getting excluded)
-        excluded_items = items.exclude(taste_tags__in=search.patron_taste_tags.all())
-        for e in excluded_items:
-            for taste in search.patron_taste_tags.all():
-                if taste in total_taste:
-                    for t in range(len(total_taste)):
-                        if taste == total_taste[t]:
-                            total_taste_counts[t] += 1
-                else:
-                    taste_counts = 0
-                    taste_counts += 1
-                total_taste_counts.append(taste_counts)
-                total_taste.append(taste) 
-        
-        
-    # Get the max of each total count and the correspoding tag
-    # Allergy
-    for i in range(len(total_allergy_counts)):
-       if total_allergy_counts[i] == max(total_allergy_counts):
-           max_allergy_eliminations = total_allergy_counts[i]
-           max_allergy_tag = total_allergy[i]
-    
-    # Ingredient
-    for i in range(len(total_ingredient_counts)):
-        if total_ingredient_counts[i] == max(total_ingredient_counts):
-            max_ingredient_eliminations = total_ingredient_counts[i]
-            max_ingredient_tag = total_ingredient[i]
-
-    # Restriction
-    for i in range(len(total_restriction_counts)):
-        if total_restriction_counts[i] == max(total_restriction_counts):
-            max_restriction_eliminations = total_restriction_counts[i]
-            max_restriction_tag = total_restrictions[i]
-
-    # Taste
-    for i in range(len(total_taste_counts)):
-        if total_taste_counts[i] == max(total_taste_counts):
-            max_taste_eliminations = total_taste_counts[i]
-            max_taste_tag = total_taste[i]
-
-    # Crete the JSONs for each tag
-    allergies_tags_most_eliminations = {
-        'allergy tag': max_allergy_tag.title,
-        'eliminations': max_allergy_eliminations
-    }
-
-    ingredient_tags_most_eliminations = {
-        'ingredient tag': max_ingredient_tag.title,
-        'eliminations': max_ingredient_eliminations
-    }
-
-    restriction_tags_most_eliminations = {
-        'restriction tag': max_restriction_tag.title,
-        'eliminations': max_restriction_eliminations
-    }
-
-    taste_tags_most_eliminations = {
-        'taste tag': max_taste_tag.title,
-        'eliminations': max_taste_eliminations
-    }
-
-    return allergies_tags_most_eliminations, ingredient_tags_most_eliminations, restriction_tags_most_eliminations, taste_tags_most_eliminations
-    

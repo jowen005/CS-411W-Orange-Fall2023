@@ -1,8 +1,6 @@
 from django.utils import timezone
-from datetime import datetime, timedelta
+from datetime import timedelta
 from dataclasses import dataclass
-from django.core.serializers import serialize
-import sys
 import time
 
 import restaurants.models as rm
@@ -109,7 +107,7 @@ def store_overall_exclusions(overall_exclusions, menu_items, current_datestamp):
             record.date_stamp = current_datestamp
 
             overall_to_update.append(record)
-            # print(f'Updated: {record} | Size in Bytes: {sys.getsizeof(serialize("json", [record]))}')#NOTE
+            # print(f'Updated: {record} | Size in Bytes: {sys.getsizeof(serialize("json", [record]))}')#DEBUG
 
         except OverallExclusionRecord.DoesNotExist:
             record = OverallExclusionRecord(
@@ -118,12 +116,12 @@ def store_overall_exclusions(overall_exclusions, menu_items, current_datestamp):
                 date_stamp=current_datestamp
             )
             overall_to_create.append(record)
-            # print(f'Created: {record} | Size in Bytes: {sys.getsizeof(serialize("json", [record]))}') #NOTE
+            # print(f'Created: {record} | Size in Bytes: {sys.getsizeof(serialize("json", [record]))}') #DEBUG
 
     OverallExclusionRecord.objects.bulk_update(overall_to_update, fields=['exclusion_count', 'date_stamp'])
-    print(f"\tNumber Updated: {len(overall_to_update)}") #NOTE
+    print(f"\tNumber Updated: {len(overall_to_update)}") #DEBUG
     OverallExclusionRecord.objects.bulk_create(overall_to_create)
-    print(f"\tNumber Created: {len(overall_to_create)}") #NOTE
+    print(f"\tNumber Created: {len(overall_to_create)}") #DEBUG
 
     end_time = time.time()
     print(f'\tTime to execute: {end_time - start_time} seconds')
@@ -147,7 +145,7 @@ def store_tag_exclusions(tag_exclusions, menu_items, tag_sets):
                     # record.date_stamp = current_datestamp
                 
                     tag_records_to_update.append(record)
-                    # print(f'Updated: {record} | Size in Bytes: {sys.getsizeof(serialize("json", [record]))}')#NOTE
+                    # print(f'Updated: {record} | Size in Bytes: {sys.getsizeof(serialize("json", [record]))}')#DEBUG
                     
                 except ExclusionModel.DoesNotExist:
                     record = ExclusionModel(
@@ -157,13 +155,14 @@ def store_tag_exclusions(tag_exclusions, menu_items, tag_sets):
                         # date_stamp=current_datestamp
                     )
                     tag_records_to_create.append(record)
-                    # print(f'Created: {record} | Size in Bytes: {sys.getsizeof(serialize("json", [record]))}') #NOTE
+                    # print(f'Created: {record} | Size in Bytes: {sys.getsizeof(serialize("json", [record]))}') #DEBUG
                     
         ExclusionModel.objects.bulk_update(tag_records_to_update, fields=['exclusion_count'])
-        print(f"\tNumber Updated: {len(tag_records_to_update)}") #NOTE
+        print(f"\tNumber Updated: {len(tag_records_to_update)}") #DEBUG
         ExclusionModel.objects.bulk_create(tag_records_to_create)
-        print(f"\tNumber Created: {len(tag_records_to_create)}") #NOTE
+        print(f"\tNumber Created: {len(tag_records_to_create)}") #DEBUG
 
         end_time = time.time()
         print(f'\tTime to execute: {end_time - start_time} seconds')
         print('\n')
+

@@ -20,3 +20,4 @@ class Command(BaseCommand):
         call_command('loadRestaurants')
 
         self.stdout.write(self.style.SUCCESS(f'{count[0]} restaurant object(s) were added to the database'))
+

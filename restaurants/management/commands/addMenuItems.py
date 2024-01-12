@@ -20,3 +20,5 @@ class Command(BaseCommand):
         call_command('loadMenuItem')
 
         self.stdout.write(self.style.SUCCESS(f'{count[0]} menu item object(s) were added to the database'))
+
+        

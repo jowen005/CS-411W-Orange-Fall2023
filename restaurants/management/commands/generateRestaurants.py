@@ -1,4 +1,3 @@
-from faker import Faker
 import random
 
 from lcc_project.commands.generate import GenerateCommand, add_file_path
@@ -65,3 +64,4 @@ class Command(GenerateCommand):
             data_list.append(data)
 
         return data_list
+

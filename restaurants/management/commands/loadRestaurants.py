@@ -20,3 +20,4 @@ class Command(LoadCommand):
             #Create object
             rest = Restaurant.objects.create(owner=owner, **obj)
             rest.tags.set(tags)
+

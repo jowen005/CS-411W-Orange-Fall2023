@@ -17,25 +17,12 @@ class Command(LoadCommand):
             # Retrieve objects references by PKFields
             restaurant = Restaurant.objects.get(pk=restaurant_id)
             food_type_tag = FoodTypeTag.objects.get(pk=food_type_tag_id)
-            # taste_tags = TasteTag.objects.get(pk=taste_tags_id)
             cook_style_tags = CookStyleTag.objects.get(pk=cook_style_tags_id)
 
             menu_restriction_tag = [RestrictionTag.objects.get(pk=id) for id in menu_restriction_id]
             menu_allergy_tag = [AllergyTag.objects.get(pk=id) for id in menu_allergy_tag_id]
             ingredients_tag = [IngredientTag.objects.get(pk=id) for id in ingredients_tag_id]
             taste_tags = [TasteTag.objects.get(pk=id) for id in taste_tags_id]
-
-            # Create object
-            # item = MenuItem.objects.create(
-            #     restaurant=restaurant,
-            #     food_type_tag=food_type_tag,
-            #     cook_style_tags = cook_style_tags,
-            #     item_name=obj.get('item_name'),
-            #     price=obj.get('price'),
-            #     calories=obj.get('calories'),
-            #     time_of_day_available=obj.get('time_of_day_available'),
-            #     is_modifiable=obj.get('is_modifiable'),
-            # )
 
             item = MenuItem.objects.create(
                 restaurant=restaurant,
@@ -50,4 +37,5 @@ class Command(LoadCommand):
             item.menu_allergy_tag.set(menu_allergy_tag)
             item.menu_restriction_tag.set(menu_restriction_tag)
             item.save()
+ 
  

@@ -1,5 +1,4 @@
 from django.core.management.base import BaseCommand, CommandParser
-from django.core.management import call_command
 from django.utils import timezone
 from datetime import datetime
 
@@ -27,3 +26,4 @@ class Command(BaseCommand):
         st.driver(sim_datetime)
 
         self.stdout.write(self.style.SUCCESS(f'All Trend Algorithms were run'))
+

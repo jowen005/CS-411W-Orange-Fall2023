@@ -1,6 +1,4 @@
 from django.utils import timezone
-from django.core.serializers import serialize
-import sys
 
 from restaurants.models import MenuItem
 from analytics.models import MenuItemPerformanceAnalytics
@@ -39,7 +37,7 @@ def driver(sim_datetime):
             entry['item'] = item
             obj = MenuItemPerformanceTrends(**entry, date_stamp=current_datestamp)
             
-            # print(f'{obj} | Size in Bytes: {sys.getsizeof(serialize("json", [obj]))}') #NOTE
+            # print(f'{obj} | Size in Bytes: {sys.getsizeof(serialize("json", [obj]))}') #DEBUG
             objs_to_create.append(obj)
     
     MenuItemPerformanceTrends.objects.bulk_create(objs_to_create)   # @500 bytes per model, ~134.2K bulk

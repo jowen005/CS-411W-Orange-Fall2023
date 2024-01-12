@@ -67,9 +67,9 @@ class Command(BaseCommand):
 
 
     def simulate_past_data(self, today, patron_accounts, rest_accounts, num_searches):
-        print('*'*50) #NOTE
-        print("Simulating Past Data") #NOTE
-        print('*'*50 + '\n') #NOTE
+        print('*'*50) #DEBUG
+        print("Simulating Past Data") #DEBUG
+        print('*'*50 + '\n') #DEBUG
         
         days = [today - timedelta(days=x) for x in range(1,NUM_DAYS_BACK+1)]
         days.reverse() # Days Increasing from 7 days ago to 1 day ago
@@ -85,31 +85,31 @@ class Command(BaseCommand):
             self.simulate_restaurant_traffic(rest_accounts, date)
             
             if num_days_simulated >= 3:
-                print('\tCalling manualAnalytics') #NOTE
+                print('\tCalling manualAnalytics') #DEBUG
                 call_command('manualAnalytics', '-d', date_str)
-        print('\n') #NOTE
+        print('\n') #DEBUG
 
 
     def simulate_today(self, today, patron_accounts, rest_accounts, num_searches):
         today_str = today.strftime(DATETIME_STR_FORMAT)
 
-        print('*'*50) #NOTE
-        print("Simulating Today's Data") #NOTE
-        print('*'*50 + '\n') #NOTE
+        print('*'*50) #DEBUG
+        print("Simulating Today's Data") #DEBUG
+        print('*'*50 + '\n') #DEBUG
 
-        print(f'Today - {today_str}') #NOTE
+        print(f'Today - {today_str}') #DEBUG
         self.simulate_patron_traffic(patron_accounts, today, today_str, num_searches)
         self.simulate_restaurant_traffic(rest_accounts, today)
         
-        print('\tCalling manualAnalytics') #NOTE
+        print('\tCalling manualAnalytics') #DEBUG
         call_command('manualAnalytics', '-d', today_str)
 
-        print('\tCalling manualTrends') #NOTE
+        print('\tCalling manualTrends') #DEBUG
         call_command('manualTrends', '-d', today_str)
     
 
     def simulate_patron_traffic(self, patron_accounts, date, date_str, num_searches):
-        print('\tSimulating Patron Traffic') #NOTE
+        print('\tSimulating Patron Traffic') #DEBUG
         for account in patron_accounts:
             for _ in range(random.choices(LOGIN_COUNTS, LOGIN_WEIGHTS, k=1)[0]):
                 LoginRecord.objects.create(user=account, date_stamp=date)
@@ -124,17 +124,17 @@ class Command(BaseCommand):
                          '-d', date_str,
                          '--no_report')
             
-            print(f'\t\t{account.email} Logged In and Performed {search_num} Search(es)') #NOTE
-        print('\n') #NOTE
+            print(f'\t\t{account.email} Logged In and Performed {search_num} Search(es)') #DEBUG
+        print('\n') #DEBUG
 
 
     def simulate_restaurant_traffic(self, rest_accounts, date):
-        print('\tSimulating Restaurant Traffic') #NOTE
+        print('\tSimulating Restaurant Traffic') #DEBUG
         for account in rest_accounts:
             for _ in range(random.choices(LOGIN_COUNTS, LOGIN_WEIGHTS, k=1)[0]):
                 LoginRecord.objects.create(user=account, date_stamp=date)
-            print(f'\t\t{account} Logged In') #NOTE
-        print('\n') #NOTE
+            print(f'\t\t{account} Logged In') #DEBUG
+        print('\n') #DEBUG
 
 
     def check_flags(self, options):

@@ -1,11 +1,8 @@
-from datetime import datetime
 from django.utils import timezone
 
 from ..models import (RestrictionTagAnalytics, AllergiesTagAnalytics, 
                       TasteTagAnalytics, IngredientTagAnalytics, 
-                      CookStyleAnalytics, CalorieAnalytics)
-from ..models import OverallFilterAnalytics
-import restaurants.models as rm
+                      CookStyleAnalytics, CalorieAnalytics, OverallFilterAnalytics)
 
 
 FILTER_TYPES = [('calories', CalorieAnalytics, ),
@@ -26,7 +23,7 @@ def driver(sim_datetime):
         current_datestamp = sim_datetime
 
     for entry in overall_analytics:
-        # print(entry)
+        # print(entry) #DEBUG
         obj = OverallFilterAnalytics.objects.create(**entry, date_stamp=current_datestamp)
         print(obj)
     print('\n')

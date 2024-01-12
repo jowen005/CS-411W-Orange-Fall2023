@@ -20,3 +20,4 @@ class Command(BaseCommand):
         call_command('loadPatrons')
 
         self.stdout.write(self.style.SUCCESS(f'{count[0]} patron object(s) were added to the database'))
+

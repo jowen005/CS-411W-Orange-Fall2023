@@ -1,16 +1,10 @@
-from django.core.management.base import BaseCommand, CommandParser
-from django.core.management import call_command
+from django.core.management.base import BaseCommand
 from patron.models import Patron, PatronSearchHistory
 from restaurants.models import MenuItem
 
 class Command(BaseCommand):
 
     help = 'Updates the Calorie Levels of Patrons, Menu Items, and Search History Objects.'
-
-
-    # def add_arguments(self, parser: CommandParser):
-    #     parser.add_argument('-f', dest='json_path', default=self.DEFAULT_JSON_PATH, 
-    #                         help='Specifies a file to load',)
 
 
     def handle(self, *args, **options):
@@ -50,3 +44,5 @@ class Command(BaseCommand):
         print(f'Number of Menu Items Updated: {report["num_updated_items"]}')
         print(f'Number of Searches Updated: {report["num_updated_searches"]}')
         self.stdout.write(self.style.SUCCESS(f'This command successfully completed'))
+
+
