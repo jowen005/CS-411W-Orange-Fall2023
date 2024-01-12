@@ -1,6 +1,5 @@
-from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework import status, viewsets, generics, views
+from rest_framework import status, viewsets, views
 from django.core.management import call_command
 
 from . import models, serializers, permissions
@@ -10,7 +9,6 @@ import restaurants.models as rm
 class FilterTrendsViewset(viewsets.ModelViewSet):
     permission_classes = [permissions.IsNonPatronRetrieveAndValidFilter]
 
-    # filter_type: (Serializer, TrendsModel, TagModel)
     FILTER_MODELS = {
         'calories': (serializers.CalorieTrendsSerializer, models.CalorieTrends, None),
         'restrictiontag': (serializers.RestrictionTagTrendsSerializer, models.RestrictionTagTrends, rm.RestrictionTag),
@@ -42,8 +40,6 @@ class FilterTrendsViewset(viewsets.ModelViewSet):
         queryset = TrendsModel.objects.filter(
             date_stamp=latest_datestamp
         ).order_by(id_attr)
-
-        # print(queryset.first().get_trend_type_display())
 
         return queryset
     

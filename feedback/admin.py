@@ -1,11 +1,6 @@
 from django.contrib import admin
+from models import Reviews, AppSatisfaction
 
-# Register your models here.
-#from .models import Ratings
-#admin.site.register(Ratings)
 
-from .models import Reviews
 admin.site.register(Reviews)
-
-from .models import AppSatisfaction
 admin.site.register(AppSatisfaction)

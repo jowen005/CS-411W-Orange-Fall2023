@@ -7,16 +7,12 @@ from rest_framework import status
 
 from .serializers import SignUpSerializer
 from .tokens import create_jwt_pair_for_user
-# from .custom_auth import authenticate
 from django.contrib.auth import authenticate
 
 from analytics.models import LoginRecord
 
 
-# Create your views here.
-
 #Responsible for handling the http requests related to user signups
-
 class SignUpView(APIView):
     serializer_class = SignUpSerializer
 
@@ -82,27 +78,3 @@ class LoginView(APIView):
         except AuthenticationFailed as e:
             return Response(data={'details':str(e)})
         
-
-# class LoginView(APIView):
-#     """
-#         Authenticates a user checking if there is a user of the specified type 
-#         matching credentials in database and returns that users tokens
-#     """
-
-#     permission_classes = []
-
-#     def post(self, request: Request, user_type:str):
-#         email = request.data.get('email')
-#         password = request.data.get('password')
-
-#         try:
-#             # Uses custom Authenticate method
-#             user = authenticate(email=email, password=password, user_type=user_type)
-#             tokens = create_jwt_pair_for_user(user)
-#             response = {
-#                 "message": "Login Successful",
-#                 "tokens":tokens
-#             }
-#             return Response(data=response, status=status.HTTP_200_OK)
-#         except AuthenticationFailed as e:
-#             return Response(data={'email':str(e)})

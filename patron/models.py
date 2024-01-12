@@ -1,8 +1,7 @@
 from django.db import models
 from restaurants.models import MenuItem,RestrictionTag,AllergyTag,TasteTag,IngredientTag
 from django.contrib.auth import get_user_model
-from django.core.validators import MinValueValidator, MaxValueValidator
-from decimal import Decimal
+from django.core.validators import MinValueValidator
 from feedback.models import Reviews
 
 User = get_user_model()
@@ -22,7 +21,6 @@ class Patron(models.Model):
     calorie_level = models.PositiveIntegerField(null=True)
 
 	#Supporting information for suggestion feeds
-    #suggestion_vector = models.ManyToManyField(PatronSuggestionVector)
     profile_updated = models.BooleanField(default=True)
 
     CALORIE_LEVEL_RANGES = [
@@ -79,18 +77,10 @@ class PatronSearchHistory(models.Model):
     query = models.CharField(max_length=255) 
     calorie_limit = models.PositiveIntegerField(null=True, blank=True)
 
-    #Replace this
-    # dietary_restriction = models.CharField(max_length=255, blank=True)
-
-    #With this
     dietary_restriction_tags = models.ManyToManyField(RestrictionTag)
     allergy_tags = models.ManyToManyField(AllergyTag)
     disliked_ingredients = models.ManyToManyField(IngredientTag)
     patron_taste_tags = models.ManyToManyField(TasteTag)
-
-    #conversion from price level to price min max
-    # QS - in backend
-    # AS - in frontend
     
     # store the price range number which min to max. 
     price_min = models.DecimalField(
@@ -171,3 +161,4 @@ class PatronSuggestionVector(models.Model):
 
     class Meta:
         db_table = 'PatronSuggestionVector'
+

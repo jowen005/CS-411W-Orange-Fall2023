@@ -1,5 +1,4 @@
 from django.db import models
-from abc import ABC
 
 from django.contrib.auth import get_user_model
 from restaurants.models import (RestrictionTag, AllergyTag, TasteTag, 
@@ -18,7 +17,7 @@ class TrendsMixin(models.Model):
     coeff3 = models.FloatField(null=True)
     coeff4 = models.FloatField(null=True)
     coeff5 = models.FloatField(null=True)
-    # behavior = models.FloatField(null=True)
+
     x_min = models.DateTimeField(null=True)
     x_max = models.DateTimeField(null=True)
     y_min = models.IntegerField(null=True)

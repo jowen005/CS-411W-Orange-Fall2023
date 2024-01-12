@@ -19,3 +19,4 @@ urlpatterns = [
     path('manual/', views.ManualTrendsCommandView.as_view(), name='manual'),
     path('<str:filter_type>/', include(filter_router.urls)),
 ]
+

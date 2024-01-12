@@ -1,12 +1,12 @@
-from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework import status, viewsets, generics, views
+from rest_framework import status, viewsets, views
 from django.core.management import call_command
 from django.db.models import Sum
-
 from django.contrib.auth import get_user_model
+
 from . import models, serializers, permissions
 import restaurants.models as rm
+
 User = get_user_model()
 
 class GlobalAnalyticsViewset(viewsets.ModelViewSet):
@@ -46,7 +46,6 @@ class CalorieAnalyticsViewset(viewsets.ModelViewSet):
             }
             return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
         
-        # instance = models.CalorieAnalytics.objects.filter(calorie_level=calorie_level).latest('date_stamp')
         queryset = self.get_queryset()
         analytic_obj = queryset.filter(calorie_level=calorie_level).first()
         if analytic_obj is None:
@@ -67,7 +66,6 @@ class TagAnalyticsViewset(viewsets.ModelViewSet):
     TagModel = None
     
     def get_queryset(self):
-
         try:
             latest_datestamp = self.AnalyticsModel.objects.latest('date_stamp').date_stamp
         except self.AnalyticsModel.DoesNotExist:
@@ -261,24 +259,6 @@ class LocalRestaurantAnalyticsViewset(viewsets.ModelViewSet):
             except models.LocalRestaurantAnalytics.DoesNotExist: # No Analytics for a Restaurant
                 return models.LocalRestaurantAnalytics.objects.none()
 
-        
-        # def retrieve(self, request, *args, **kwargs):
-        #     requested_id = int(kwargs.get('pk'))
-
-        #     # The permission class verifies the existence of the 'restaurantd_id'
-        
-        #     queryset = self.get_queryset()
-        #     analytic_obj = queryset.filter(restaurant_id__id=requested_id).first()
-        #     if analytic_obj is None:
-        #         response = {
-        #             'message': f'This Restaurant({requested_id}) is valid but does not yet have analytics!'
-        #     }
-        #         return Response(data=response, status=status.HTTP_404_NOT_FOUND)
-
-        #     serializer = self.get_serializer(analytic_obj)
-
-        #     return Response(data=serializer.data, status=status.HTTP_200_OK)
-
 
 class ManualAnalyticsCommandView(views.APIView):
     permission_classes = [permissions.IsAuthAdminAndCreate]
@@ -361,3 +341,5 @@ class OverallLoginAnalyticsView(views.APIView):
         }
 
         return Response(data=response, status=status.HTTP_200_OK)
+    
+    

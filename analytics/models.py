@@ -1,11 +1,10 @@
 from django.db import models
 from restaurants.models import MenuItem, CookStyleTag, TasteTag, RestrictionTag, AllergyTag, IngredientTag, Restaurant
 from django.contrib.auth import get_user_model
-
-User = get_user_model()
-
 from django.db import models
 
+
+User = get_user_model()
 
 class GlobalAnalytics(models.Model):
     total_males = models.IntegerField()
@@ -42,7 +41,6 @@ class CalorieAnalytics(models.Model):
     number_of_menuItems = models.PositiveIntegerField()
     number_of_searches = models.PositiveIntegerField()          #For Trend Use Only
     number_of_items_added_HIS = models.PositiveIntegerField()   #For Trend Use Only
-    # date_stamp = models.DateTimeField(auto_now_add = True)
     date_stamp = models.DateTimeField()
 
     def __str__(self):
@@ -58,7 +56,6 @@ class RestrictionTagAnalytics(models.Model):
     exclusion_count = models.PositiveIntegerField(default=0)
     number_of_search = models.PositiveIntegerField()    #For Trend Use Only
     number_of_HIS = models.PositiveIntegerField()       #For Trend Use Only
-    # date_stamp = models.DateTimeField(auto_now_add = True)
     date_stamp = models.DateTimeField()
 
     def __str__(self):
@@ -74,7 +71,6 @@ class AllergiesTagAnalytics(models.Model):
     exclusion_count = models.PositiveIntegerField(default=0)
     number_of_search = models.PositiveIntegerField()    #For Trend Use Only
     number_of_HIS = models.PositiveIntegerField()       #For Trend Use Only
-    # date_stamp = models.DateTimeField(auto_now_add = True)
     date_stamp = models.DateTimeField()
 
     def __str__(self):
@@ -90,7 +86,6 @@ class IngredientTagAnalytics(models.Model):
     exclusion_count = models.PositiveIntegerField(default=0)
     number_of_search = models.PositiveIntegerField()    #For Trend Use Only
     number_of_HIS = models.PositiveIntegerField()       #For Trend Use Only
-    # date_stamp = models.DateTimeField(auto_now_add = True)
     date_stamp = models.DateTimeField()
 
     def __str__(self):
@@ -106,7 +101,6 @@ class TasteTagAnalytics(models.Model):
     exclusion_count = models.PositiveIntegerField(default=0)
     number_of_search = models.PositiveIntegerField()    #For Trend Use Only
     number_of_HIS = models.PositiveIntegerField()       #For Trend Use Only
-    # date_stamp = models.DateTimeField(auto_now_add = True)
     date_stamp = models.DateTimeField()
 
     def __str__(self):
@@ -120,7 +114,6 @@ class CookStyleAnalytics(models.Model):
     number_of_menuItem = models.PositiveIntegerField()
     number_of_search = models.PositiveIntegerField()    #For Trend Use Only
     number_of_HIS = models.PositiveIntegerField()       #For Trend Use Only
-    # date_stamp = models.DateTimeField(auto_now_add = True)
     date_stamp = models.DateTimeField()
 
     def __str__(self):
@@ -164,7 +157,6 @@ class MenuItemPerformanceAnalytics(models.Model):
         max_digits=8,  # Total number of digits
         decimal_places=2,  # Maximum of 2 decimal places
     )
-    # date_stamp = models.DateTimeField(auto_now_add = True)
     date_stamp = models.DateTimeField()
 
     def __str__(self):
@@ -192,22 +184,18 @@ class AppSatisfactionAnalytics(models.Model):
 # Model for tracking analytics for restaurants within their geographic area
 class LocalRestaurantAnalytics(models.Model):
     restaurant_id = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
+
     # Limit the top 3 menu items to menu items from the same restaurant
-    #top_three_items = models.ManyToManyField(MenuItem, limit_choices_to={'restaurant': restaurant_id})
     top_three_items = models.JSONField(null=True)
+
     # Total number of menu items from restaurant added to patron menu item histories
     total_items_added_to_histories = models.PositiveIntegerField()
+
     # Tag that led to the most menu item elimination between items
-    # taste_tags_most_eliminations = models.OneToOneField(TasteTag, on_delete=models.DO_NOTHING)
-    # restriction_tags_most_eliminations = models.OneToOneField(RestrictionTag, on_delete=models.DO_NOTHING)
-    # cookStyle_tags_most_eliminations = models.OneToOneField(CookStyleTag, on_delete=models.DO_NOTHING)
-    # ingredient_tags_most_eliminations = models.OneToOneField(IngredientTag, on_delete=models.DO_NOTHING)
-    # allergies_tags_most_eliminations = models.OneToOneField(AllergyTag, on_delete=models.DO_NOTHING)
     taste_tags_most_eliminations = models.JSONField(null=True)
     restriction_tags_most_eliminations = models.JSONField(null=True)
     ingredient_tags_most_eliminations = models.JSONField(null=True)
     allergies_tags_most_eliminations = models.JSONField(null=True)
-    # Food type is probably not needed
 
     # Date and time when analytics were run
     date_stamp = models.DateTimeField()
@@ -219,7 +207,9 @@ class LocalRestaurantAnalytics(models.Model):
         db_table = 'LocalRestaurantAnalytics'
 
 
+# ---------------------------------------------
 # INTERMEDIATE TABLES
+# ---------------------------------------------
 
 
 class OverallExclusionRecord(models.Model):
@@ -238,7 +228,6 @@ class AllergyTagExclusionRecord(models.Model):
     menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
     tag = models.ForeignKey(AllergyTag, on_delete=models.CASCADE)
     exclusion_count = models.PositiveIntegerField(default=0)
-    # date_stamp = models.DateTimeField()
 
     def __str__(self):
         return f"{self.menu_item.id}: {self.tag.title} --> {self.exclusion_count}"
@@ -251,7 +240,6 @@ class IngredientTagExclusionRecord(models.Model):
     menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
     tag = models.ForeignKey(IngredientTag, on_delete=models.CASCADE)
     exclusion_count = models.PositiveIntegerField(default=0)
-    # date_stamp = models.DateTimeField()
 
     def __str__(self):
         return f"{self.menu_item.id}: {self.tag.title} --> {self.exclusion_count}"
@@ -264,7 +252,6 @@ class RestrictionTagExclusionRecord(models.Model):
     menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
     tag = models.ForeignKey(RestrictionTag, on_delete=models.CASCADE)
     exclusion_count = models.PositiveIntegerField(default=0)
-    # date_stamp = models.DateTimeField()
 
     def __str__(self):
         return f"{self.menu_item.id}: {self.tag.title} --> {self.exclusion_count}"
@@ -277,7 +264,6 @@ class TasteTagExclusionRecord(models.Model):
     menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
     tag = models.ForeignKey(TasteTag, on_delete=models.CASCADE)
     exclusion_count = models.PositiveIntegerField(default=0)
-    # date_stamp = models.DateTimeField()
 
     def __str__(self):
         return f"{self.menu_item.id}: {self.tag.title} --> {self.exclusion_count}"
@@ -298,7 +284,6 @@ class LoginAnalytics(models.Model):
         return f"{self.user.username}: Total Logins = {self.total_logins}, Logins Since = {self.logins_since}"
 
     def save(self, *args, **kwargs):
-        # user_email = User.objects.get(email=self.user.email)
         self.email = self.user.email
         super().save(*args, **kwargs)
         
@@ -314,3 +299,4 @@ class LoginRecord(models.Model):
         return self.user.username
     class Meta:
         db_table = 'LoginRecord'
+

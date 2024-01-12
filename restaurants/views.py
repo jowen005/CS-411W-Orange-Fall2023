@@ -2,11 +2,9 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status, viewsets, generics, views
-from django.http import HttpRequest
 
 from . import models, serializers, permissions
 
-# Create your views here.
 
 class RestaurantViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.RestaurantSerializer

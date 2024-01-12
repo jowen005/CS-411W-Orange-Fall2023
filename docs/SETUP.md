@@ -50,7 +50,6 @@ Install Python 3.9 or 3.10 and Docker Desktop
        * Make sure *settings.py* refers to 'secrets_dev.json'
 
 
-
 # Setting up environment without Docker
 Install Python 3.9 or 3.10, MySQL Server, and MySQL Workbench
 1. Setting up MySQL Server

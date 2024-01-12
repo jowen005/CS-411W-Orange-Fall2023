@@ -170,7 +170,7 @@ class MenuItemHistoryViewSet(viewsets.ModelViewSet):
                 'message': 'Successfully added to meal history.',
                 'results': history_serializer.data,
             }
-			#SAVE HERE NOTE =================================================================================================================================
+
             patron = models.Patron.objects.get(user=request.user)
             patron.profile_updated = True
             patron.save()
@@ -192,7 +192,7 @@ class MenuItemHistoryViewSet(viewsets.ModelViewSet):
                         'message': 'Successfully added to meal history and removed from bookmarks.',
                         'results': history_serializer.data,
                     }
-					#SAVE HERE NOTE =================================================================================================================================
+
                     patron = models.Patron.objects.get(user=request.user)
                     patron.profile_updated = True
                     patron.save()
@@ -232,8 +232,7 @@ def SuggestionFeedAPI(request:Request):
 
     suggestions = generateSuggestions(patron_id)
 
-    #suggestions = MenuItem.objects.filter(id__in=suggestion_ids)
-
     serializer = MenuItemListSerializer(suggestions, many=True)
 
     return Response(data=serializer.data, status=status.HTTP_200_OK)
+

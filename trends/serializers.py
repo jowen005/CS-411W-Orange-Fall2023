@@ -96,3 +96,5 @@ class AppSatisfactionTrendsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.AppSatisfactionTrends
         fields = '__all__'
+
+        

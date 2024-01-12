@@ -12,3 +12,4 @@ def create_jwt_pair_for_user(user: User):
     }
 
     return tokens
+

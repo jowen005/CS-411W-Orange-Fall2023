@@ -1,13 +1,10 @@
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
 import math
 
-#from accounts.utils.vectorize import vectorizeMenuItem
 
 User = get_user_model()
 
-# Create your models here.
 class RestTag(models.Model):
     """
         A descriptive tag that describes the type of restaurant or cuisine

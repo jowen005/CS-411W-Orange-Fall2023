@@ -1,13 +1,9 @@
-from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, APIView
 from rest_framework import status, viewsets, generics
 
 from . import models, serializers, permissions
 from restaurants.models import MenuItem
-from restaurants.serializers import MenuItemListSerializer
 
-# Create your views here.
 
 class ReviewViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.FeedbackPermission]
@@ -15,11 +11,6 @@ class ReviewViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         
         user = self.request.user
-
-        # queries for reviews for a specified menu item
-        # if self.action == 'list':
-        #     menu_item = MenuItem.objects.get(id=self.request.data['menu_item'])
-        #     return models.Reviews.objects.filter(menu_item=menu_item)
         
         # queries for reviews for a specific patron
         if user.user_type == 'patron':
@@ -68,5 +59,4 @@ class AppSatisfactionViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-
 

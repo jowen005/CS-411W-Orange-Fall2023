@@ -1,29 +1,13 @@
 from django.contrib import admin
+import models as rm
 
-# Register your models here.
-from .models import RestTag
-admin.site.register(RestTag)
+admin.site.register(rm.RestTag)
+admin.site.register(rm.Restaurant)
+admin.site.register(rm.FoodTypeTag)
+admin.site.register(rm.CookStyleTag)
+admin.site.register(rm.TasteTag)
+admin.site.register(rm.RestrictionTag)
+admin.site.register(rm.AllergyTag)
+admin.site.register(rm.IngredientTag)
+admin.site.register(rm.MenuItem)
 
-from .models import Restaurant
-admin.site.register(Restaurant)
-
-from .models import FoodTypeTag
-admin.site.register(FoodTypeTag)
-
-from .models import CookStyleTag
-admin.site.register(CookStyleTag)
-
-from .models import TasteTag
-admin.site.register(TasteTag)
-
-from .models import MenuItem
-admin.site.register(MenuItem)
-
-from .models import RestrictionTag
-admin.site.register(RestrictionTag)
-
-from .models import AllergyTag
-admin.site.register(AllergyTag)
-
-from .models import IngredientTag
-admin.site.register(IngredientTag)

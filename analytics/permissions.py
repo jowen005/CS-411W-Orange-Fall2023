@@ -1,6 +1,4 @@
-from rest_framework.permissions import (
-    BasePermission,
-    SAFE_METHODS)
+from rest_framework.permissions import BasePermission
 from restaurants.models import Restaurant, MenuItem
 from rest_framework.exceptions import PermissionDenied
 
@@ -127,19 +125,6 @@ class LocalRestaurantAnalyticsPermission(BasePermission):
             if is_admin:
                 if view.action == 'list':
                     return True
-                # elif view.action == 'retrieve':
-                #     rest_id = view.kwargs.get('restaurant_id')
-                #     restaurant_id = int(view.kwargs.get('pk'))
-
-                #     try:
-                #         restaurant = Restaurant.objects.get(pk=restaurant_id)
-                #     except Restaurant.DoesNotExist:
-                #         raise PermissionDenied(f"This Restaurant ID ({restaurant_id}) is not valid!")
-                    
-                #     if restaurant.owner == rest_id:
-                #         return True
-                #     raise PermissionDenied(f"The specified restaurant ({restaurant_id}) does not belong " +
-                #                            f"to the specified restaurant ({rest_id})!")
 
                 else:
                     raise PermissionDenied(f"This action is not allowed ({view.action})!")
@@ -151,18 +136,6 @@ class LocalRestaurantAnalyticsPermission(BasePermission):
                 if rest_id in owned_rest_ids:
                     if view.action == 'list':
                         return True
-                    # elif view.action == 'retrieve':
-                    #     restaurant_id = int(view.kwargs.get('pk'))
-                        
-                    #     try:
-                    #         restaurant = Restaurant.objects.get(pk=restaurant_id)
-                    #     except Restaurant.DoesNotExist:
-                    #         raise PermissionDenied(f"This Restaurant ID ({restaurant_id}) is not valid!")
-
-                    #     if Restaurant.owner == rest_id:
-                    #         return True
-                    #     raise PermissionDenied(f"The specified restaurant ({restaurant_id}) does not belong " +
-                    #                            f"to the specified restaurant ({rest_id})!")
                     
                     raise PermissionDenied(f"This action is not allowed ({view.action})!")
 

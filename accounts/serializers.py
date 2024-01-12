@@ -5,7 +5,6 @@ from .models import User
 
 
 #Responsible for validating and serializing the data sent by users during the signup process
-
 class SignUpSerializer(serializers.ModelSerializer):
     USER_TYPES = [
         ('admin', 'Admin'),
@@ -20,7 +19,6 @@ class SignUpSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
-        #fields = ['email', 'username', 'user_type', 'password']
     
     def validate(self, attrs):
         email_exists = User.objects.filter(email=attrs['email']).exists()
@@ -37,16 +35,4 @@ class SignUpSerializer(serializers.ModelSerializer):
         Token.objects.create(user=user)
 
         return user
-
-
-# class UserGetSerializer(serializers.ModelSerializer):
-#     email = serializers.EmailField(max_length=80)
-    
-#     class Meta:
-#         model = User
-#         fields = ['email']
-
-
-
-
 

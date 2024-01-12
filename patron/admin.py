@@ -1,14 +1,9 @@
 from django.contrib import admin
+import models as pm
 
 # Register your models here.
-from .models import Patron
-admin.site.register(Patron)
+admin.site.register(pm.Patron)
+admin.site.register(pm.Bookmark)
+admin.site.register(pm.MenuItemHistory)
+admin.site.register(pm.PatronSearchHistory)
 
-from .models import Bookmark
-admin.site.register(Bookmark)
-
-from .models import MenuItemHistory
-admin.site.register(MenuItemHistory)
-
-from .models import PatronSearchHistory
-admin.site.register(PatronSearchHistory)
